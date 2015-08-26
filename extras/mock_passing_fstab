@@ -1,0 +1,11 @@
+/dev/sda /tmp ex3 nosuid,nodev,noexec 0 0
+/dev/sda /var ex3 defaults 0 0
+/tmp /var/tmp none bind 0 0
+/dev/sda /var/log ext3 defaults
+/dev/sda /var/log/audit ext3 defaults
+/dev/sda /home ext3 defaults
+/dev/sda /home ext3 defaults,nodev
+/dev/floppy /mnt/floppy ext3 nosuid,defaults,nodev,noexec
+none /run/shm tmpfs rw,nosuid,nodev 0 0
+
+

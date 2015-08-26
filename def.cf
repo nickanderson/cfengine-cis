@@ -1,0 +1,16 @@
+body common cis_def_file_control
+{
+  vars:
+    centos_6::
+      "input[cis_centos_linux_6_benchmark_v1_0_0_section_1_1]"
+        string => "$(this.promise_dirname)/policy/cis_centos_linux_6_benchmark_v1_0_0_section_1_1.cf",
+        meta => { "inventory", "attribute_name=input" };
+
+    any::
+      "inputs" slist => getvalues(input);
+}
+
+body file control
+{
+  inputs => { @(cis_def_file_control.inputs) };
+}

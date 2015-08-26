@@ -1,0 +1,310 @@
+#https://benchmarks.cisecurity.org/tools2/CIS_CentOS_Linux_6_Benchmark_v1.0.0.pdf
+
+bundle agent cis_centos_linux_6_benchmark_v1_0_0_section_1_1
+{
+  methods:
+    "Filesystem Mount Inventory"
+      usebundle => cis_centos_linux_6_benchmark_v1_0_0_section_1_1_filesystem_mounts_inventory;
+
+    "Filesystem Support Inventory"
+      usebundle => cis_centos_linux_6_benchmark_v1_0_0_section_1_1_filesystem_support_inventory;
+}
+
+bundle agent cis_centos_linux_6_benchmark_v1_0_0_section_1_1_filesystem_mounts_inventory
+{
+  meta:
+    "description"
+      string => "
+This bundle implements inventory for sections 1.1.1 through 1.1.17 to check
+that various filesystems exist and have restricted mount opitons.";
+
+
+  vars:
+      "fstab"                string => ifelse("TEST", "$(this.promise_dirname)/pass_fstab", "/etc/fstab");
+      "mtab"                 string => ifelse("TEST", "$(this.promie_dirname)/pass_fstab", "/proc/self/mounts");
+      "CIS_1_1_17_statefile" string => ifelse("TEST", "$(this.promise_dirname)/CIS_1_1_17_state", "/var/cfengine/state/CIS_1_1_17");
+
+
+    DEBUG::
+      # Build a lists of scored and unscored classes
+      "all_scored_findings"
+        slist => classesmatching(".*", "CIS:scored=true");
+
+      "all_not_scored_findings"
+        slist => classesmatching(".*", "CIS:scored=false");
+
+      "all_this_bundle"
+        slist => classesmatching(".*", "defined_from=$(this.bundle)");
+
+      # Now narrow the list to just this bundle so that we dont get any confusion.
+      "scored_findings"
+        slist => intersection(all_scored_findings, all_this_bundle);
+
+      "not_scored_findings"
+        slist => intersection(all_not_scored_findings, all_this_bundle);
+
+  classes:
+       # Strong regex pattern to match fstab entries. Note the capturing
+       # groups, and the optional dump and pass options at the end.
+       # Non comment lines with a device that /tmp is mounted on with any filesystem, any options, and optionally dump and pass specifications
+       #(?!\s*#.*$)(\H+)\s+(\/tmp)\s+(\H+)\s+(\H+)\s*\d*\s*\d*\s*
+
+    "CIS_1_1_1" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/tmp)\s+(\H*)\s+(\H*)\s*\d*\s*\d*\s*", $(fstab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding"},
+      scope => "namespace",
+      comment => "Create Separate Partition for /tmp";
+
+    "CIS_1_1_2" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/tmp)\s+(\H*)\s+(\H*nodev\H*)\s*\d*\s*\d*\s*", $(fstab) ),
+      meta => { "CIS:scored=true" , "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding"},
+      scope => "namespace",
+      comment => "Set nodev option for /tmp Partition";
+
+    "CIS_1_1_2" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/tmp)\s+(\H*)\s+(\H*nodev\H*)\s*\d*\s*\d*\s*", $(mtab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Set nodev option for /tmp Partition";
+
+    "CIS_1_1_3" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/tmp)\s+(\H*)\s+(\H*nosuid\H*)\s*\d*\s*\d*\s*", $(fstab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Set nosuid option for /tmp Partition";
+
+    "CIS_1_1_3" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/tmp)\s+(\H*)\s+(\H*nosuid\H*)\s*\d*\s*\d*\s*", $(mtab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Set nosuid option for /tmp Partition";
+
+    "CIS_1_1_4" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/tmp)\s+(\H*)\s+(\H*noexec\H*)\s*\d*\s*\d*\s*", $(fstab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Set noexec option for /tmp Partition";
+
+    "CIS_1_1_4" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/tmp)\s+(\H*)\s+(\H*noexec\H*)\s*\d*\s*\d*\s*", $(mtab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Set noexec option for /tmp Partition";
+
+    "CIS_1_1_5" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/var)\s+(\H*)\s+(\H*)\s*\d*\s*\d*\s*", $(fstab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Create a seperate partition for /var";
+
+    "CIS_1_1_6" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(/tmp)\s+(\/var\/tmp)\s+(none)\s+(bind)\s*\d*\s*\d*\s*", $(fstab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Bind Mount the /var/tmp directory to /tmp";
+
+    "CIS_1_1_7" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/var\/log)\s+(\H*)\s+(\H*)\s*\d*\s*\d*\s*", $(fstab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Create Separate Partition for /var/log";
+
+    "CIS_1_1_8" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/var\/log\/audit)\s+(\H*)\s+(\H*)\s*\d*\s*\d*\s*", $(fstab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Create Separate Partition for /var/log/audit ";
+
+    "CIS_1_1_9" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/home)\s+(\H*)\s+(\H*)\s*\d*\s*\d*\s*", $(fstab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Create Separate Partition for /home";
+
+    "CIS_1_1_10" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/home)\s+(\H*)\s+(\H*nodev\H*)\s*\d*\s*\d*\s*", $(fstab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Add nodev Option to /home";
+
+    "CIS_1_1_10" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/home)\s+(\H*)\s+(\H*nodev\H*)\s*\d*\s*\d*\s*", $(mtab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Add nodev Option to /home";
+
+    "CIS_1_1_11" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\H*(floppy|cdrom|dvd|usb)\H*)\s+(\H*)\s+(\H*nodev\H*)\s*\d*\s*\d*\s*", $(fstab) ),
+      meta => { "CIS:scored=false", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Add nodev Option to Removable Media Partitions";
+
+    "CIS_1_1_12" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\H*(floppy|cdrom|dvd|usb)\H*)\s+(\H*)\s+(\H*noexec\H*)\s*\d*\s*\d*\s*", $(fstab) ),
+      meta => { "CIS:scored=false", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Add noexec Option to Removable Media Partitions";
+
+    "CIS_1_1_13" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\H*(floppy|cdrom|dvd|usb)\H*)\s+(\H*)\s+(\H*nosuid\H*)\s*\d*\s*\d*\s*", $(fstab) ),
+      meta => { "CIS:scored=false", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Add nosuid Option to Removable Media Partitions";
+
+    "CIS_1_1_14" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/dev\/shm)\s+(\H*)\s+(\H*nodev\H*)\s*\d*\s*\d*\s*", $(fstab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Add nodev Option to /dev/shm Partition";
+
+    "CIS_1_1_14" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/dev\/shm)\s+(\H*)\s+(\H*nodev\H*)\s*\d*\s*\d*\s*", $(mtab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Add nodev Option to /dev/shm Partition";
+
+    "CIS_1_1_15" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/dev\/shm)\s+(\H*)\s+(\H*nosuid\H*)\s*\d*\s*\d*\s*", $(fstab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Add nosuid Option to /dev/shm Partition";
+
+    "CIS_1_1_15" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/dev\/shm)\s+(\H*)\s+(\H*nosuid\H*)\s*\d*\s*\d*\s*", $(mtab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Add nosuid Option to /dev/shm Partition";
+
+    "CIS_1_1_16" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/dev\/shm)\s+(\H*)\s+(\H*noexec\H*)\s*\d*\s*\d*\s*", $(fstab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Add noexec Option to /dev/shm Partition";
+
+    "CIS_1_1_16" -> { "CIS" }
+      not => regline("(?!\s*#.*$)(\H+)\s+(\/dev\/shm)\s+(\H*)\s+(\H*noexec\H*)\s*\d*\s*\d*\s*", $(mtab) ),
+      meta => { "CIS:scored=true", "CIS:level=1", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 1 Finding" },
+      scope => "namespace",
+      comment => "Add noexec Option to /dev/shm Partition";
+
+  vars:
+    have_CIS_1_1_17_statefile::
+      "CIS_1_1_17_dirs"      slist => readstringlist( $(CIS_1_1_17_statefile), "", "\n", 1k, 1M);
+      "CIS_1_1_17_dir_count" int => length(CIS_1_1_17_dirs);
+
+  classes:
+    "have_CIS_1_1_17_statefile"
+      expression => fileexists( $(CIS_1_1_17_statefile) );
+
+    "CIS_1_1_17" -> { "CIS" }
+      expression => isgreaterthan($(CIS_1_1_17_dir_count), 0),
+      meta => { "CIS:scored=true", "CIS:level=1" },
+      scope => "namespace",
+      comment => "Set Sticky Bit on All World-Writable Directories";
+
+  commands:
+    !have_CIS_1_1_17_statefile::
+      "/bin/df" -> { "CIS_1_1_17", "CIS" }
+        args => "--local -P | /bin/awk {'if (NR!=1) print $6'}| /usr/bin/xargs -I '{}' /bin/find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 1> $(CIS_1_1_17_statefile) 2> /dev/null",
+        contain => in_shell,
+        comment => "This will find all directories that are world writeable that do not have the sticky bit set";
+
+  reports:
+    DEBUG::
+      "DEBUG $(this.bundle):";
+      "$(const.t)SCORED FINDING: $(scored_findings)";
+      "$(const.t)NOT SCORED FINDING: $(not_scored_findings)";
+}
+
+bundle agent cis_centos_linux_6_benchmark_v1_0_0_section_1_1_filesystem_support_inventory
+{
+  meta:
+    "description"
+      string => "
+This bundle implements inventory for sections 1.1.18 through 1.1.24 to check
+that unneeded filesystem types are specifically disabled from mounting.
+Removing support for unneeded filesystem types reduces the local attack surface
+of the server.
+";
+
+  vars:
+      "lsmod_data_cache" string => ifelse("TEST", "$(this.promise_dirname)/lsmod", "/var/cfengine/state/lsmod");
+
+      "lsmod_idx" slist => getindices(lsmod_data);
+      "modprobe_command" string => "/sbin/modprobe -n -v";
+
+      "CIS_filesystem[CIS_1_1_18][fs]" string => "cramfs";
+      "CIS_filesystem[CIS_1_1_18][modprobe]" string => execresult("$(modprobe_command) cramfs", "noshell");
+
+      "CIS_filesystem[CIS_1_1_19][fs]" string => "freevxfs";
+      "CIS_filesystem[CIS_1_1_19][modprobe]" string => execresult("$(modprobe_command) freevxfs", "noshell");
+
+      "CIS_filesystem[CIS_1_1_20][fs]" string => "jffs2";
+      "CIS_filesystem[CIS_1_1_20][modprobe]" string => execresult("$(modprobe_command) jffs2", "noshell");
+
+      "CIS_filesystem[CIS_1_1_21][fs]" string => "hfs";
+      "CIS_filesystem[CIS_1_1_21][modprobe]" string => execresult("$(modprobe_command) hfs", "noshell");
+
+      "CIS_filesystem[CIS_1_1_22][fs]" string => "hfsplus";
+      "CIS_filesystem[CIS_1_1_22][modprobe]" string => execresult("$(modprobe_command) hfsplus", "noshell");
+
+      "CIS_filesystem[CIS_1_1_23][fs]" string => "squashfs";
+      "CIS_filesystem[CIS_1_1_23][modprobe]" string => execresult("$(modprobe_command) squashfs", "noshell");
+
+      "CIS_filesystem[CIS_1_1_24][fs]" string => "udf";
+      "CIS_filesystem[CIS_1_1_24][modprobe]" string => execresult("$(modprobe_command) udf", "noshell");
+
+      "CIS_filesystem_idx" slist => getindices("CIS_filesystem");
+
+    have_lsmod_data_cache::
+      "lsmod_data" data => data_readstringarray("$(lsmod_data_cache)", "", "\s+", 1k, 1M);
+
+    DEBUG::
+      # Build a lists of scored and unscored classes
+      "all_scored_findings"
+        slist => classesmatching(".*", "CIS:scored=true");
+
+      "all_not_scored_findings"
+        slist => classesmatching(".*", "CIS:scored=false");
+
+      "all_this_bundle"
+        slist => classesmatching(".*", "defined_from=$(this.bundle)");
+
+      # Now narrow the list to just this bundle so that we dont get any confusion.
+      "scored_findings"
+        slist => intersection(all_scored_findings, all_this_bundle);
+
+      "not_scored_findings"
+        slist => intersection(all_not_scored_findings, all_this_bundle);
+
+  classes:
+      # Define classes for each CIS check if the modprobe output doesn't say "install /bin/true";
+      "$(CIS_filesystem_idx)" -> { "CIS" }
+        not => regcmp( "install\s+/bin/true", "$(CIS_filesystem[$(CIS_filesystem_idx)][modprobe])"),
+        meta => { "CIS:scored=false", "CIS:level=2", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 2 Finding" },
+        scope => "namespace";
+
+      # Define classes for each CIS check if the filesystem is found in lsmod output;
+      "$(CIS_filesystem_idx)" -> { "CIS" }
+        expression => reglist( @(lsmod_idx), "$(CIS_filesystem[$(CIS_filesystem_idx)][fs])"),
+        meta => { "CIS:scored=false", "CIS:level=2", "defined_from=$(this.bundle)", "inventory", "attribute_name=CIS Level 2 Finding" },
+        scope => "namespace";
+
+      "have_lsmod_data_cache"
+        expression => fileexists( $(lsmod_data_cache) );
+
+  commands:
+    !have_lsmod_data_cache::
+      "/sbin/lsmod"
+        args => "> $(lsmod_data_cache)",
+        contain => in_shell,
+        comment => "So that we don't have to run the command so many times, we
+                    run it once and cache the output for multiple checks";
+
+  reports:
+    DEBUG::
+      "DEBUG $(this.bundle):";
+      "$(const.t)SCORED FINDING: $(scored_findings)";
+      "$(const.t)NOT SCORED FINDING: $(not_scored_findings)";
+
+}
