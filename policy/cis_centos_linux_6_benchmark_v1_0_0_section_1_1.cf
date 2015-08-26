@@ -3,11 +3,12 @@
 bundle agent cis_centos_linux_6_benchmark_v1_0_0_section_1_1
 {
   methods:
-    "Filesystem Mount Inventory"
-      usebundle => cis_centos_linux_6_benchmark_v1_0_0_section_1_1_filesystem_mounts_inventory;
+    centos_6::
+      "Filesystem Mount Inventory"
+        usebundle => cis_centos_linux_6_benchmark_v1_0_0_section_1_1_filesystem_mounts_inventory;
 
-    "Filesystem Support Inventory"
-      usebundle => cis_centos_linux_6_benchmark_v1_0_0_section_1_1_filesystem_support_inventory;
+      "Filesystem Support Inventory"
+        usebundle => cis_centos_linux_6_benchmark_v1_0_0_section_1_1_filesystem_support_inventory;
 }
 
 bundle agent cis_centos_linux_6_benchmark_v1_0_0_section_1_1_filesystem_mounts_inventory
@@ -20,12 +21,13 @@ that various filesystems exist and have restricted mount opitons.";
 
 
   vars:
+    centos_6::
       "fstab"                string => ifelse("TEST", "$(this.promise_dirname)/pass_fstab", "/etc/fstab");
       "mtab"                 string => ifelse("TEST", "$(this.promie_dirname)/pass_fstab", "/proc/self/mounts");
       "CIS_1_1_17_statefile" string => ifelse("TEST", "$(this.promise_dirname)/CIS_1_1_17_state", "/var/cfengine/state/CIS_1_1_17");
 
 
-    DEBUG::
+    DEBUG.centos_6::
       # Build a lists of scored and unscored classes
       "all_scored_findings"
         slist => classesmatching(".*", "CIS:scored=true");
@@ -48,6 +50,7 @@ that various filesystems exist and have restricted mount opitons.";
        # groups, and the optional dump and pass options at the end.
        # Non comment lines with a device that /tmp is mounted on with any filesystem, any options, and optionally dump and pass specifications
        #(?!\s*#.*$)(\H+)\s+(\/tmp)\s+(\H+)\s+(\H+)\s*\d*\s*\d*\s*
+    centos_6::
 
     "CIS_1_1_1" -> { "CIS" }
       not => regline("(?!\s*#.*$)(\H+)\s+(\/tmp)\s+(\H*)\s+(\H*)\s*\d*\s*\d*\s*", $(fstab) ),
@@ -188,11 +191,12 @@ that various filesystems exist and have restricted mount opitons.";
       comment => "Add noexec Option to /dev/shm Partition";
 
   vars:
-    have_CIS_1_1_17_statefile::
+    have_CIS_1_1_17_statefile.centos_6::
       "CIS_1_1_17_dirs"      slist => readstringlist( $(CIS_1_1_17_statefile), "", "\n", 1k, 1M);
       "CIS_1_1_17_dir_count" int => length(CIS_1_1_17_dirs);
 
   classes:
+    centos_6::
     "have_CIS_1_1_17_statefile"
       expression => fileexists( $(CIS_1_1_17_statefile) );
 
@@ -210,7 +214,7 @@ that various filesystems exist and have restricted mount opitons.";
         comment => "This will find all directories that are world writeable that do not have the sticky bit set";
 
   reports:
-    DEBUG::
+    DEBUG.centos_6::
       "DEBUG $(this.bundle):";
       "$(const.t)SCORED FINDING: $(scored_findings)";
       "$(const.t)NOT SCORED FINDING: $(not_scored_findings)";
@@ -228,6 +232,7 @@ of the server.
 ";
 
   vars:
+    centos_6::
       "lsmod_data_cache" string => ifelse("TEST", "$(this.promise_dirname)/lsmod", "/var/cfengine/state/lsmod");
 
       "lsmod_idx" slist => getindices(lsmod_data);
@@ -256,10 +261,10 @@ of the server.
 
       "CIS_filesystem_idx" slist => getindices("CIS_filesystem");
 
-    have_lsmod_data_cache::
+    have_lsmod_data_cache.centos_6::
       "lsmod_data" data => data_readstringarray("$(lsmod_data_cache)", "", "\s+", 1k, 1M);
 
-    DEBUG::
+    DEBUG.centos_6::
       # Build a lists of scored and unscored classes
       "all_scored_findings"
         slist => classesmatching(".*", "CIS:scored=true");
@@ -278,6 +283,7 @@ of the server.
         slist => intersection(all_not_scored_findings, all_this_bundle);
 
   classes:
+    centos_6::
       # Define classes for each CIS check if the modprobe output doesn't say "install /bin/true";
       "$(CIS_filesystem_idx)" -> { "CIS" }
         not => regcmp( "install\s+/bin/true", "$(CIS_filesystem[$(CIS_filesystem_idx)][modprobe])"),
@@ -294,7 +300,7 @@ of the server.
         expression => fileexists( $(lsmod_data_cache) );
 
   commands:
-    !have_lsmod_data_cache::
+    !have_lsmod_data_cache.centos_6::
       "/sbin/lsmod"
         args => "> $(lsmod_data_cache)",
         contain => in_shell,
@@ -302,7 +308,7 @@ of the server.
                     run it once and cache the output for multiple checks";
 
   reports:
-    DEBUG::
+    DEBUG.centos_6::
       "DEBUG $(this.bundle):";
       "$(const.t)SCORED FINDING: $(scored_findings)";
       "$(const.t)NOT SCORED FINDING: $(not_scored_findings)";
