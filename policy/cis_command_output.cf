@@ -1,0 +1,90 @@
+bundle agent cis_command_output
+#@
+#@ Call commands and set classes due to "execresult" - NB the commands can be shell scripts, too.
+#@
+{
+
+meta:
+   "tags"  slist => {
+                     "CIS",
+                     "security",
+                     "reporting"
+                    },
+      ifvarclass => isdir("$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/");
+
+vars:
+   "infile"       string => "$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/$(this.bundle).json";
+
+   infile_exists::
+      "input"      data   => readdata("$(infile)","auto");
+      "paragraphs" slist  => getindices("input"),
+                   meta   => { "CIS" , "CISSECTIONS" };                
+                   
+classes:
+   "infile_exists" expression => fileexists("$(infile)");
+
+methods:
+   infile_exists::
+      "$(paragraphs)" usebundle => cis_command("$(paragraphs)",
+                                               "$(input[$(paragraphs)][score])",
+                                               "$(input[$(paragraphs)][level])",
+                                               "$(input[$(paragraphs)][comment])",
+                                               "$(input[$(paragraphs)][command])",
+                                               "$(input[$(paragraphs)][regexp])",
+                                               "$(input[$(paragraphs)][match])");
+                                                                    
+
+}
+
+
+bundle agent cis_command(paragraph,
+                         score,
+                         level,
+                         comment,
+                         command,
+                         regexp,
+                         match)
+{
+
+
+vars:
+   # in case an absolute file name is given, assume it to be executable
+   "prefix" string => "",
+        ifvarclass => regcmp("/.*","$(command)");
+   # in case an absolute file name is given, assume it to be relative to the below, and interpret it with the system shelll
+   "prefix" string => "/bin/sh $(this.promise_dirname)/$(sys.flavour)/scripts/",
+        ifvarclass => not(regcmp("/.*","$(command)"));
+
+   # generate putput
+   "output" string => execresult("$(prefix)/$(command)","noshell");
+   "c"      string => canonify("$(command)-$(paragraph)");
+
+classes:
+
+   # finally, we are off to go = "(rmatch.match)|(!rmatch.!match)" = "(rmatch.match)|!(rmatch|match)"
+
+   # c is just anxiety --> should work without
+   "go_$(c)" expression => regcmp("$(regexp)","$(output)"),
+             ifvarclass => strcmp("false","$(match)");
+
+   "go_$(c)" expression => not(regcmp("$(regexp)","$(output)")),
+             ifvarclass => strcmp("true","$(match)");
+   
+methods:
+   "setifneeded" usebundle  => CIS_set_inventory_class("$(paragraph)",
+                                                       "$(score)",
+                                                       "$(level)",
+                                                       "$(this.bundle)",
+                                                       "$(comment)"),
+                 ifvarclass => classmatch("go_$(c)");   # done this way for 3.6 compatibility
+
+reports:
+   DEBUG::
+      "$(this.bundle) for $(paragraph): $(command) yields $(output)";
+      "$(this.bundle) for $(paragraph): $(regexp) with $(match)";
+      "$(this.bundle) for $(paragraph): $(regexp) with $(match) (tested for false)"
+            ifvarclass => strcmp("false","$(match)");
+      "$(this.bundle) for $(paragraph): $(regexp) with $(match) -- regcmp set ?)"
+            ifvarclass => regcmp("$(regexp)","$(output)");
+      
+}

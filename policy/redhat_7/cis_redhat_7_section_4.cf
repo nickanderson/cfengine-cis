@@ -1,0 +1,36 @@
+bundle agent cis_redhat_7_section_4
+#@
+{
+
+meta:
+   redhat_7::
+      "tags"  slist => {
+                        "CIS",
+                        "security",
+                        "reporting"
+                       };
+
+
+vars:
+   redhat_7::
+      "WLAN"   int    => countclassesmatching("net_iface_wlan.*");
+
+   DEBUG.redhat_7::
+      "CISFOUND"  slist  => classesmatching(".*CIS.*");
+
+methods:
+   # 
+   # 
+   # 
+   #
+  redhat_7::
+    # look whether a WLAN interface is active 
+    "CIS_4_3_1"  usebundle  => CIS_set_inventory_class("4_3_1","false","1","$(this.bundle)","Deactivate Wireless Interfaces"),
+                 ifvarclass => not(strcmp("$(WLAN)","0"));
+
+
+reports:
+   DEBUG::
+      "CIS non compliances found $(CISFOUND)";
+
+}

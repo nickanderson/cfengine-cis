@@ -1,0 +1,180 @@
+bundle agent cis_world_writable_files
+#@
+#@
+#@
+{
+
+meta:
+   "tags"  slist => {
+                     "CIS",
+                     "security",
+                     "reporting"
+                    },
+      ifvarclass => isdir("$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/");
+
+vars:
+   "infile"       string => "$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/$(this.bundle).json";
+   "interval"     string => "$(cis_wrapper.interval)";
+   "action"       string => "warn";   # might be overwritten with fix below
+
+   infile_exists::
+      "input"      data   => readjson("$(infile)","100K");
+      "paragraphs" slist  => getindices("input"),
+                   meta   => { "CIS" , "CISSECTIONS" };
+
+   any::
+     "paragraph"  string => join("","paragraphs");
+
+   infile_exists::
+      "comment"    string => "$(input[$(paragraph)][comment])";
+      "level"      string => "$(input[$(paragraph)][level])";
+      "score"      string => "$(input[$(paragraph)][score])";
+
+   infile_exists.CISENFORCE::
+      "action"    string => "fix",
+              ifvarclass => classmatch("CISENFORCE_$(paragraph)");
+
+classes:
+   "infile_exists" expression => fileexists("$(infile)");
+ 
+files:
+   "$(localfs.paths)"
+       comment        => "no world writable files should exist",
+       perms          => m("o-w"),
+       depth_search   => recurse_in_fs,
+       file_select    => world_writable_files,
+       handle         => "security: $(this.bundle)",
+       classes        => if_notkept("cis1"),
+       action         => fix_or_warn_on_interval("$(action)","$(interval)");
+ 
+methods:
+   cis1::
+      "cis1" usebundle => CIS_set_inventory_class("$(paragraph)","$(score)","$(level)","$(this.bundle)","$(comment)");
+
+reports:
+   DEBUG::
+      "$(this.bundle) score $(score)";
+      "$(this.bundle) input $(input)";
+      "$(this.bundle) infile $(infile)";
+   DEBUG.cis1::
+      "$(this.bundle) cis usebundle => CIS_set_inventory_class($(paragraph),$(score),$(level),$(this.bundle),$(comment))";
+
+}
+
+bundle agent cis_world_writable_dirs
+#@
+#@
+#@
+{
+
+meta:
+   "tags"  slist => {
+                     "CIS",
+                     "security",
+                     "reporting"
+                     },
+      ifvarclass => isdir("$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/");
+
+vars:
+   "infile"       string => "$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/$(this.bundle).json";
+   "interval"     string => "$(cis_wrapper.interval)";
+   "action"       string => "warn";   # might be overwritten with fix below
+
+   infile_exists::
+      "input"      data   => readjson("$(infile)","100K");
+      "paragraphs" slist  => getindices("input"),
+                   meta   => { "CIS" , "CISSECTIONS" };
+
+   any::
+     "paragraph"   string => join("","paragraphs");
+
+   infile_exists::
+      "comment"    string => "$(input[$(paragraph)][comment])";
+      "level"      string => "$(input[$(paragraph)][level])";
+      "score"      string => "$(input[$(paragraph)][score])";
+
+   infile_exists.CISENFORCE::
+      "action"     string => "fix",
+               ifvarclass => classmatch("CISENFORCE_$(paragraph)");
+
+classes:
+   "infile_exists" expression => fileexists("$(infile)");
+
+files:
+   "$(localfs.paths)"
+       comment        => "no world writable directory should exist",
+       perms          => m("+t"),
+       depth_search   => recurse_in_fs,
+       file_select    => world_writable_dirs,
+       handle         => "security: $(this.bundle)",
+       classes        => if_notkept("cis"),
+       action         => fix_or_warn_on_interval("$(action)","$(interval)");
+
+methods:
+   cis::
+      "cis" usebundle => CIS_set_inventory_class("$(paragraph)","$(score)","$(level)","$(this.bundle)","$(comment)");
+
+reports:
+   DEBUG::
+      "$(this.bundle) score $(score)";
+      "$(this.bundle) input $(input)";
+      "$(this.bundle) infile $(infile)";
+   DEBUG.cis::
+      "$(this.bundle) cis usebundle => CIS_set_inventory_class($(paragraph),$(score),$(level),$(this.bundle),$(comment))";
+
+}
+
+
+
+bundle agent localfs
+#@
+#@
+#@
+#@
+{
+
+vars:
+   linux::
+      "tmp"     string => execresult("$(paths.path[df]) --local | $(paths.path[sed]) 's/.* //'","useshell");
+      "tmp2"    int    => parsestringarray("tmp3","$(tmp)",""," ","100","10000");
+      "paths"  slist  => getindices("tmp3");
+
+   !linux::
+      "paths"  slist  => { "/" };
+
+}
+
+body depth_search recurse_in_fs
+#@
+#@
+#@
+{
+   depth            => "inf";
+   include_basedir  => "true";
+   xdev             => "true";
+}
+
+
+body file_select world_writable_files
+#@
+#@
+#@
+{
+
+   search_mode => { "o+w" };
+   file_types  => { "plain" };
+   file_result => "mode.file_types";
+
+}
+
+body file_select world_writable_dirs
+#@
+#@
+#@
+{
+
+   search_mode => { "-t,o+w" };
+   file_types  => { "dir" };
+   file_result => "mode.file_types";
+
+}

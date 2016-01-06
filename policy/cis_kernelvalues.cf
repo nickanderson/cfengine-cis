@@ -1,0 +1,89 @@
+bundle agent cis_kernelvalues
+#@ 
+#@ cis_kernelvalues
+#@
+#@ Will report misconfigurations regarding kernel values.
+#@ 
+#@ Reads input from .json: Yes
+#@ Enforcement possible: Yes (when match is "true")
+#@
+#@ Improvements to be done: Do not call augeas_like(...) directly but use other 
+#@ bundle to facilitate other operating systems than linux.
+{
+
+meta:
+   "tags"  slist => {
+                     "CIS",
+                     "security",
+                     "reporting"
+                    },
+      ifvarclass => isdir("$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/");
+
+
+vars:
+   "infile"  string => "$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/$(this.bundle).json";
+
+   infile_exists::
+
+     # read data for packages supposed to be installed / not intalled
+     "values"           data  => readdata("$(infile)","auto");
+
+     # get all paragraphs covered, and give it a meta tag to collect all paragraphs covered by general methods
+     "paragraphs"    slist => getindices("values"),
+                     meta  => { "CIS" , "CISSECTIONS" };
+
+     # get all needed sysctl values
+     "tmp[$(paragraphs)]"
+                     string => "$(values[$(paragraphs)][key])";
+     "sysctlneeded"  slist => getvalues("tmp");
+
+     "sysctlvars"    string => join(" ","sysctlneeded");
+     "sysctl_in"     string => execresult("/sbin/sysctl $(sysctlvars)","noshell");
+     "tmp2"          int    => parsestringarray("sysctlarray","$(sysctl_in)",""," = ","10240","204400");
+     "sysctl[$(sysctlneeded)]"
+                     string => "$(sysctlarray[$(sysctlneeded)][1])";
+
+
+   DEBUG::
+      "CISFOUND"  slist  => classesmatching(".*CIS.*");
+
+classes:
+   "infile_exists" expression => fileexists("$(infile)");
+
+
+methods:
+   # supposed match
+   "$(paragraphs)" usebundle  => CIS_set_inventory_class("$(paragraphs)",
+                                                         "$(values[$(paragraphs)][score])",
+                                                         "$(values[$(paragraphs)][level])",
+                                                         "$(this.bundle)",
+                                                         "$(values[$(paragraphs)][comment])"),
+                   ifvarclass => and(not(strcmp("$(values[$(paragraphs)][value])","$(sysctl[$(values[$(paragraphs)][key])])")),
+                                         strcmp("$(values[$(paragraphs)][match])","true"));
+
+   # supposed not match
+   "$(paragraphs)" usebundle  => CIS_set_inventory_class("$(paragraphs)",
+                                                         "$(values[$(paragraphs)][score])",
+                                                         "$(values[$(paragraphs)][level])",
+                                                         "$(this.bundle)",
+                                                         "$(values[$(paragraphs)][comment])"),
+                   ifvarclass => and(strcmp("$(values[$(paragraphs)][value])","$(sysctl[$(values[$(paragraphs)][key])])"),
+                                     strcmp("$(values[$(paragraphs)][match])","false"));
+
+   # Enforcement for CIS, only for supposed match (not match is hard to achieve)
+   "$(paragraphs)" usebundle  => augeas_like("/etc/sysctl.d/99-CIS-sysctl.conf","$(values[$(paragraphs)][key])=$(values[$(paragraphs)][value])","="),
+                   ifvarclass => and(classmatch("CISENFORCE_$(paragraphs)"),
+                                     strcmp("$(values[$(paragraphs)][match])","true"));
+
+reports:
+   DEBUG::
+      "$(paragraphs) $(values[$(paragraphs)][value]) $(sysctl[$(values[$(paragraphs)][key])])";
+      "$(paragraphs) $(values[$(paragraphs)][value]) $(sysctl[$(values[$(paragraphs)][key])])"
+          ifvarclass => not(strcmp("$(values[$(paragraphs)][value])","$(sysctl[$(values[$(paragraphs)][key])])"));
+      "$(this.bundle) CIS non compliances found $(CISFOUND)";
+      "$(this.bundle) list ";
+      "$(this.bundle) str $(str) ";
+      "$(this.bundle) paragraphs $(paragraphs) ";
+      "$(this.bundle) sysctlneeded $(sysctlneeded)";
+
+}

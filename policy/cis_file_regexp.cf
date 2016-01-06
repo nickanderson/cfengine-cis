@@ -1,0 +1,86 @@
+bundle agent cis_file_regexp
+{
+
+meta:
+   "tags"  slist => {
+                     "security",
+                     "reporting",
+                     "CIS",
+                    },
+      ifvarclass => isdir("$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/");
+
+vars:
+   "infile"         string => "$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/file_regexp.json";
+
+   infile_exists::
+      # read input
+      "cis_file_reg" data => readjson("$(infile)","100K");
+
+      # get all paragraphs covered, and give it a meta tag to collect all paragraphs covered by general methods
+      "paragraphs"       slist => getindices("cis_file_reg"),
+                         meta  => { "CIS" , "CISSECTIONS" };
+
+   DEBUG::
+      "CISFOUND"  slist  => classesmatching(".*CIS.*");
+      "reg"       slist  => classesmatching(".*regmatch.*");
+
+classes:
+   # platform OS specific needs to exist
+   "infile_exists" expression => fileexists("$(infile)");
+
+   # helper classes
+   "fileexists_$(paragraphs)"
+                     expression => fileexists( "$(cis_file_reg[$(paragraphs)][filename])" );
+   "failedifnofile_$(paragraphs)"
+                     expression => not(strcmp("$(cis_file_reg[$(paragraphs)][failedifnofile])","false"));
+
+   "regmatch_$(paragraphs)"
+                     expression => regline("$(cis_file_reg[$(paragraphs)][regexp])",
+                                           "$(cis_file_reg[$(paragraphs)][filename])" );
+
+   "noregmatch_$(paragraphs)"
+                     not        => "regmatch_$(paragraphs)";
+
+methods:
+   # supposed match
+   "$(paragraphs)" usebundle  => CIS_set_inventory_class("$(paragraphs)",
+                                                         "$(cis_file_reg[$(paragraphs)][score])",
+                                                         "$(cis_file_reg[$(paragraphs)][level])",
+                                                         "$(this.bundle)",
+                                                         "$(cis_file_reg[$(paragraphs)][comment])"),
+                   ifvarclass => or(
+                                   and("noregmatch_$(paragraphs)",
+                                       strcmp("$(cis_file_reg[$(paragraphs)][match])","true"),
+                                       "fileexists_$(paragraphs)"),
+                                   and(strcmp("$(cis_file_reg[$(paragraphs)][match])","true"),
+                                       not("fileexists_$(paragraphs)"),
+                                       "failedifnofile_$(paragraphs)")
+                                   );
+
+   # supposed no match
+   "$(paragraphs)" usebundle  => CIS_set_inventory_class("$(paragraphs)",
+                                                         "$(cis_file_reg[$(paragraphs)][score])",
+                                                         "$(cis_file_reg[$(paragraphs)][level])",
+                                                         "$(this.bundle)",
+                                                         "$(cis_file_reg[$(paragraphs)][comment])"),
+                   ifvarclass => and("regmatch_$(paragraphs)",
+                                     strcmp("$(cis_file_reg[$(paragraphs)][match])","false"));
+
+reports:
+   DEBUG::
+      "$(this.bundle) paragraphs $(paragraphs)";
+      "$(this.bundle) CISFOUND $(CISFOUND)";
+      "$(this.bundle) ifvar $(paragraphs)"
+                   ifvarclass => or( fileexists("$(cis_file_reg[$(paragraphs)][filename])"),
+                                     not(strcmp("$(cis_file_reg[$(paragraphs)][failedifnofile])","false")));
+
+      "$(this.bundle) ifvar2 $(paragraphs)"
+                   ifvarclass => or( "fileexists_$(paragraphs)" , "failedifnofile_$(paragraphs)" );
+
+      "$(this.bundle) $(paragraphs) $(cis_file_reg[$(paragraphs)][match]) $(cis_file_reg[$(paragraphs)][regexp]) $(cis_file_reg[$(paragraphs)][filename])";
+      "$(this.bundle) $(paragraphs) $(cis_file_reg[$(paragraphs)][match])"
+             ifvarclass => and(not(regline("$(cis_file_reg[$(paragraphs)][filename])",
+                                                 "$(cis_file_reg[$(paragraphs)][regexp])" )),
+                                         strcmp("$(cis_file_reg[$(paragraphs)][match])","true"));
+
+}

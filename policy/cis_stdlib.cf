@@ -1,0 +1,169 @@
+bundle agent CIS_package_installed(paragraph,
+                                   pkgname,
+                                   score,
+                                   level,
+                                   comment,
+                                   supposed_installed)
+#@
+#@
+#@
+{
+
+vars:
+   "pkg"   data   => packagesmatching("$(pkgname)" , "[0-9].*", ".*", ".*"); # version is supposed to start with a digits, avoids confusing results
+
+methods:
+    # if supposed_installed == true, check whether the packages IS installed
+    "CIS_$(paragraph)" usebundle  => CIS_set_inventory_class("$(paragraph)","$(score)","$(level)","$(this.bundle)","$(comment)"),
+                       ifvarclass => and(not(isvariable("pkg[0]")),strcmp("$(supposed_installed)","true"));
+
+    # if supposed_installed == false, check that the package IS NOT instaled
+    "CIS_$(paragraph)" usebundle  => CIS_set_inventory_class("$(paragraph)","$(score)","$(level)","$(this.bundle)","$(comment)"),
+                       ifvarclass => and(isvariable("pkg[0]"),strcmp("$(supposed_installed)","false"));
+
+reports:
+   DEBUG::
+      "$(this.bundle) $(paragraph), $(pkgname), $(score), $(level), $(comment), $(supposed_installed) $(pkg[0])";
+      "isvariable(pkg[0]):: $(this.bundle) $(paragraph), $(pkgname), $(score), $(level), $(comment), $(supposed_installed) $(pkg[0])"
+           ifvarclass => isvariable("pkg[0]");
+
+}
+
+bundle agent CIS_mog_report(paragraph,
+                            file,
+                            score,
+                            level,
+                            comment,
+                            mode,
+                            uid,
+                            gid)
+#@
+#@ Checks whether the file "file" has permission (octal) "mode", and ist owned by the numerical uid "uid" and gid "gid".
+#@ The string "" will act as a joker.
+#@
+#@ If this condition is not meet, the inventory classe "CIS_$(paragraph)" will be set.
+#@
+#@ Improvements: do not use strcmp(), but regextract() to account for regular expressions
+#@
+{
+
+vars:
+   # filestats, in case values to check are given
+   "fm"   string => format("%03d",filestat("$(file)","permoct")), ifvarclass => not(strcmp("$(mode)",""));   # format is needed for leading "0"
+   "fu"   string => filestat("$(file)","uid"),     ifvarclass => not(strcmp("$(uid)",""));
+   "fg"   string => filestat("$(file)","gid"),     ifvarclass => not(strcmp("$(gid)",""));
+
+   # in case "" is given, nothing is checked
+   "fm"   string => "", ifvarclass => strcmp("$(mode)","");
+   "fu"   string => "", ifvarclass => strcmp("$(uid)","");
+   "fg"   string => "", ifvarclass => strcmp("$(gid)","");
+
+methods:
+   "CIS_$(paragraph)" usebundle  => CIS_set_inventory_class("$(paragraph)","$(score)","$(level)","$(this.bundle)","$(comment)"),
+                      ifvarclass => not(strcmp("$(fm)-$(fu)-$(fg)","$(mode)-$(uid)-$(gid)"));
+
+#reports:
+#   "$(file)";
+#   "$(paragraph) x$(fm)-$(fu)-$(fg)x == x$(mode)-$(uid)-$(gid)x";
+
+}
+
+
+bundle agent CIS_set_inventory_class(paragraph,score,level,defined_from,comment)
+#@
+#@ Set the CIS class CIS_$(paragraph) according to the above arguments.
+#@
+#@ !!If CISBLACKLIST_$(paragraph) is set, the bundle will not report the finding for a clean report!!
+#@
+#@ If the global class "CIS_cache" is set, it will also write this to $(sys.workdir)/tmp/CIS.csv
+#@ for reference and caching. This will not be surpressed by CISBLACKLIST_$(paragraph).
+#@
+#@
+{
+
+vars:
+   "fill"  string     => "Not",
+           ifvarclass => strcmp("$(score)","false");
+   "fill"  string     => "",
+           ifvarclass => strcmp("$(score)","true");
+
+files:
+   CIS_cache::
+      "$(sys.workdir)/tmp/."
+          create => "true",
+          perms  => m("u+rwx,go-rwx");
+      "$(sys.workdir)/tmp/CIS.csv"
+          create    => "true",
+          perms     => m("u+rw,go-rwx"),
+          edit_line => insert_lines("$(paragraph) ; CIS_$(paragraph) ; $(score) ; $(level) ; $(defined_from) ; $(comment)");
+       
+classes:
+   #
+   !CIS_cache::
+      "CIS_$(paragraph)" -> { "CIS" }
+         expression  => "cfengine",
+         meta        => { "CIS:scored=$(score)", "CIS:level=$(level)", "defined_from=$(defined_from)", "inventory", "attribute_name=CIS Level $(level) Finding ($(fill) Scored)"},
+         scope       => "namespace",
+         comment     => "$(comment)",
+         ifvarclass  => not(classmatch("CISBLACKLIST_$(paragraph)"));
+   #
+   CIS_cache::
+      "CIS_$(paragraph)" -> { "CIS" }
+         expression  => "cfengine",
+         meta        => { "CIS:scored=$(score)", "CIS:level=$(level)", "defined_from=$(defined_from)", "inventory", "attribute_name=CIS Level $(level) Finding ($(fill) Scored)"},
+         scope       => "namespace",
+         comment     => "$(comment)",
+         persistence => "$(cis_configure.grace)",
+         ifvarclass  => not(classmatch("CISBLACKLIST_$(paragraph)"));
+
+}
+
+bundle agent CIS_user_data
+#@
+#@ Function: Provides arrays CIS_user_data.passwd and CIS_user_data.group
+#@
+#@
+{
+
+vars:
+   # /etc/passwd
+   "passwd_length"    int    => readstringarray("passwd", "/etc/passwd","",":","1000","100000");
+   "userids"          slist  => getindices("passwd");
+   "uid[$(userids)]"  string => "$(passwd[$(userids)][2])";
+   "uids"             slist  => getvalues("uid");
+   "uuids"            slist  => unique("uids");
+
+   # /etc/group
+   "group_length"     int    => readstringarray("group", "/etc/group","",":","1000","100000");
+   "groupids"         slist  => getindices("group");
+   "gid[$(groupids)]" string => "$(group[$(groupids)][2])";
+   "gids"             slist  => getvalues("gid");
+   "ugids"            slist  => unique("gids");
+
+classes:
+   "has_duplicate_userids" expression => islessthan(length("userids"),"$(passwd_length)");
+   "has_duplicate_uids"    expression => islessthan(length("uuids"),length("userids"));
+
+reports:
+   DEBUG::
+      "$(this.bundle) dummy $(dummy)";
+      "$(this.bundle) $(userids) uids $(uid[$(userids)])";
+      "$(this.bundle) $(groupids) gids $(gid[$(groupids)])";
+   DEBUG.has_duplicate_userids::
+      "$(this.bundle) has_duplicate_userids ist set";
+   DEBUG.has_duplicate_uids::
+      "$(this.bundle) has_duplicate_uids ist set";
+}
+
+body action warn_hourly
+{
+   action_policy => "warn";
+   ifelapsed => "60";
+}
+
+body action fix_or_warn_on_interval(action,interval)
+{
+   action_policy => "$(action)";
+   ifelapsed => "$(interval)";
+}
+

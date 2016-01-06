@@ -1,0 +1,40 @@
+bundle agent cis_input
+#@
+#@ Collect all input files for CIS compliance
+#@
+#@ Note: if placed in ../inputs/services/autorun/, this 
+#@ bundle and its variables are available for calling in
+#@ promises.cf without any adjustments (even without a
+#@ tag given here)
+#@
+{
+  meta:
+    "tags" slist => { "autorun" };
+
+vars:
+   # set the base directory for CIS
+   "bdir"                 string => "$(this.promise_dirname)/../CIS/";
+
+   # collect components
+   "general"          slist  => lsdir("$(bdir)",".*\.cf","true");
+   "flavour"          slist  => lsdir("$(bdir)/$(sys.flavour)/",".*\.cf","true"),
+                      ifvarclass => isdir("$(bdir)/$(sys.flavour)/");
+   "flavour"          slist  => { },
+                      ifvarclass => not(isdir("$(bdir)/$(sys.flavour)/"));
+
+   # stich them together
+   "input_files"      slist  => { @(general) , @(flavour) };
+
+  methods:
+    "Activate CIS Compliance Policy Framework"
+      usebundle => cis_wrapper;
+
+  reports:
+    DEBUG|DEBUG_cis_input::
+    "DEBUG $(this.bundle)";
+}
+
+body file control
+{
+  inputs => { @(cis_input.input_files) };
+}

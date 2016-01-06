@@ -1,0 +1,152 @@
+bundle agent cis_wrapper
+#@
+#@ just acts as wrapper to call any bundle with name cis_.* and tag "CIS"
+#@
+{
+
+vars:
+
+   # collect all bundles
+   "to_be_called"  slist  => bundlesmatching("default:cis_.*","CIS");
+
+   #
+   "interval"  string     => "$(cis_configure.interval)";
+
+   DEBUG::
+      "allparagraphsvars" slist  => variablesmatching("default:cis_.*\.paragraphs");
+      "array[$(allparagraphsvars)]"
+                          string => join(" ","$(allparagraphsvars)");
+      "tmp"               slist  => getvalues("array");
+      "tmp2"              string => join(" ","tmp");
+      "tmp3"              slist  => splitstring("$(tmp2)"," ","10000");
+      "complete_para"     slist  => sort("tmp3","lex");
+      "CISFOUND"          slist  => classesmatching(".*CIS.*");
+
+classes:
+   "CIS_cache"  expression  => strcmp("$(cis_configure.cache)","true"),
+                scope       => "namespace";
+   "CISBLACKLIST_$(cis_configure.blacklist)"
+                or          => { "any" },
+                scope       => "namespace";
+   "CISENFORCE_$(cis_configure.enforce)"
+                or          => { "any" },
+                scope       => "namespace";
+   "CISENFORCE" expression  => not(strcmp(length("cis_configure.enforce"),"0")),
+                scope       => "namespace";
+
+files:
+   CIS_cache::
+      # remove the cache regularly to enforce recalculation
+      "$(sys.workdir)/tmp/CIS.csv"
+         delete  => tidy,
+         action  => fix_or_warn_on_interval("fix","60"),
+         classes => if_ok("timeout");
+
+methods:
+   # call the bundles in 
+   timeout|!CIS_cache::
+      "$(to_be_called)"   usebundle => "$(to_be_called)";
+
+   # !timeout:: replay
+   CIS_cache.!timeout::
+      "replay" usebundle => cis_replay;
+
+reports:
+   DEBUG::
+      "$(this.bundle) CISFOUND//CIS Findings: $(CISFOUND)";
+      "$(this.bundle) CIS Sections covered by this bundle: $(complete_para)";
+      "$(this.bundle) allparagraphsvars $(allparagraphsvars)";
+      "$(this.bundle) cis_input_files $(cis_input_files)";
+      "$(this.bundle) to_be_called $(to_be_called)";
+      "$(this.bundle) tmp $(tmp)";
+      "$(this.bundle) tmp2 $(tmp2)";
+      "$(this.bundle) tmp3 $(tmp3)";
+
+}
+
+bundle agent cis_replay
+#@
+#@ In case caching is active, just replay the content of "$(sys.workdir)/tmp/CIS.csv"
+#@ to the class setting function CIS_set_inventory_class(...)
+#@
+{
+
+vars:
+   "dummy" int    => readstringarray("input", "$(sys.workdir)/tmp/CIS.csv" , "" , " ; " , "500" , "100K" );
+   "p"     slist => getindices("input");
+
+methods:
+   "$(p)" usebundle  => CIS_set_inventory_class("$(p)",
+                                                "$(input[$(p)][2])",
+                                                "$(input[$(p)][3])",
+                                                "$(input[$(p)][4])",
+                                                "$(input[$(p)][5])");
+
+}
+
+
+bundle agent cis_inventory
+#@
+#@ If called directly, generate a .csv-file with the paragraphs covered.
+#@
+#@ Otherwise the bundle only provides a merged input data datam.
+#@
+#@
+{
+
+vars:
+   "jsondir"     string => "$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/";
+   "injsons"     slist  => lsdir("$(jsondir)",".*\.json","true"),
+             ifvarclass => isdir("$(jsondir)/");
+
+   "can[$(injsons)]"
+                string => canonify("$(injsons)");
+
+   "data_$(can[$(injsons)])"
+                data   => readjson("$(injsons)","100K");
+
+   # merge all data together
+   "datam"      data   => parsejson('[]'),             policy => "free";
+   "datam"      data   => mergedata("datam","data_$(can[$(injsons)])"), policy => "free";
+   "p"          slist  => getindices("datam");
+
+reports:
+   "$(this.bundle) ; $(p) ; $(p) ; $(datam[$(p)][comment]) ; $(datam[$(p)][level]) ; $(datam[$(p)][score]) ";
+   DEBUG::
+      "$(this.bundle) DEBUG";
+      "$(this.bundle) jsondir $(jsondir)";
+      "$(this.bundle) p $(p)";
+      "$(this.bundle) datam $(datam)";
+      "$(this.bundle) injsons $(injsons)";
+
+}
+
+bundle common cis_enforce
+#@
+#@ Sets the classes CISENFORCE_$(p) according to the classes
+#@ CISENFORCE_LEVEL1_FALSE//CISENFORCE_LEVEL2_FALSE//CISENFORCE_LEVEL1_TRUE//CISENFORCE_LEVEL2_TRUE
+#@
+{
+
+vars:
+   DEBUG::
+      "cisenforce"  slist => classesmatching("CISENFORCE.*");
+
+classes:
+   CISENFORCE.CISENFORCE_LEVEL1_FALSE::
+      "CISENFORCE_$(cis_inventory.p)"  expression => and(strcmp("$(cis_inventory.datam[$(cis_inventory.p)][level])","1"),
+                                                         strcmp("$(cis_inventory.datam[$(cis_inventory.p)][score])","false"));
+   CISENFORCE.CISENFORCE_LEVEL2_FALSE::
+      "CISENFORCE_$(cis_inventory.p)"  expression => and(strcmp("$(cis_inventory.datam[$(cis_inventory.p)][level])","2"),
+                                                         strcmp("$(cis_inventory.datam[$(cis_inventory.p)][score])","false"));
+   CISENFORCE.CISENFORCE_LEVEL1_TRUE::
+      "CISENFORCE_$(cis_inventory.p)"  expression => and(strcmp("$(cis_inventory.datam[$(cis_inventory.p)][level])","1"),
+                                                         strcmp("$(cis_inventory.datam[$(cis_inventory.p)][score])","true"));
+   CISENFORCE.CISENFORCE_LEVEL2_TRUE::
+      "CISENFORCE_$(cis_inventory.p)"  expression => and(strcmp("$(cis_inventory.datam[$(cis_inventory.p)][level])","2"),
+                                                         strcmp("$(cis_inventory.datam[$(cis_inventory.p)][score])","true"));
+
+reports:
+   DEBUG::
+      "$(this.bundle) cisenforce $(cisenforce)";
+} # cis_enforce

@@ -1,0 +1,33 @@
+bundle agent cis_flavour_specific
+#@
+#@ Call all sys.flavour specific bundles for CIS
+#@
+{
+
+meta:
+   "tags"  slist => {
+                     "CIS",
+                     "security",
+                     "reporting"
+                    },
+      ifvarclass => isdir("$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/");
+
+vars:
+   "infile"       string => "$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/$(this.bundle).json";
+
+   infile_exists::
+      "input"      data   => readjson("$(infile)","100K");
+      "paragraphs" slist  => getindices("input"),
+                   meta   => { "CIS" , "CISSECTIONS" };
+      "bundle[$(paragraphs)]"
+                   string => "$(input[$(paragraphs)][bundle])";
+classes:
+   "infile_exists" expression => fileexists("$(infile)");
+
+methods:
+   infile_exists::
+      "$(paragraphs)" usebundle => $(bundle[$(paragraphs)])("$(paragraphs)");
+                                                                    
+
+}
+

@@ -1,0 +1,102 @@
+bundle agent cis_services
+#@
+#@ Enforce the state of the services specified in 
+#@ $(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/services.json
+#@
+#@ Act only if both the class CISENFORCE is set, and for EACH paragraph,
+#@ CISENFORCE_PARAGRAPH.
+#@ For instance, set CISENFORCE_2_1_12 on redhat_7 to disable chargen-dgram
+#@
+#@
+#@ Known bugs: redhat_7:: rhnsd is still chkconfig, hence services promise does not work
+#@
+{
+
+meta:
+   "tags"  slist => {
+                     "CIS",
+                     "security",
+                     "reporting"
+                     },
+      ifvarclass => isdir("$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/");
+
+vars:
+
+   # platform OS specific input file
+   "infile"         string => "$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/services.json";
+
+   infile_exists:: 
+      "cis_services" data  => readjson("$(infile)","100K");
+
+      "paragraphs"   slist => getindices("cis_services"),
+                     meta  => { "CIS" , "CISSECTIONS" };
+
+      "tmp[$(paragraphs)]"  string => "$(paragraphs)",
+                        ifvarclass => classmatch("CISENFORCE_$(paragraphs)");
+
+      # get intersection with those meant to be enforced to yield paragraphs_enforced
+      "paragraphs_enforced"   slist => getindices("tmp");
+
+      # split both in supposed_running==true and supposed_running==false
+      "tmp2[$(paragraphs)]" string => "$(paragraphs)",
+                        ifvarclass => strcmp("$(cis_services[$(paragraphs)][supposed_running])","true");
+      "start_para"          slist  => getindices("tmp2");
+      "enforce_start"       slist  => intersection("start_para","paragraphs_enforced");
+      "stop_para"           slist  => difference("paragraphs","start_para");
+      "enforce_stop"        slist  => intersection("stop_para","paragraphs_enforced");
+
+      # not nice, but the service promise does set if_notkept badly when called with warning
+      # should be put into a different bundle
+      redhat_7::
+         "service_list"     string => execresult('echo ; $(paths.path[systemctl]) list-units --type service --state=running -q|\
+                                                  $(paths.path[grep]) "\.service" | $(paths.path[cut]) -f 1 -d. ; echo',
+                                                   "useshell");
+    
+
+classes:
+   # platform OS specific needs to exist
+   "infile_exists" expression => fileexists("$(infile)");
+
+services: 
+   CISENFORCE.infile_exists::
+      # then loop only over those to be enforced started
+      "$(cis_services[$(enforce_start)][service])"
+        service_policy => "start",
+        action         => fix_or_warn_on_interval("fix","60");
+      # then loop only over those to be enforced stopped
+      "$(cis_services[$(enforce_stop)][service])"
+        service_policy => "stop",
+        action         => fix_or_warn_on_interval("fix","60");
+
+methods:
+   # set the CIS classes properly
+   "$(start_para)" usebundle  => CIS_set_inventory_class("$(start_para)",
+                                                         "$(cis_services[$(start_para)][score])",
+                                                         "$(cis_services[$(start_para)][level])",
+                                                         "$(this.bundle)",
+                                                         "$(cis_services[$(start_para)][comment])"),
+                   ifvarclass => not(regcmp(".*[$(const.n)]$(cis_services[$(start_para)][service])$(const.n).*","$(service_list)"));
+   "$(stop_para)" usebundle   => CIS_set_inventory_class("$(stop_para)",
+                                                         "$(cis_services[$(stop_para)][score])",
+                                                         "$(cis_services[$(stop_para)][level])",
+                                                         "$(this.bundle)",
+                                                         "$(cis_services[$(stop_para)][comment])"),
+                   ifvarclass => regcmp(".*$(const.n)$(cis_services[$(stop_para)][service])$(const.n).*","$(service_list)");
+
+reports:
+   DEBUG::
+      "$(cis_services[$(paragraphs_enforced)][service]) should be stopped"
+        ifvarclass     => strcmp("$(cis_services[$(paragraphs_enforced)][supposed_running])","false");
+      "$(this.bundle) paragraphs_enforced $(paragraphs_enforced)";
+      "$(this.bundle) infile $(infile)";
+      "$(this.bundle) infile $(infile) exists";
+      "$(this.bundle) test";
+      "$(this.bundle) start_para $(start_para)";
+      "$(this.bundle) stop_para $(stop_para)";
+      "$(this.bundle) service_list $(service_list)";
+      "$(this.bundle) paragraphs $(paragraphs)";
+      "$(this.bundle) paragraphs with cis_$(paragraphs) is set "
+                ifvarclass => classmatch("cis_$(paragraphs)");
+      "$(this.bundle) paragraphs $(paragraphs) supposed_running==false"
+        ifvarclass     => strcmp("$(cis_services[$(paragraphs)][supposed_running])","false");
+}

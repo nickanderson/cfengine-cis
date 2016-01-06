@@ -1,64 +1,24 @@
-* Center for Internet Security (CIS) policy
+* Center for Internet Security (CIS) policy framework
 
-** cis_centos_linux_6_benchmark_v1_0_0_section_1_1
+This is a framework to check Linux (Unix) installations for
+CIS-compliance.
 
-   Wrapper bundle to activate bundles related to section 1.1
+It will, if used with the CFEngine Enterprise Edition, collect the
+implemented CIS benchmarks and report them into mission portal. For an
+example how to use the mission portals inventory report with this,
+refer to [[mission_portal.org][this presentation]]. In case you are deploying the CFEngine
+Community Edition, the easiest method to get a compliance report is to
+used the cached mode of this framework, which will generate a file
+=$(sys.workdir)/tmp/CIS.csv=.
 
-** cis_centos_linux_6_benchmark_v1_0_0_section_1_1_filesystem_mounts_inventory
+* File Structure and Components
 
-This bundle implements inventory for sections 1.1.1 through 1.1.17 to check
-that various filesystems exist and have restricted mount opitons.
+* Customizable files
+- [[policy/cis_configure.cf][cis_configure.cf]]
 
-** cis_centos_linux_6_benchmark_v1_0_0_section_1_1_filesystem_support_inventory
-
-This bundle implements inventory for sections 1.1.18 through 1.1.24 to check
-that unneeded filesystem types are specifically disabled from mounting.
-Removing support for unneeded filesystem types reduces the local attack surface
-of the server.
-
-** How to integrate into your policy
-First get the policy into your masterfiles
-
-#+begin_src sh
-  cd /tmp
-  export MASTERFILES=/var/cfengine/masterfiles
-  git clone https://github.com/nickanderson/cfengine-cis.git
-  cd cfengine-cis
-  mkdir -p $MASTERFILES/services/cis
-  git archive master | tar -x -C $MASTERFILES/services/cis
-#+end_src
-
-Include def.cf into your inputs
-
-#+begin_src cfengine
-  body common control
-  {
-        inputs => { 
-                    # Reports
-                    @(cfengine_reports.inputs),
-  
-                   "services/cis/def.cf",
-                    
-                    # autorun system
-                    @(services_autorun.inputs),
-        };
-  }
-#+end_src
-
-Activate the features you want in the proper context.
-
-For example to activate
-`cis_centos_linux_6_benchmark_v1_0_0_section_1_1` on all CentOS 6
-nodes:
-
-#+begin_src cfengine3
-  bundle agent main
-  # User Defined Service Catalogue
-  {
-    methods:
-      # Activate your custom policies here
-      centos_6::
-        "Inventory CIS section 1.1" -> { "security", "CIS" }
-          usebundle => cis_centos_linux_6_benchmark_v1_0_0_section_1_1;
-  }
-#+end_src
+* ToDos
+** TODO Adhere CFEngine design rules
+** TODO remove all dependencies to redhat_7 which are not required by technology
+** TODO Improve customizability
+** TODO Prevent high (IO)-load functions from being run
+** TODO Define automated test cases for platforms supported
