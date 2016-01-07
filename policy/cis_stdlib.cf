@@ -21,8 +21,14 @@ methods:
     "CIS_$(paragraph)" usebundle  => CIS_set_inventory_class("$(paragraph)","$(score)","$(level)","$(this.bundle)","$(comment)"),
                        ifvarclass => and(isvariable("pkg[0]"),strcmp("$(supposed_installed)","false"));
 
+classes:
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or         => { "DEBUG" },
+                       ifvarclass => classmatch("DEBUG_$(this.bundle)");   
+                       
+                       
 reports:
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "$(this.bundle) $(paragraph), $(pkgname), $(score), $(level), $(comment), $(supposed_installed) $(pkg[0])";
       "isvariable(pkg[0]):: $(this.bundle) $(paragraph), $(pkgname), $(score), $(level), $(comment), $(supposed_installed) $(pkg[0])"
            ifvarclass => isvariable("pkg[0]");
@@ -144,14 +150,19 @@ classes:
    "has_duplicate_userids" expression => islessthan(length("userids"),"$(passwd_length)");
    "has_duplicate_uids"    expression => islessthan(length("uuids"),length("userids"));
 
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or         => { "DEBUG" },
+                       ifvarclass => classmatch("DEBUG_$(this.bundle)");   
+      
+   
 reports:
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "$(this.bundle) dummy $(dummy)";
       "$(this.bundle) $(userids) uids $(uid[$(userids)])";
       "$(this.bundle) $(groupids) gids $(gid[$(groupids)])";
-   DEBUG.has_duplicate_userids::
+   DEBUG_THIS_BUNDLE.has_duplicate_userids::
       "$(this.bundle) has_duplicate_userids ist set";
-   DEBUG.has_duplicate_uids::
+   DEBUG_THIS_BUNDLE.has_duplicate_uids::
       "$(this.bundle) has_duplicate_uids ist set";
 }
 

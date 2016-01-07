@@ -2,6 +2,10 @@ bundle agent cis_command_output
 #@
 #@ Call commands and set classes due to "execresult" - NB the commands can be shell scripts, too.
 #@
+#@ The given regexp is supposed to be anchored and match the whole output of the command, i.e. 
+#@ if you look for a single line SEARCHEDFOR, a good regexp would be .*$(const.n)SEARCHEDFOR$(const.n)
+#@ 
+#@ TODO: respect the class "CIS_AVOID_HIGH_LOAD" and avoid sections/commands with "high_load": "true" 
 {
 
 meta:
@@ -44,6 +48,13 @@ bundle agent cis_command(paragraph,
                          command,
                          regexp,
                          match)
+#@
+#@ Inspect the ouput of command for the occurence of the rexpexp. The CIS_inventory_class
+#@ is set in accordence to the "match" parameter.
+#@
+#@ If command has no heading /, it is supposed to be a shell script relative to
+#@ $(this.promise_dirname)/$(sys.flavour)/scripts/ and is executed via /bin/sh
+#@
 {
 
 
@@ -69,7 +80,12 @@ classes:
 
    "go_$(c)" expression => not(regcmp("$(regexp)","$(output)")),
              ifvarclass => strcmp("true","$(match)");
-   
+
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE"
+             or         => { "DEBUG" },
+             ifvarclass => classmatch("DEBUG_$(this.bundle)");
+             
 methods:
    "setifneeded" usebundle  => CIS_set_inventory_class("$(paragraph)",
                                                        "$(score)",
@@ -79,7 +95,7 @@ methods:
                  ifvarclass => classmatch("go_$(c)");   # done this way for 3.6 compatibility
 
 reports:
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "$(this.bundle) for $(paragraph): $(command) yields $(output)";
       "$(this.bundle) for $(paragraph): $(regexp) with $(match)";
       "$(this.bundle) for $(paragraph): $(regexp) with $(match) (tested for false)"

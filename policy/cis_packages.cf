@@ -25,13 +25,17 @@ vars:
      "paragraphs" slist => getindices("pkgs"),
                   meta  => { "CIS" , "CISSECTIONS" };
 
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "CISFOUND"  slist  => classesmatching(".*CIS.*");
 
 
 classes:
    # platform OS specific needs to exist
-   "infile_exists" expression => fileexists("$(infile)");
+   "infile_exists"     expression => fileexists("$(infile)");
+   
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or         => { "DEBUG" },
+                       ifvarclass => classmatch("DEBUG_$(this.bundle)");   
    
 
 methods:
@@ -54,7 +58,7 @@ packages:
                                  classmatch("CISENFORCE_$(paragraphs)"));
 
 reports:
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       # "$(this.bundle) paragraphs $(paragraphs)";
       "$(this.bundle) CISFOUND $(CISFOUND)";
       # "$(this.bundle) CIS_package_installed($(paragraphs),$(pkgs[$(paragraphs)][pkgname])";

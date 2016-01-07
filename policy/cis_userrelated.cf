@@ -28,13 +28,17 @@ vars:
      "duplicate_groupnames" string => $(paragraphs),
                  ifvarclass => strcmp("$(input[$(paragraphs)][part])","duplicate_groupnames");
 
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "CISFOUND"  slist  => classesmatching(".*CIS.*");
 
 classes:
    # platform OS specific needs to exist
-   "infile_exists" expression => fileexists("$(infile)");
-
+   "infile_exists"     expression => fileexists("$(infile)");
+   
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or         => { "DEBUG" },
+                       ifvarclass => classmatch("DEBUG_$(this.bundle)");   
+   
 
 methods:
    # duplicate data in /etc/passwd
@@ -70,7 +74,7 @@ methods:
                    ifvarclass => islessthan(length("CIS_user_data.groupids"),"$(CIS_user_data.group_length)");
 
 reports:
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "$(this.bundle) duplicate_uid $(duplicate_uid)";
       "$(this.bundle) duplicate_gid $(duplicate_gid)";
       "$(this.bundle) duplicate_usernames $(duplicate_usernames)";
@@ -109,8 +113,13 @@ vars:
      "paragraph"  string => join("","paragraphs");
 
 classes:
-   "infile_exists" expression => fileexists("$(infile)");
-
+   # platform OS specific needs to exist
+   "infile_exists"     expression => fileexists("$(infile)");
+   
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or         => { "DEBUG" },
+                       ifvarclass => classmatch("DEBUG_$(this.bundle)");   
+   
 files:
    "$(CIS_user_data.passwd[$(CIS_user_data.userids)][5])/$(input[$(paragraphs)][file])"
        comment        => "no $(input[$(paragraphs)][file]) file should exist",
@@ -128,7 +137,7 @@ methods:
                    ifvarclass => classmatch("cis_$(paragraphs)");
 
 reports:
-   DEBUG.cis1::
+   DEBUG_THIS_BUNDLE.cis1::
       "$(this.bundle) cis usebundle => CIS_set_inventory_class($(paragraph),$(score),$(level),$(this.bundle),$(comment))";
 
 }

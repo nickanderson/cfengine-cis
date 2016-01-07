@@ -20,7 +20,7 @@ vars:
       "paragraphs"       slist => getindices("cis_file_reg"),
                          meta  => { "CIS" , "CISSECTIONS" };
 
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "CISFOUND"  slist  => classesmatching(".*CIS.*");
       "reg"       slist  => classesmatching(".*regmatch.*");
 
@@ -30,17 +30,21 @@ classes:
 
    # helper classes
    "fileexists_$(paragraphs)"
-                     expression => fileexists( "$(cis_file_reg[$(paragraphs)][filename])" );
+                       expression => fileexists( "$(cis_file_reg[$(paragraphs)][filename])" );
    "failedifnofile_$(paragraphs)"
-                     expression => not(strcmp("$(cis_file_reg[$(paragraphs)][failedifnofile])","false"));
+                       expression => not(strcmp("$(cis_file_reg[$(paragraphs)][failedifnofile])","false"));
 
    "regmatch_$(paragraphs)"
-                     expression => regline("$(cis_file_reg[$(paragraphs)][regexp])",
-                                           "$(cis_file_reg[$(paragraphs)][filename])" );
+                       expression => regline("$(cis_file_reg[$(paragraphs)][regexp])",
+                                             "$(cis_file_reg[$(paragraphs)][filename])" );
 
    "noregmatch_$(paragraphs)"
-                     not        => "regmatch_$(paragraphs)";
+                       not        => "regmatch_$(paragraphs)";
 
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or         => { "DEBUG" },
+                       ifvarclass => classmatch("DEBUG_$(this.bundle)");
+                     
 methods:
    # supposed match
    "$(paragraphs)" usebundle  => CIS_set_inventory_class("$(paragraphs)",
@@ -67,7 +71,7 @@ methods:
                                      strcmp("$(cis_file_reg[$(paragraphs)][match])","false"));
 
 reports:
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "$(this.bundle) paragraphs $(paragraphs)";
       "$(this.bundle) CISFOUND $(CISFOUND)";
       "$(this.bundle) ifvar $(paragraphs)"

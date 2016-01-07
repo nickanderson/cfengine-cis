@@ -12,7 +12,7 @@ vars:
    #
    "interval"  string     => "$(cis_configure.interval)";
 
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "allparagraphsvars" slist  => variablesmatching("default:cis_.*\.paragraphs");
       "array[$(allparagraphsvars)]"
                           string => join(" ","$(allparagraphsvars)");
@@ -34,6 +34,11 @@ classes:
    "CISENFORCE" expression  => not(strcmp(length("cis_configure.enforce"),"0")),
                 scope       => "namespace";
 
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE"
+                or          => { "DEBUG" },
+                ifvarclass  => classmatch("DEBUG_$(this.bundle)"); 
+                
 files:
    CIS_cache::
       # remove the cache regularly to enforce recalculation
@@ -52,7 +57,7 @@ methods:
       "replay" usebundle => cis_replay;
 
 reports:
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "$(this.bundle) CISFOUND//CIS Findings: $(CISFOUND)";
       "$(this.bundle) CIS Sections covered by this bundle: $(complete_para)";
       "$(this.bundle) allparagraphsvars $(allparagraphsvars)";
@@ -110,9 +115,14 @@ vars:
    "datam"      data   => mergedata("datam","data_$(can[$(injsons)])"), policy => "free";
    "p"          slist  => getindices("datam");
 
+classes:
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or         => { "DEBUG" },
+                       ifvarclass => classmatch("DEBUG_$(this.bundle)");   
+   
 reports:
    "$(this.bundle) ; $(p) ; $(p) ; $(datam[$(p)][comment]) ; $(datam[$(p)][level]) ; $(datam[$(p)][score]) ";
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "$(this.bundle) DEBUG";
       "$(this.bundle) jsondir $(jsondir)";
       "$(this.bundle) p $(p)";
@@ -129,10 +139,14 @@ bundle common cis_enforce
 {
 
 vars:
-   DEBUG::
+   DEBUG_TTHIS_BUNDLE::
       "cisenforce"  slist => classesmatching("CISENFORCE.*");
 
 classes:
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE"                 or         => { "DEBUG" },
+                                       ifvarclass => classmatch("DEBUG_$(this.bundle)");   
+
    CISENFORCE.CISENFORCE_LEVEL1_FALSE::
       "CISENFORCE_$(cis_inventory.p)"  expression => and(strcmp("$(cis_inventory.datam[$(cis_inventory.p)][level])","1"),
                                                          strcmp("$(cis_inventory.datam[$(cis_inventory.p)][score])","false"));
@@ -145,8 +159,7 @@ classes:
    CISENFORCE.CISENFORCE_LEVEL2_TRUE::
       "CISENFORCE_$(cis_inventory.p)"  expression => and(strcmp("$(cis_inventory.datam[$(cis_inventory.p)][level])","2"),
                                                          strcmp("$(cis_inventory.datam[$(cis_inventory.p)][score])","true"));
-
 reports:
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "$(this.bundle) cisenforce $(cisenforce)";
 } # cis_enforce

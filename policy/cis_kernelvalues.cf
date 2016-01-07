@@ -44,12 +44,15 @@ vars:
                      string => "$(sysctlarray[$(sysctlneeded)][1])";
 
 
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "CISFOUND"  slist  => classesmatching(".*CIS.*");
 
 classes:
-   "infile_exists" expression => fileexists("$(infile)");
-
+   "infile_exists"      expression => fileexists("$(infile)");
+   
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or         => { "DEBUG" },
+                       ifvarclass => classmatch("DEBUG_$(this.bundle)");
 
 methods:
    # supposed match
@@ -76,7 +79,7 @@ methods:
                                      strcmp("$(values[$(paragraphs)][match])","true"));
 
 reports:
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "$(paragraphs) $(values[$(paragraphs)][value]) $(sysctl[$(values[$(paragraphs)][key])])";
       "$(paragraphs) $(values[$(paragraphs)][value]) $(sysctl[$(values[$(paragraphs)][key])])"
           ifvarclass => not(strcmp("$(values[$(paragraphs)][value])","$(sysctl[$(values[$(paragraphs)][key])])"));
