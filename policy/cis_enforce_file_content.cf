@@ -53,6 +53,11 @@ classes:
    # platform OS specific needs to exist
    "infile_exists" expression => fileexists("$(infile)");
 
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE"
+                   or         => { "DEBUG" },
+                   ifvarclass => classmatch("DEBUG_$(this.bundle)");
+   
 methods:
    CISENFORCE.infile_exists::
       # invoke line editing with knowledge of file structure, skip files with no specification (empty string)
@@ -60,7 +65,7 @@ methods:
                   ifvarclass => not(strcmp("$(str_$(can[$(files)]))",""));      
 
 reports:
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "$(this.bundle) paragraphs $(paragraphs)";
       "$(this.bundle) files ---$(files)---";
       "$(this.bundle) $(LHS_$(can[$(files)])) $(files)";
@@ -98,6 +103,11 @@ vars:
                         strcmp("$(file)","/etc/sysctl.d/99-CIS-sysctl.conf")
                        );
 
+                       
+classes:
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or         => { "DEBUG" },
+                       ifvarclass => classmatch("DEBUG_$(this.bundle)");
 
 files:
    # file which are recognized as have LHS\s+RHS with # as a comment, and basically disregard most whitespace
@@ -148,7 +158,7 @@ methods:
       "doasappropriate" usebundle => doasappropriate("$(file)");
 
 reports:
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "$(this.bundle) $(file) $(i)";
       "$(this.bundle) input values $(file) $(inblock)";
       "$(this.bundle) replace_or_add($(i) , $(augeas_like.LHS_$(c)[$(i)]))";
