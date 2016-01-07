@@ -11,11 +11,11 @@ meta:
                    "security",
                    "reporting"
                     },
-     ifvarclass => isdir("$(this.promise_dirname)/data/CIS_JSON/$(sys.flavour)/");
+     ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
 
 
 vars:
-   "infile" string => "$(this.promise_dirname)/data/CIS_JSON/$(sys.flavour)/$(this.bundle).json";
+   "infile" string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
 
    infile_exists::
      # read data for packages supposed to be installed / not intalled

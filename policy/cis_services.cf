@@ -1,7 +1,7 @@
 bundle agent cis_services
 #@
 #@ Enforce the state of the services specified in 
-#@ $(this.promise_dirname)/data/CIS_JSON/$(sys.flavour)/services.json
+#@ $(this.promise_dirname)/data/$(sys.flavour)/services.json
 #@
 #@ Act only if both the class CISENFORCE is set, and for EACH paragraph,
 #@ CISENFORCE_PARAGRAPH.
@@ -18,12 +18,12 @@ meta:
                      "security",
                      "reporting"
                      },
-      ifvarclass => isdir("$(this.promise_dirname)/data/CIS_JSON/$(sys.flavour)/");
+      ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
 
 vars:
 
    # platform OS specific input file
-   "infile"         string => "$(this.promise_dirname)/data/CIS_JSON/$(sys.flavour)/services.json";
+   "infile"         string => "$(this.promise_dirname)/data/$(sys.flavour)/services.json";
 
    infile_exists:: 
       "cis_services" data  => readjson("$(infile)","100K");

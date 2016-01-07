@@ -7,10 +7,10 @@ meta:
                      "security",
                      "reporting"
                     },
-      ifvarclass => isdir("$(this.promise_dirname)/data/CIS_JSON/$(sys.flavour)/");
+      ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
 
 vars:
-   "infile"         string => "$(this.promise_dirname)/data/CIS_JSON/$(sys.flavour)/$(this.bundle).json";
+   "infile"         string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
 
    infile_exists::
      # read input
@@ -98,10 +98,10 @@ meta:
                      "security",
                      "reporting"
                     },
-      ifvarclass => isdir("$(this.promise_dirname)/data/CIS_JSON/$(sys.flavour)/");
+      ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
 
 vars:
-   "infile"        string => "$(this.promise_dirname)/data/CIS_JSON/$(sys.flavour)/$(this.bundle).json";
+   "infile"        string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
    "interval"      string => "$(cis_wrapper.interval)";   
 
    infile_exists::
@@ -156,10 +156,10 @@ meta:
                      "security",
                      "reporting"
                      },
-      ifvarclass => isdir("$(this.promise_dirname)/data/CIS_JSON/$(sys.flavour)/");
+      ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
 
 vars:
-   "infile"            string => "$(this.promise_dirname)/data/CIS_JSON/$(sys.flavour)/$(this.bundle).json";
+   "infile"            string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
    "interval"          string => "$(cis_wrapper.interval)";   
  
 
@@ -214,10 +214,10 @@ meta:
                      "security",
                      "reporting"
                     },
-      ifvarclass => isdir("$(this.promise_dirname)/data/CIS_JSON/$(sys.flavour)/");
+      ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
 
 vars:
-   "infile"         string => "$(this.promise_dirname)/data/CIS_JSON/$(sys.flavour)/$(this.bundle).json";
+   "infile"         string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
 
    infile_exists::
      # read input

@@ -100,7 +100,7 @@ bundle agent cis_inventory
 {
 
 vars:
-   "jsondir"     string => "$(this.promise_dirname)/data/CIS_JSON/$(sys.flavour)/";
+   "jsondir"     string => "$(this.promise_dirname)/data/$(sys.flavour)/";
    "injsons"     slist  => lsdir("$(jsondir)",".*\.json","true"),
              ifvarclass => isdir("$(jsondir)/");
 

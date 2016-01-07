@@ -7,11 +7,11 @@ meta:
                      "CISENFORCE",
                      "CIS"
                     },
-      ifvarclass => isdir("$(this.promise_dirname)/data/CIS_JSON/$(sys.flavour)/");
+      ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
 
 vars:
    # platform OS specific input file
-   "infile" string => "$(this.promise_dirname)/data/CIS_JSON/$(sys.flavour)/file_regexp.json";
+   "infile" string => "$(this.promise_dirname)/data/$(sys.flavour)/file_regexp.json";
 
    # a delimiter not part of any LHS or RHS, and not expandable as PCRE
    "delim"  string => ";---;"; 
