@@ -14,10 +14,10 @@ meta:
                      "security",
                      "reporting"
                     },
-      ifvarclass => isdir("$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/");
+      ifvarclass => isdir("$(this.promise_dirname)/data/CIS_JSON/$(sys.flavour)/");
 
 vars:
-   "infile"       string => "$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/$(this.bundle).json";
+   "infile"       string => "$(this.promise_dirname)/data/CIS_JSON/$(sys.flavour)/$(this.bundle).json";
 
    infile_exists::
       "input"      data   => readdata("$(infile)","auto");
