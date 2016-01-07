@@ -1,0 +1,27 @@
+<h1> CIS compliance package framework for Unix </h1>
+
+This is a framework to check Linux (Unix) installations for
+<a href="http://www.cisecurity.org"> CIS-compliance </a>.<br> </br>
+
+It will, if used with the <em>CFEngine Enterprise Edition</em>, collect the implemented CIS benchmarks
+and report them into mission portal. For an example how to use the mission portals inventory report
+with this, refer to <a href="./mission_portal.html"> this presentation</a>.
+
+In case you are deploying the <em>CFEngine Community Edition</em>, the easiest method to get a compliance report
+is to used the cached mode of this framework, which will generate a file <kbd>$(sys.workdir)/tmp/CIS.csv</kbd>.
+
+<h2> File Structure and Components</h2>
+
+<h2> Customizable files</h2>
+
+
+
+<h2> TODO </h2> 
+
+<ul>
+   <li> Adhere CFEngine design rules </li>
+   <li> remove all dependencies to redhat_7 which are not required by technology</li>
+   <li> Improve customizability </li>
+   <li> Prevent high (IO)-load functions from being run </li>
+   <li> Define automated test cases for platforms supported</li>
+</ul>
