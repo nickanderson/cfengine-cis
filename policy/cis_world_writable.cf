@@ -10,10 +10,10 @@ meta:
                      "security",
                      "reporting"
                     },
-      ifvarclass => isdir("$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/");
+      ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
 
 vars:
-   "infile"       string => "$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/$(this.bundle).json";
+   "infile"       string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
    "interval"     string => "$(cis_wrapper.interval)";
    "action"       string => "warn";   # might be overwritten with fix below
 
@@ -35,8 +35,12 @@ vars:
               ifvarclass => classmatch("CISENFORCE_$(paragraph)");
 
 classes:
-   "infile_exists" expression => fileexists("$(infile)");
- 
+   "infile_exists"     expression => fileexists("$(infile)");
+
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or         => { "DEBUG" },
+                       ifvarclass => classmatch("DEBUG_$(this.bundle)");   
+   
 files:
    "$(localfs.paths)"
        comment        => "no world writable files should exist",
@@ -52,11 +56,11 @@ methods:
       "cis1" usebundle => CIS_set_inventory_class("$(paragraph)","$(score)","$(level)","$(this.bundle)","$(comment)");
 
 reports:
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "$(this.bundle) score $(score)";
       "$(this.bundle) input $(input)";
       "$(this.bundle) infile $(infile)";
-   DEBUG.cis1::
+   DEBUG_THIS_BUNDLE.cis1::
       "$(this.bundle) cis usebundle => CIS_set_inventory_class($(paragraph),$(score),$(level),$(this.bundle),$(comment))";
 
 }
@@ -73,10 +77,10 @@ meta:
                      "security",
                      "reporting"
                      },
-      ifvarclass => isdir("$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/");
+      ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
 
 vars:
-   "infile"       string => "$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/$(this.bundle).json";
+   "infile"       string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
    "interval"     string => "$(cis_wrapper.interval)";
    "action"       string => "warn";   # might be overwritten with fix below
 
@@ -98,7 +102,12 @@ vars:
                ifvarclass => classmatch("CISENFORCE_$(paragraph)");
 
 classes:
-   "infile_exists" expression => fileexists("$(infile)");
+   "infile_exists"     expression => fileexists("$(infile)");
+
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or         => { "DEBUG" },
+                       ifvarclass => classmatch("DEBUG_$(this.bundle)");                  
+               
 
 files:
    "$(localfs.paths)"
@@ -115,11 +124,11 @@ methods:
       "cis" usebundle => CIS_set_inventory_class("$(paragraph)","$(score)","$(level)","$(this.bundle)","$(comment)");
 
 reports:
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "$(this.bundle) score $(score)";
       "$(this.bundle) input $(input)";
       "$(this.bundle) infile $(infile)";
-   DEBUG.cis::
+   DEBUG_THIS_BUNDLE.cis::
       "$(this.bundle) cis usebundle => CIS_set_inventory_class($(paragraph),$(score),$(level),$(this.bundle),$(comment))";
 
 }

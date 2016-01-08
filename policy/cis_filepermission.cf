@@ -11,10 +11,10 @@ meta:
                     "CIS",
                     "reporting"
                     },
-      ifvarclass => isdir("$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/");
+      ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
 
 vars:
-   "infile"   string => "$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/(this.bundle).json";
+   "infile"   string => "$(this.promise_dirname)/data/$(sys.flavour)/(this.bundle).json";
    "interval" string => "60";
 
    infile_exists::
@@ -25,11 +25,15 @@ vars:
       "paragraphs"       slist => getindices("cis_permissions"),
                          meta  => { "CIS" , "CISSECTIONS" };
 
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "CISFOUND"  slist  => classesmatching(".*CIS.*");
-
+      
 classes:
-   "infile_exists" expression => fileexists("$(infile)");
+   "infile_exists"     expression => fileexists("$(infile)");
+
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or         => { "DEBUG" },
+                       ifvarclass => classmatch("DEBUG_$(this.bundle)");
 
 
 methods:
@@ -49,7 +53,7 @@ methods:
                       ifvarclass => classmatch("CISENFORCE_$(paragraphs)");
 
 reports:
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "paragraphs $(paragraphs)";
       "CISFOUND $(CISFOUND)";
       "$(this.bundle) CISENFORCE_$(paragraphs) is set" ifvarclass => classmatch("CISENFORCE_$(paragraphs)");

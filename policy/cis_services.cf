@@ -1,7 +1,7 @@
 bundle agent cis_services
 #@
 #@ Enforce the state of the services specified in 
-#@ $(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/services.json
+#@ $(this.promise_dirname)/data/$(sys.flavour)/services.json
 #@
 #@ Act only if both the class CISENFORCE is set, and for EACH paragraph,
 #@ CISENFORCE_PARAGRAPH.
@@ -18,12 +18,12 @@ meta:
                      "security",
                      "reporting"
                      },
-      ifvarclass => isdir("$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/");
+      ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
 
 vars:
 
    # platform OS specific input file
-   "infile"         string => "$(this.promise_dirname)/staged_config/CIS_JSON/$(sys.flavour)/services.json";
+   "infile"         string => "$(this.promise_dirname)/data/$(sys.flavour)/services.json";
 
    infile_exists:: 
       "cis_services" data  => readjson("$(infile)","100K");
@@ -55,8 +55,12 @@ vars:
 
 classes:
    # platform OS specific needs to exist
-   "infile_exists" expression => fileexists("$(infile)");
+   "infile_exists"     expression => fileexists("$(infile)");
 
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or         => { "DEBUG" },
+                       ifvarclass => classmatch("DEBUG_$(this.bundle)");    
+   
 services: 
    CISENFORCE.infile_exists::
       # then loop only over those to be enforced started
@@ -84,7 +88,7 @@ methods:
                    ifvarclass => regcmp(".*$(const.n)$(cis_services[$(stop_para)][service])$(const.n).*","$(service_list)");
 
 reports:
-   DEBUG::
+   DEBUG_THIS_BUNDLE::
       "$(cis_services[$(paragraphs_enforced)][service]) should be stopped"
         ifvarclass     => strcmp("$(cis_services[$(paragraphs_enforced)][supposed_running])","false");
       "$(this.bundle) paragraphs_enforced $(paragraphs_enforced)";

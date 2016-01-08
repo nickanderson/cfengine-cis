@@ -1,4 +1,21 @@
 bundle agent cis_configure
+#@ Central configuration file for the CIS framework.
+#@ 
+#@ The following parameters have to be set, and mean the following:
+#@
+#@ cache: if true, the framework works in cached mode and intermediately saves the results
+#@        in $(sys.workdir)/tmp/CIS.csv for caching.
+#@ interval: in case cache==true, the bundles will only be called every $(interval) minutes.
+#@           At intermediate runs of cf-agent, the classes are "replayed" from the cache.
+#@ grace: In cached mode, the classes are set persistent. Set grace in a way that 
+#@        a single non cached run will not take longer than grace-interval minutes.
+#@        In case this is not true, the worst thing that happens is that sone benchmarks
+#@        are not set correctly in the exeeding time.
+#@ enforce: (try to) enforce these sections.
+#@ blacklist: to not report these benchmarks back to the mission portal. They will not
+#@            be surpreesed in the .../CIS.csv cache file, though.
+#@
+#@ TODO: have a not_run slist which prohibits running these benchmarks alltogether.
 {
 
 vars:
@@ -7,7 +24,7 @@ vars:
    # not(isvariable()) as stanza
    ipv4_192_168.linux::
       # cloud installations, quite small FS
-      "cache"       string => "false";
+      "cache"       string => "true";
       "interval"    string => "60";
       "grace"       string => "120";
       "enforce"     slist  => { "1_2_2", "1_2_3", "1_5_1", "1_5_2", "1_6_1",
