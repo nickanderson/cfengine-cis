@@ -35,9 +35,7 @@ classes:
                 scope       => "namespace";
 
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
-   "DEBUG_THIS_BUNDLE"
-                or          => { "DEBUG" },
-                ifvarclass  => classmatch("DEBUG_$(this.bundle)"); 
+   "DEBUG_THIS_BUNDLE"  or => { "DEBUG", "DEBUG_$(this.bundle)" };
                 
 files:
    CIS_cache::
@@ -117,8 +115,7 @@ vars:
 
 classes:
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
-   "DEBUG_THIS_BUNDLE" or         => { "DEBUG" },
-                       ifvarclass => classmatch("DEBUG_$(this.bundle)");   
+   "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
    
 reports:
    "$(this.bundle) ; $(p) ; $(p) ; $(datam[$(p)][comment]) ; $(datam[$(p)][level]) ; $(datam[$(p)][score]) ";
@@ -139,13 +136,12 @@ bundle common cis_enforce
 {
 
 vars:
-   DEBUG_TTHIS_BUNDLE::
+   DEBUG_THIS_BUNDLE::
       "cisenforce"  slist => classesmatching("CISENFORCE.*");
 
 classes:
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
-   "DEBUG_THIS_BUNDLE"                 or         => { "DEBUG" },
-                                       ifvarclass => classmatch("DEBUG_$(this.bundle)");   
+   "DEBUG_THIS_BUNDLE" or=> { "DEBUG","DEBUG_$(this.bundle)" };
 
    CISENFORCE.CISENFORCE_LEVEL1_FALSE::
       "CISENFORCE_$(cis_inventory.p)"  expression => and(strcmp("$(cis_inventory.datam[$(cis_inventory.p)][level])","1"),

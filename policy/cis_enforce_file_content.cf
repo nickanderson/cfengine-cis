@@ -54,9 +54,7 @@ classes:
    "infile_exists" expression => fileexists("$(infile)");
 
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
-   "DEBUG_THIS_BUNDLE"
-                   or         => { "DEBUG" },
-                   ifvarclass => classmatch("DEBUG_$(this.bundle)");
+   "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
    
 methods:
    CISENFORCE.infile_exists::
@@ -106,8 +104,7 @@ vars:
                        
 classes:
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
-   "DEBUG_THIS_BUNDLE" or         => { "DEBUG" },
-                       ifvarclass => classmatch("DEBUG_$(this.bundle)");
+   "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
 
 files:
    # file which are recognized as have LHS\s+RHS with # as a comment, and basically disregard most whitespace

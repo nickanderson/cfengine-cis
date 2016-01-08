@@ -42,8 +42,8 @@ classes:
                        not        => "regmatch_$(paragraphs)";
 
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
-   "DEBUG_THIS_BUNDLE" or         => { "DEBUG" },
-                       ifvarclass => classmatch("DEBUG_$(this.bundle)");
+   "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
+
                      
 methods:
    # supposed match

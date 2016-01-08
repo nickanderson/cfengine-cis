@@ -23,9 +23,7 @@ methods:
 
 classes:
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
-   "DEBUG_THIS_BUNDLE" or         => { "DEBUG" },
-                       ifvarclass => classmatch("DEBUG_$(this.bundle)");   
-                       
+   "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
                        
 reports:
    DEBUG_THIS_BUNDLE::
@@ -151,9 +149,7 @@ classes:
    "has_duplicate_uids"    expression => islessthan(length("uuids"),length("userids"));
 
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
-   "DEBUG_THIS_BUNDLE" or         => { "DEBUG" },
-                       ifvarclass => classmatch("DEBUG_$(this.bundle)");   
-      
+   "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
    
 reports:
    DEBUG_THIS_BUNDLE::
