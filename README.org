@@ -6,7 +6,7 @@ CIS-compliance.
 It will, if used with the CFEngine Enterprise Edition, collect the
 implemented CIS benchmarks and report them into mission portal. For an
 example how to use the mission portals inventory report with this,
-refer to [[mission_portal.org][this presentation]]. In case you are deploying the CFEngine
+refer to [[docs/mission_portal.org][this presentation]]. In case you are deploying the CFEngine
 Community Edition, the easiest method to get a compliance report is to
 used the cached mode of this framework, which will generate a file
 =$(sys.workdir)/tmp/CIS.csv=.
