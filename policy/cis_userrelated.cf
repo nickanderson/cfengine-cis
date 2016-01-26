@@ -115,7 +115,7 @@ classes:
    "infile_exists"     expression => fileexists("$(infile)");
    
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
-   "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" },
+   "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
    
 files:
    "$(CIS_user_data.passwd[$(CIS_user_data.userids)][5])/$(input[$(paragraphs)][file])"
