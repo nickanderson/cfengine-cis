@@ -36,7 +36,7 @@ classes:
 
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
    "DEBUG_THIS_BUNDLE"  or => { "DEBUG", "DEBUG_$(this.bundle)" };
-                
+
 files:
    CIS_cache::
       # remove the cache regularly to enforce recalculation
@@ -46,7 +46,7 @@ files:
          classes => if_ok("timeout");
 
 methods:
-   # call the bundles in 
+   # call the bundles in
    timeout|!CIS_cache::
       "$(to_be_called)"   usebundle => "$(to_be_called)";
 
@@ -74,9 +74,23 @@ bundle agent cis_replay
 #@
 {
 
+classes:
+   "cached_cis_csv_exists"
+     expression => fileexists("$(sys.workdir)/tmp/CIS.csv");
+
 vars:
-   "dummy" int    => readstringarray("input", "$(sys.workdir)/tmp/CIS.csv" , "" , " ; " , "500" , "100K" );
-   "p"     slist => getindices("input");
+   cached_cis_csv_exists::
+     # This is guarded in order to suppress error messages that can cause agent
+     # email storms.
+     "dummy"
+       int => readstringarray( "input",
+                               "$(sys.workdir)/tmp/CIS.csv",
+                               "",
+                               " ; ",
+                               "500",
+                               "100K" );
+
+     "p"     slist => getindices("input");
 
 methods:
    "$(p)" usebundle  => CIS_set_inventory_class("$(p)",
@@ -85,6 +99,9 @@ methods:
                                                 "$(input[$(p)][4])",
                                                 "$(input[$(p)][5])");
 
+reports:
+  !cached_cis_csv_exists::
+    "Error: $(this.bundle): '$(sys.workdir)/tmp/CIS.csv' does not exist. Unable to replay cached results.";
 }
 
 
@@ -116,7 +133,7 @@ vars:
 classes:
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
    "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
-   
+
 reports:
    "$(this.bundle) ; $(p) ; $(p) ; $(datam[$(p)][comment]) ; $(datam[$(p)][level]) ; $(datam[$(p)][score]) ";
    DEBUG_THIS_BUNDLE::
