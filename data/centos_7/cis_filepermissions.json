@@ -1,0 +1,209 @@
+{
+  "1_5_1": {
+    "filename": "/boot/grub2/grub.cfg",
+    "score": "true",
+    "level": "1",
+    "comment": "Set User/Group Owner on /boot/grub2/grub.cfg",
+    "mode": "",
+    "uid": "0",
+    "gid": "0"
+  },
+  "1_5_2": {
+    "filename": "/boot/grub2/grub.cfg",
+    "score": "true",
+    "level": "1",
+    "comment": "Set User/Group Owner on /boot/grub2/grub.cfg",
+    "mode": "600",
+    "uid": "",
+    "gid": ""
+  },
+  "4_5_3": {
+    "filename": "/etc/hosts.allow",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify Permissions on /etc/hosts.allow",
+    "mode": "644",
+    "uid": "0",
+    "gid": "0"
+  },
+  "4_5_5": {
+    "filename": "/etc/hosts.deny",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify Permissions on /etc/hosts.deny",
+    "mode": "644",
+    "uid": "0",
+    "gid": "0"
+  },
+  "6_1_3": {
+    "filename": "/etc/anacrontab",
+    "score": "true",
+    "level": "1",
+    "comment": "Set User/Group Owner and Permission on /etc/anacrontab",
+    "mode": "600",
+    "uid": "0",
+    "gid": "0"
+  },
+  "6_1_4": {
+    "filename": "/etc/crontab",
+    "score": "true",
+    "level": "1",
+    "comment": "Set User/Group Owner and Permission on /etc/crontab",
+    "mode": "600",
+    "uid": "0",
+    "gid": "0"
+  },
+  "6_1_5": {
+    "filename": "/etc/cron.hourly",
+    "score": "true",
+    "level": "1",
+    "comment": "Set User/Group Owner and Permission on /etc/cron.hourly",
+    "mode": "700",
+    "uid": "0",
+    "gid": "0"
+  },
+  "6_1_6": {
+    "filename": "/etc/cron.daily",
+    "score": "true",
+    "level": "1",
+    "comment": "Set User/Group Owner and Permission on /etc/cron.daily",
+    "mode": "700",
+    "uid": "0",
+    "gid": "0"
+  },
+  "6_1_7": {
+    "filename": "/etc/cron.weekly",
+    "score": "true",
+    "level": "1",
+    "comment": "Set User/Group Owner and Permission on /etc/cron.weekly",
+    "mode": "700",
+    "uid": "0",
+    "gid": "0"
+  },
+  "6_1_8": {
+    "filename": "/etc/cron.monthly",
+    "score": "true",
+    "level": "1",
+    "comment": "Set User/Group Owner and Permission on /etc/cron.monthly",
+    "mode": "700",
+    "uid": "0",
+    "gid": "0"
+  },
+  "6_1_9": {
+    "filename": "/etc/cron.d",
+    "score": "true",
+    "level": "1",
+    "comment": "Set User/Group Owner and Permission on /etc/cron.d",
+    "mode": "700",
+    "uid": "0",
+    "gid": "0"
+  },
+  "6_2_3": {
+    "filename": "/etc/ssh/sshd_config",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Permissions on /etc/ssh/sshd_config",
+    "mode": "600",
+    "uid": "0",
+    "gid": "0"
+  },
+  "8_1a": {
+    "filename": "/etc/motd",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Warning Banner for Standard Login Services",
+    "mode": "644",
+    "uid": "0",
+    "gid": "0"
+  },
+  "8_1b": {
+    "filename": "/etc/issue",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Warning Banner for Standard Login Services",
+    "mode": "644",
+    "uid": "0",
+    "gid": "0"
+  },
+  "8_1c": {
+    "filename": "/etc/issuenet",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Warning Banner for Standard Login Services",
+    "mode": "644",
+    "uid": "0",
+    "gid": "0"
+  },
+  "9_1_2": {
+    "filename": "/etc/passwd",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify Permissions on /etc/passwd",
+    "mode": "644",
+    "uid": "",
+    "gid": ""
+  },
+  "9_1_3": {
+    "filename": "/etc/shadow",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify Permissions on /etc/shadow",
+    "mode": "000",
+    "uid": "",
+    "gid": ""
+  },
+  "9_1_4": {
+    "filename": "/etc/gshadow",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify Permissions on /etc/gshadow",
+    "mode": "000",
+    "uid": "",
+    "gid": ""
+  },
+  "9_1_5": {
+    "filename": "/etc/group",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify Permissions on /etc/group",
+    "mode": "644",
+    "uid": "",
+    "gid": ""
+  },
+  "9_1_6": {
+    "filename": "/etc/passwd",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify User/Group Ownership on /etc/passwd",
+    "mode": "",
+    "uid": "0",
+    "gid": "0"
+  },
+  "9_1_7": {
+    "filename": "/etc/shadow",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify User/Group Ownership on /etc/shadow",
+    "mode": "",
+    "uid": "0",
+    "gid": "0"
+  },
+  "9_1_8": {
+    "filename": "/etc/gshadow",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify User/Group Ownership on /etc/gshadow",
+    "mode": "",
+    "uid": "0",
+    "gid": "0"
+  },
+  "9_1_9": {
+    "filename": "/etc/group",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify User/Group Ownership on /etc/group",
+    "mode": "",
+    "uid": "0",
+    "gid": "0"
+  }
+}

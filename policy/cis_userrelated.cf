@@ -29,12 +29,12 @@ vars:
                  ifvarclass => strcmp("$(input[$(paragraphs)][part])","duplicate_groupnames");
 
    DEBUG_THIS_BUNDLE::
-      "CISFOUND"  slist  => classesmatching(".*CIS.*");
+      "CISFOUND"  slist  => classesmatching("CIS_finding_.*", "defined_from=$(this.bundle)" );
 
 classes:
    # platform OS specific needs to exist
    "infile_exists"     expression => fileexists("$(infile)");
-   
+
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
    "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
 
@@ -87,7 +87,7 @@ bundle agent cis_user_nodotfiles
 #@
 #@ Check for users' dot-files which should not exist!
 #@
-#@ 
+#@
 {
 
 meta:
@@ -100,7 +100,7 @@ meta:
 
 vars:
    "infile"        string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
-   "interval"      string => "$(cis_wrapper.interval)";   
+   "interval"      string => "$(cis_configure.interval)";
 
    infile_exists::
       "input"      data   => readjson("$(infile)","100K");
@@ -113,10 +113,10 @@ vars:
 classes:
    # platform OS specific needs to exist
    "infile_exists"     expression => fileexists("$(infile)");
-   
+
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
    "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
-   
+
 files:
    "$(CIS_user_data.passwd[$(CIS_user_data.userids)][5])/$(input[$(paragraphs)][file])"
        comment        => "no $(input[$(paragraphs)][file]) file should exist",
@@ -157,8 +157,8 @@ meta:
 
 vars:
    "infile"            string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
-   "interval"          string => "$(cis_wrapper.interval)";   
- 
+   "interval"          string => "$(cis_configure.interval)";
+
 
    infile_exists::
       "input"          data   => readdata("$(infile)","auto");
@@ -171,8 +171,8 @@ vars:
       "action[$(paragraphs)]"
                        string => "fix",
                    ifvarclass => classmatch("CISENFORCE_$(paragraphs)");
-					   
-					   
+
+
 classes:
    "infile_exists" expression => fileexists("$(infile)");
 

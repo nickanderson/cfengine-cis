@@ -16,15 +16,15 @@ vars:
       "WLAN"   int    => countclassesmatching("net_iface_wlan.*");
 
    DEBUG.redhat_7::
-      "CISFOUND"  slist  => classesmatching(".*CIS.*");
+      "CISFOUND"  slist  => classesmatching("CIS_finding_.*");
 
 methods:
-   # 
-   # 
-   # 
+   #
+   #
+   #
    #
   redhat_7::
-    # look whether a WLAN interface is active 
+    # look whether a WLAN interface is active
     "CIS_4_3_1"  usebundle  => CIS_set_inventory_class("4_3_1","false","1","$(this.bundle)","Deactivate Wireless Interfaces"),
                  ifvarclass => not(strcmp("$(WLAN)","0"));
 

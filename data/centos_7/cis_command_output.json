@@ -1,0 +1,69 @@
+{
+  "1_2_6": {
+    "comment": "Verify Package Integrity Using RPM",
+    "score": "false",
+    "level": "1",
+    "command": "1_2_6.sh",
+    "regexp": ".+",
+    "match": "false"
+  },
+  "7_2": {
+    "comment": "Disable System Accounts",
+    "score": "true",
+    "level": "1",
+    "command": "7_2.sh",
+    "regexp": ".+",
+    "match": "false"
+  },
+  "7_5": {
+    "comment": "Lock Inactive User Accounts",
+    "score": "true",
+    "level": "1",
+    "command": "/sbin/useradd -D",
+    "regexp": ".*INACTIVE=[0-9]+.*",
+    "match": "true"
+  },
+  "9_2_7": {
+    "comment": "Check Permissions on User Home Directories",
+    "score": "true",
+    "level": "1",
+    "command": "9_2_7.sh",
+    "regexp": ".+",
+    "match": "false"
+  },
+  "9_2_11": {
+    "comment": "Check Groups in /etc/passwd",
+    "score": "true",
+    "level": "1",
+    "command": "9_2_11.sh",
+    "regexp": ".+",
+    "match": "false"
+  },
+  "9_2_12": {
+    "comment": "Check That Users Are Assigned Valid Home Directories",
+    "score": "true",
+    "level": "1",
+    "command": "9_2_12.sh",
+    "regexp": ".+",
+    "match": "false"
+  },
+  "9_2_13": {
+    "comment": "Check User Home Directory Ownership",
+    "score": "true",
+    "level": "1",
+    "command": "9_2_13.sh",
+    "regexp": ".+",
+    "match": "false"
+  },
+
+  "9_2_16": {
+    "comment": "Check That Reserved UIDs Are Assigned to System Accounts",
+    "score": "true",
+    "level": "1",
+    "command": "9_2_16.sh",
+    "regexp": ".+",
+    "match": "false"
+  }
+
+}
+

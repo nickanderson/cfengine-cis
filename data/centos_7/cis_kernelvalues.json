@@ -1,0 +1,186 @@
+{
+  "1_6_1": {
+    "score": "true",
+    "level": "1",
+    "comment": "Restrict Core Dumps",
+    "key": "fs.suid_dumpable",
+    "value": "0",
+    "match": "true"
+  },
+  "1_6_2": {
+    "score": "true",
+    "level": "1",
+    "comment": "Enable Randomized Virtual Memory Region Placement",
+    "key": "kernel.randomize_va_space",
+    "value": "2",
+    "match": "true"
+  },
+  "4_1_1": {
+    "score": "true",
+    "level": "1",
+    "comment": "Disable IP Forwarding",
+    "key": "net.ipv4.ip_forward",
+    "value": "0",
+    "match": "true"
+  },
+  "4_1_2": {
+    "score": "true",
+    "level": "1",
+    "comment": "Disable Send Packet Redirects",
+    "key": "net.ipv4.conf.all.send_redirects",
+    "value": "0",
+    "match": "true"
+  },
+  "4_1_2b": {
+    "score": "true",
+    "level": "1",
+    "comment": "Disable Send Packet Redirects",
+    "key": "net.ipv4.conf.default.send_redirects",
+    "value": "0",
+    "match": "true"
+  },
+  "4_2_1": {
+    "score": "true",
+    "level": "1",
+    "comment": "Disable Source Routed Packet Acceptance",
+    "key": "net.ipv4.conf.all.accept_source_route",
+    "value": "0",
+    "match": "true"
+  },
+  "4_2_1b": {
+    "score": "true",
+    "level": "1",
+    "comment": "Disable Source Routed Packet Acceptance",
+    "key": "net.ipv4.conf.default.accept_source_route",
+    "value": "0",
+    "match": "true"
+  },
+  "4_2_2": {
+    "score": "true",
+    "level": "1",
+    "comment": "Disable ICMP Redirect Acceptance",
+    "key": "net.ipv4.conf.all.accept_redirects",
+    "value": "0",
+    "match": "true"
+  },
+  "4_2_2b": {
+    "score": "true",
+    "level": "1",
+    "comment": "Disable ICMP Redirect Acceptance",
+    "key": "net.ipv4.conf.default.accept_redirects",
+    "value": "0",
+    "match": "true"
+  },
+  "4_2_3": {
+    "score": "true",
+    "level": "2",
+    "comment": "Disable Secure ICMP Redirect Acceptance",
+    "key": "net.ipv4.conf.all.secure_redirects",
+    "value": "0",
+    "match": "true"
+  },
+  "4_2_3b": {
+    "score": "true",
+    "level": "2",
+    "comment": "Disable Secure ICMP Redirect Acceptance",
+    "key": "net.ipv4.conf.default.secure_redirects",
+    "value": "0",
+    "match": "true"
+  },
+  "4_2_4": {
+    "score": "true",
+    "level": "1",
+    "comment": "Log Suspicious Packets",
+    "key": "net.ipv4.conf.all.log_martians",
+    "value": "1",
+    "match": "true"
+  },
+  "4_2_4b": {
+    "score": "true",
+    "level": "1",
+    "comment": "Log Suspicious Packets",
+    "key": "net.ipv4.conf.default.log_martians",
+    "value": "1",
+    "match": "true"
+  },
+  "4_2_5": {
+    "score": "true",
+    "level": "1",
+    "comment": "Enable Ignore Broadcast Requests",
+    "key": "net.ipv4.icmp_echo_ignore_broadcasts",
+    "value": "1",
+    "match": "true"
+  },
+  "4_2_6": {
+    "score": "true",
+    "level": "1",
+    "comment": "Enable Bad Error Message Protection",
+    "key": "net.ipv4.icmp_ignore_bogus_error_responses",
+    "value": "1",
+    "match": "true"
+  },
+  "4_2_7": {
+    "score": "true",
+    "level": "2",
+    "comment": "Enable RFC-recommended Source Route Validation",
+    "key": "net.ipv4.conf.all.rp_filter",
+    "value": "1",
+    "match": "true"
+  },
+  "4_2_7b": {
+    "score": "true",
+    "level": "2",
+    "comment": "Enable RFC-recommended Source Route Validation",
+    "key": "net.ipv4.conf.default.rp_filter",
+    "value": "1",
+    "match": "true"
+  },
+  "4_2_8": {
+    "score": "true",
+    "level": "1",
+    "comment": "Enable TCP SYN Cookies",
+    "key": "net.ipv4.tcp_syncookies",
+    "value": "1",
+    "match": "true"
+  },
+  "4_4_1_1": {
+    "score": "false",
+    "level": "1",
+    "comment": "Disable IPv6 Router Advertisements",
+    "key": "net.ipv6.conf.all.accept_ra",
+    "value": "0",
+    "match": "true"
+  },
+  "4_4_1_1b": {
+    "score": "false",
+    "level": "1",
+    "comment": "Disable IPv6 Router Advertisements",
+    "key": "net.ipv6.conf.default.accept_ra",
+    "value": "0",
+    "match": "true"
+  },
+  "4_4_1_2": {
+    "score": "false",
+    "level": "1",
+    "comment": "Disable IPv6 Redirect Acceptance",
+    "key": "net.ipv6.conf.all.accept_redirects",
+    "value": "0",
+    "match": "true"
+  },
+  "4_4_1_2b": {
+    "score": "false",
+    "level": "1",
+    "comment": "Disable IPv6 Redirect Acceptance",
+    "key": "net.ipv6.conf.default.accept_redirects",
+    "value": "0",
+    "match": "true"
+  },
+  "4_4_2": {
+    "score": "false",
+    "level": "1",
+    "comment": "Disable IPv6",
+    "key": "net.ipv6.conf.all.disable_ipv6",
+    "value": "1",
+    "match": "true"
+  }
+}

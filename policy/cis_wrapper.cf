@@ -1,70 +1,136 @@
 bundle agent cis_wrapper
-#@
-#@ just acts as wrapper to call any bundle with name cis_.* and tag "CIS"
-#@
+#@ brief Main driver for CIS Framework
+{
+  methods:
+      "Init" usebundle => cis_wrapper_init;
+      "Activate" usebundle => cis_wrapper_activate;
+      "Summary" usebundle => cis_wrapper_summary;
+}
+
+bundle agent cis_wrapper_init
+#@ breif Fnding cis bundles that should be activated
+{
+  classes:
+      # general debugging class specific for a bundle, should work with 3.6 & 3.7
+      "DEBUG_THIS_BUNDLE"  or => { "DEBUG", "DEBUG_$(this.bundle)" };
+
+  vars:
+
+      # collect all bundles
+      "to_be_called"  slist  => bundlesmatching("default:cis_.*","CIS");
+
+      #
+      "interval"  string     => "$(cis_configure.interval)";
+
+    DEBUG_THIS_BUNDLE::
+      "to_be_called_count" int => length( "to_be_called" );
+
+  reports:
+    DEBUG_THIS_BUNDLE::
+      "DEBUG $(this.bundle): Found '$(to_be_called_count)' CIS bundle to activate";
+      "DEBUG $(this.bundle): Found CIS bundle to activate: '$(to_be_called)'";
+}
+
+bundle agent cis_wrapper_activate
+#@ breif Activate discoverd cis bundles
 {
 
-vars:
+  classes:
+      "CIS_cache"
+        expression  => strcmp("$(cis_configure.cache)","true"),
+        scope       => "namespace";
 
-   # collect all bundles
-   "to_be_called"  slist  => bundlesmatching("default:cis_.*","CIS");
+      "CISBLACKLIST_$(cis_configure.blacklist)"
+        or          => { "any" },
+        scope       => "namespace";
 
-   #
-   "interval"  string     => "$(cis_configure.interval)";
+      "CISENFORCE_$(cis_configure.enforce)"
+        or          => { "any" },
+        scope       => "namespace";
 
-   DEBUG_THIS_BUNDLE::
-      "allparagraphsvars" slist  => variablesmatching("default:cis_.*\.paragraphs");
-      "array[$(allparagraphsvars)]"
-                          string => join(" ","$(allparagraphsvars)");
-      "tmp"               slist  => getvalues("array");
-      "tmp2"              string => join(" ","tmp");
-      "tmp3"              slist  => splitstring("$(tmp2)"," ","10000");
-      "complete_para"     slist  => sort("tmp3","lex");
-      "CISFOUND"          slist  => classesmatching(".*CIS.*");
-
-classes:
-   "CIS_cache"  expression  => strcmp("$(cis_configure.cache)","true"),
-                scope       => "namespace";
-   "CISBLACKLIST_$(cis_configure.blacklist)"
-                or          => { "any" },
-                scope       => "namespace";
-   "CISENFORCE_$(cis_configure.enforce)"
-                or          => { "any" },
-                scope       => "namespace";
-   "CISENFORCE" expression  => not(strcmp(length("cis_configure.enforce"),"0")),
-                scope       => "namespace";
+      "CISENFORCE"
+        expression  => not(strcmp(length("cis_configure.enforce"),"0")),
+        scope       => "namespace";
 
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
    "DEBUG_THIS_BUNDLE"  or => { "DEBUG", "DEBUG_$(this.bundle)" };
 
-files:
-   CIS_cache::
+  files:
+    CIS_cache::
       # remove the cache regularly to enforce recalculation
       "$(sys.workdir)/tmp/CIS.csv"
-         delete  => tidy,
-         action  => fix_or_warn_on_interval("fix","60"),
-         classes => if_ok("timeout");
+        handle => "purge_stale_cis_finding_cache",
+        delete  => tidy,
+        action  => fix_or_warn_on_interval("fix","60"),
+        classes => if_ok("timeout");
 
-methods:
-   # call the bundles in
-   timeout|!CIS_cache::
-      "$(to_be_called)"   usebundle => "$(to_be_called)";
+  methods:
+      # call the bundles
+    timeout|!CIS_cache::
+      "$(cis_wrapper_init.to_be_called)"
+        usebundle => "$(cis_wrapper_init.to_be_called)",
+        classes => scoped_classes_generic("bundle", "_cis_inventory");
 
-   # !timeout:: replay
-   CIS_cache.!timeout::
-      "replay" usebundle => cis_replay;
+      # !timeout:: replay
+    CIS_cache.!timeout::
+      "replay"
+        usebundle => cis_replay,
+        classes => scoped_classes_generic("bundle", "_cis_inventory");
+
+}
+
+bundle agent cis_wrapper_summary
+#@ breif Summarize CIS Findings
+# This bundle is really only useful when debugging the policy interactively
+{
+  classes:
+      # general debugging class specific for a bundle, should work with 3.6 & 3.7
+      "DEBUG_THIS_BUNDLE"  or => { "DEBUG", "DEBUG_$(this.bundle)" };
+
+  vars:
+   DEBUG_THIS_BUNDLE::
+      # Each implementation bundle should contan a list variable named paragraphs that contains
+      # a list of each control implemented by the bundle (derived from the data source)
+      # First we find all of these variables
+      "allparagraphsvars" slist  => variablesmatching("default:cis_.*\.paragraphs");
+
+      # Then we construct an array where each key is named for a cis
+      # bundle that defined the paragraphs variable and the value of
+      # the key is a space separted string listing each control
+      # implemented by that bundle.
+      "array[$(allparagraphsvars)]"
+                          string => join(" ","$(allparagraphsvars)");
+
+      # We then get a list of each space seperated string
+      "tmp"               slist  => getvalues("array");
+
+      # And then join that list back together in to a single space
+      # seperted string.  Warning: This could be problematic if the
+      # size of the string grows over 4k
+      "tmp2"              string => join(" ","tmp");
+
+      # Then we split the long string on the spaces to get a unified
+      # list of all covered controls/rule ids.
+      "tmp3"              slist  => splitstring("$(tmp2)"," ","10000");
+
+      # And finally we sort that lexically for consistency.
+      "complete_para"     slist  => sort("tmp3","lex");
+
+      "CIS_findings"
+        slist  => classesmatching("CIS_finding_.*"),
+        comment => "It's important to get a combined list of all
+                    classes that indicate non compliance with the CIS
+                    rule sets.";
+
+      "CIS_findings_count"
+        int => length( "CIS_findings" );
+
 
 reports:
    DEBUG_THIS_BUNDLE::
-      "$(this.bundle) CISFOUND//CIS Findings: $(CISFOUND)";
-      "$(this.bundle) CIS Sections covered by this bundle: $(complete_para)";
-      "$(this.bundle) allparagraphsvars $(allparagraphsvars)";
-      "$(this.bundle) cis_input_files $(cis_input_files)";
-      "$(this.bundle) to_be_called $(to_be_called)";
-      "$(this.bundle) tmp $(tmp)";
-      "$(this.bundle) tmp2 $(tmp2)";
-      "$(this.bundle) tmp3 $(tmp3)";
-
+      "DEBUG $(this.bundle): Covers $(sys.flavor) CIS Benchmarks Version? '$(complete_para)'";
+      "DEBUG $(this.bundle): Found '$(CIS_findings_count)' CIS Findings";
+      "DEBUG $(this.bundle): CIS Finding: $(CIS_findings)";
 }
 
 bundle agent cis_replay
@@ -114,28 +180,34 @@ bundle agent cis_inventory
 #@
 {
 
-vars:
-   "jsondir"     string => "$(this.promise_dirname)/data/$(sys.flavour)/";
-   "injsons"     slist  => lsdir("$(jsondir)",".*\.json","true"),
-             ifvarclass => isdir("$(jsondir)/");
+  classes:
+      "_have_jsondir" expression => isdir($(jsondir));
 
-   "can[$(injsons)]"
-                string => canonify("$(injsons)");
+  vars:
+      "jsondir"     string => "$(this.promise_dirname)/data/$(sys.flavour)/";
 
-   "data_$(can[$(injsons)])"
-                data   => readjson("$(injsons)","100K");
+    _have_json_dir::
+      "injsons"     slist  => lsdir("$(jsondir)",".*\.json","true"),
+        ifvarclass => isdir("$(jsondir)/");
 
-   # merge all data together
-   "datam"      data   => parsejson('[]'),             policy => "free";
-   "datam"      data   => mergedata("datam","data_$(can[$(injsons)])"), policy => "free";
-   "p"          slist  => getindices("datam");
+      "can[$(injsons)]"
+        string => canonify("$(injsons)");
+
+      "data_$(can[$(injsons)])"
+        data   => readjson("$(injsons)","100K");
+
+      # merge all data together
+      "datam"      data   => parsejson('[]'),             policy => "free";
+      "datam"      data   => mergedata("datam","data_$(can[$(injsons)])"), policy => "free";
+      "p"          slist  => getindices("datam");
 
 classes:
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
    "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
 
 reports:
-   "$(this.bundle) ; $(p) ; $(p) ; $(datam[$(p)][comment]) ; $(datam[$(p)][level]) ; $(datam[$(p)][score]) ";
+    _have_jsondir::
+      "$(this.bundle) ; $(p) ; $(p) ; $(datam[$(p)][comment]) ; $(datam[$(p)][level]) ; $(datam[$(p)][score]) ";
    DEBUG_THIS_BUNDLE::
       "$(this.bundle) DEBUG";
       "$(this.bundle) jsondir $(jsondir)";

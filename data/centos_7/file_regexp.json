@@ -1,0 +1,1317 @@
+{
+  "1_1_1": {
+    "filename": "/etc/fstab",
+    "score": "true",
+    "level": "1",
+    "comment": "Create Separate Partition for /tmp",
+    "regexp": ".*\\s+/tmp\\s+.*",
+    "match": "true"
+  },
+  "1_1_2": {
+    "filename": "/etc/fstab",
+    "score": "true",
+    "level": "1",
+    "comment": "Create Separate Partition for /tmp",
+    "regexp": ".*\\s+/tmp\\s+.*nodev.*",
+    "match": "true"
+  },
+  "1_1_2b": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "1",
+    "comment": "Create Separate Partition for /tmp",
+    "regexp": ".*\\s+/tmp\\s+.*nodev.*",
+    "match": "true"
+  },
+  "1_1_3": {
+    "filename": "/etc/fstab",
+    "score": "true",
+    "level": "1",
+    "comment": "Create Separate Partition for /tmp",
+    "regexp": ".*\\s+/tmp\\s+.*nosuid.*",
+    "match": "true"
+  },
+  "1_1_3b": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "1",
+    "comment": "Create Separate Partition for /tmp",
+    "regexp": ".*\\s+/tmp\\s+.*nosuid.*",
+    "match": "true"
+  },
+  "1_1_4": {
+    "filename": "/etc/fstab",
+    "score": "true",
+    "level": "1",
+    "comment": "Set noexec option for /tmp Partition",
+    "regexp": ".*\\s+/tmp\\s+.*noexec.*",
+    "match": "true"
+  },
+  "1_1_4b": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "1",
+    "comment": "Set noexec option for /tmp Partition",
+    "regexp": ".*\\s+/tmp\\s+.*noexec.*",
+    "match": "true"
+  },
+  "1_1_5": {
+    "filename": "/etc/fstab",
+    "score": "true",
+    "level": "1",
+    "comment": "Create Separate Partition for /var",
+    "regexp": ".*\\s+/var\\s+.*",
+    "match": "true"
+  },
+  "1_1_6": {
+    "filename": "/etc/fstab",
+    "score": "true",
+    "level": "1",
+    "comment": "Bind Mount the /var/tmp directory to /tmp",
+    "regexp": "(?!\\s*#.*$).*(/tmp)\\s+(/var/tmp)\\s+none\\s+(bind)\\s+.*",
+    "match": "true"
+  },
+  "1_1_7": {
+    "filename": "/etc/fstab",
+    "score": "true",
+    "level": "1",
+    "comment": "Create Separate Partition for /var/log",
+    "regexp": ".*\\s+/var/log\\s+.*",
+    "match": "true"
+  },
+  "1_1_8": {
+    "filename": "/etc/fstab",
+    "score": "true",
+    "level": "1",
+    "comment": "Create Separate Partition for /var/log/audit",
+    "regexp": ".*\\s+/var/log/audit\\s+.*",
+    "match": "true"
+  },
+  "1_1_9": {
+    "filename": "/etc/fstab",
+    "score": "true",
+    "level": "1",
+    "comment": "Create Separate Partition for /home",
+    "regexp": ".*\\s+/home\\s+.*",
+    "match": "true"
+  },
+  "1_1_10": {
+    "filename": "/etc/fstab",
+    "score": "true",
+    "level": "1",
+    "comment": "Add nodev Option to /home",
+    "regexp": ".*\\s+/home\\s+.*nodev.*",
+    "match": "true"
+  },
+  "1_1_10b": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "1",
+    "comment": "Add nodev Option to /home",
+    "regexp": ".*\\s+/home\\s+.*nodev.*",
+    "match": "true"
+  },
+  "1_1_14": {
+    "filename": "/etc/fstab",
+    "score": "true",
+    "level": "1",
+    "comment": "Add nodev Option to /dev/shm Partition",
+    "regexp": ".*\\s+/dev/shm\\s+.*nodev.*",
+    "match": "true"
+  },
+  "1_1_14b": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "1",
+    "comment": "Add nodev Option to /dev/shm Partition",
+    "regexp": ".*\\s+/dev/shm\\s+.*nodev.*",
+    "match": "true"
+  },
+  "1_1_15": {
+    "filename": "/etc/fstab",
+    "score": "true",
+    "level": "1",
+    "comment": "Add nosuid Option to /dev/shm Partition",
+    "regexp": ".*\\s+/dev/shm\\s+.*nosuid.*",
+    "match": "true"
+  },
+  "1_1_15b": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "1",
+    "comment": "Add nosuid Option to /dev/shm Partition",
+    "regexp": ".*\\s+/dev/shm\\s+.*nosuid.*",
+    "match": "true"
+  },
+  "1_1_16": {
+    "filename": "/etc/fstab",
+    "score": "true",
+    "level": "1",
+    "comment": "Add noexec Option to /dev/shm Partition",
+    "regexp": ".*\\s+/dev/shm\\s+.*noexec.*",
+    "match": "true"
+  },
+  "1_1_16b": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "1",
+    "comment": "Add noexec Option to /dev/shm Partition",
+    "regexp": ".*\\s+/dev/shm\\s+.*noexec.*",
+    "match": "true"
+  },
+  "1_1_18": {
+    "filename": "/etc/modprobe.d/CIS.conf",
+    "score": "false",
+    "level": "2",
+    "comment": "Disable Mounting of cramfs Filesystems",
+    "regexp": "\\s*install\\s+cramfs\\s+/bin/true\\s*",
+    "match": "true"
+  },
+  "1_1_19": {
+    "filename": "/etc/modprobe.d/CIS.conf",
+    "score": "false",
+    "level": "2",
+    "comment": "Disable Mounting of freevxfs Filesystems",
+    "regexp": "\\s*install\\s+freevxfs\\s+/bin/true\\s*",
+    "match": "true"
+  },
+  "1_1_20": {
+    "filename": "/etc/modprobe.d/CIS.conf",
+    "score": "false",
+    "level": "2",
+    "comment": "Disable Mounting of jffs2 Filesystems",
+    "regexp": "\\s*install\\s+jffs2\\s+/bin/true\\s*",
+    "match": "true",
+    "LHS": ".*install\\s+jffs2.*",
+    "value": "install jffs2 /bin/true"
+  },
+  "1_1_21": {
+    "filename": "/etc/modprobe.d/CIS.conf",
+    "score": "false",
+    "level": "2",
+    "comment": "Disable Mounting of hfs Filesystems",
+    "regexp": "\\s*install\\s+hfs\\s+/bin/true\\s*",
+    "match": "true",
+    "LHS": ".*install\\s+hfs.*",
+    "value": "install hfs /bin/true"
+  },
+  "1_1_22": {
+    "filename": "/etc/modprobe.d/CIS.conf",
+    "score": "false",
+    "level": "2",
+    "comment": "Disable Mounting of hfsplus Filesystems",
+    "regexp": "\\s*install\\s+hfsplus\\s+/bin/true\\s*",
+    "match": "true"
+  },
+  "1_1_23": {
+    "filename": "/etc/modprobe.d/CIS.conf",
+    "score": "false",
+    "level": "2",
+    "comment": "Disable Mounting of squashfs Filesystems",
+    "regexp": "\\s*install\\s+squashfs\\s+/bin/true\\s*",
+    "match": "true"
+  },
+  "1_1_24": {
+    "filename": "/etc/modprobe.d/CIS.conf",
+    "score": "false",
+    "level": "2",
+    "comment": "Disable Mounting of udf Filesystems",
+    "regexp": "\\s*install\\s+udf\\s+/bin/true\\s*",
+    "match": "true"
+  },
+  "1_2_3": {
+    "filename": "/etc/yum.conf",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify that gpgcheck is Globally Activated",
+    "regexp": "gpgcheck=1\\s*",
+    "match": "true",
+    "LHS": "gpgcheck",
+    "value": "1"
+  },
+  "1_4_1": {
+    "filename": "/boot/grub2/grub.cfg",
+    "score": "true",
+    "level": "2",
+    "comment": "Ensure SELinux is not disabled in /boot/grub2/grub.cfg",
+    "regexp": ".*selinux=0.*",
+    "match": "false"
+  },
+  "1_4_1b": {
+    "filename": "/boot/grub2/grub.cfg",
+    "score": "true",
+    "level": "2",
+    "comment": "Ensure SELinux is not disabled in /boot/grub2/grub.cfg",
+    "regexp": ".*enforcing=0.*",
+    "match": "false",
+    "LHS": "SELINUX",
+    "value": "enforcing"
+  },
+  "1_4_2": {
+    "filename": "/etc/selinux/config",
+    "score": "true",
+    "level": "2",
+    "comment": "Set the SELinux State",
+    "regexp": "\\s*SELINUX=enforcing\\s*",
+    "match": "true",
+    "LHS": "SELINUX",
+    "value": "enforcing"
+  },
+  "1_4_3": {
+    "filename": "/etc/selinux/config",
+    "score": "true",
+    "level": "2",
+    "comment": "Set the SELinux State",
+    "regexp": "\\s*SELINUXTYPE=targeted\\s*",
+    "match": "true",
+    "LHS": "SELINUXTYPE",
+    "value": "targeted"
+  },
+  "1_6_1": {
+    "filename": "/etc/security/limits.conf",
+    "score": "true",
+    "level": "1",
+    "comment": "Restrict Core Dumps",
+    "regexp": "\\s*[*]+\\s+hard\\s+core\\s+0\\s*",
+    "match": "true",
+    "LHS": ".*[*]+\\s+soft\\s+core\\s+0\\s*",
+    "value": "*\t\t hard\t core\t\t 0"
+  },
+  "1_7": {
+    "filename": "/etc/redhat-release",
+    "score": "false",
+    "level": "1",
+    "comment": "Use the Latest OS Release",
+    "regexp": "\\s*.*\\s*release\\s+7.2\\s*.*",
+    "match": "true"
+  },
+  "3_1": {
+    "filename": "/etc/sysconfig/init",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Daemon umask",
+    "regexp": "\\s*umask\\s+027.*",
+    "match": "true",
+    "LHS": ".*umask\\s*.*",
+    "value": "umask 027"
+  },
+  "3_2a": {
+    "filename": "/etc/systemd/system/default.target",
+    "score": "true",
+    "level": "1",
+    "comment": "Remove the X Window System",
+    "regexp": "graphical.target",
+    "match": "false"
+  },
+  "3_6": {
+    "filename": "/etc/ntp.conf",
+    "score": "true",
+    "level": "1",
+    "comment": "Configure Network Time Protocol (NTP)",
+    "regexp": "\\s*restrict\\s+default\\s+.*",
+    "match": "true",
+    "LHS": "\\s*restrict\\s+default\\s+.*",
+    "value": "restrict default kod nomodify notrap nopeer noquery"
+  },
+  "3_6b": {
+    "filename": "/etc/ntp.conf",
+    "score": "true",
+    "level": "1",
+    "comment": "Configure Network Time Protocol (NTP)",
+    "regexp": "\\s*restrict\\s+-6\\s+default\\s+.*",
+    "match": "true",
+    "LHS": "\\s*restrict\\s+-6\\s+default\\s+.*",
+    "value": "restrict -6 default kod nomodify notrap nopeer noquery"
+  },
+  "3_6c": {
+    "filename": "/etc/ntp.conf",
+    "score": "true",
+    "level": "1",
+    "comment": "Configure Network Time Protocol (NTP)",
+    "regexp": "\\s*server\\s+.*",
+    "match": "true"
+  },
+  "3_6d": {
+    "filename": "/etc/sysconfig/ntpd",
+    "score": "true",
+    "level": "1",
+    "comment": "Configure Network Time Protocol (NTP)",
+    "regexp": "\\s*OPTIONS=.-u\\s+ntp:ntp.\\s*.*",
+    "match": "true",
+    "LHS": "\\s*OPTIONS=.*",
+    "value": "OPTIONS=\\\"-u ntp:ntp -p /var/run/ntpd.pid\\\""
+  },
+  "3_16a": {
+    "filename": "/etc/postfix/main.cf",
+    "score": "true",
+    "level": "1",
+    "comment": "Configure Mail Transfer Agent for Local-Only Mode",
+    "regexp": "\\s*inet_interfaces\\s*=\\s*localhost\\s*",
+    "match": "true",
+    "LHS": "inet_interfaces",
+    "value": "localhost"
+  },
+  "4_5_2": {
+    "filename": "/etc/hosts.allow",
+    "score": "false",
+    "level": "1",
+    "comment": "Create /etc/hosts.allows",
+    "regexp": ".*",
+    "match": "true"
+  },
+  "4_5_4": {
+    "filename": "/etc/hosts.deny",
+    "score": "false",
+    "level": "1",
+    "comment": "Create /etc/hosts.allows",
+    "regexp": ".*",
+    "match": "true"
+  },
+  "4_6_1": {
+    "filename": "/etc/modprobe.d/CIS.conf",
+    "score": "false",
+    "level": "1",
+    "comment": "Disable DCCP",
+    "regexp": "install\\s+dccp\\s+/bin/true\\s*",
+    "match": "true",
+    "LHS": "install\\s+dccp\\s+.*",
+    "value": "install dccp /bin/true"
+  },
+  "4_6_2": {
+    "filename": "/etc/modprobe.d/CIS.conf",
+    "score": "false",
+    "level": "1",
+    "comment": "Disable SCTP",
+    "regexp": "install\\s+sctp\\s+/bin/true\\s*",
+    "match": "true",
+    "LHS": "install\\s+sctp\\s+.*",
+    "value": "install sctp /bin/true"
+  },
+  "4_6_3": {
+    "filename": "/etc/modprobe.d/CIS.conf",
+    "score": "false",
+    "level": "1",
+    "comment": "Disable RDS",
+    "regexp": "install\\s+rds\\s+/bin/true\\s*",
+    "match": "true",
+    "LHS": "install\\s+rds\\s+.*",
+    "value": "install rds /bin/true"
+  },
+  "4_6_4": {
+    "filename": "/etc/modprobe.d/CIS.conf",
+    "score": "false",
+    "level": "1",
+    "comment": "Disable TICP",
+    "regexp": "install\\s+tipc\\s+/bin/true\\s*",
+    "match": "true",
+    "LHS": "install\\s+tipc\\s+.*",
+    "value": "install tipc /bin/true"
+  },
+  "5_1_3a": {
+    "filename": "/etc/rsyslog.conf",
+    "score": "false",
+    "level": "1",
+    "comment": "Configure /etc/rsyslog.conf",
+    "regexp": "auth,user.\\*\\s+/var/log/messages\\s*",
+    "match": "true",
+    "LHS": "auth,user.\\*\\s+.*",
+    "value": "auth,user.* \t\t\t\t/var/log/messages"
+  },
+  "5_1_3b": {
+    "filename": "/etc/rsyslog.conf",
+    "score": "false",
+    "level": "1",
+    "comment": "Configure /etc/rsyslog.conf",
+    "regexp": "kern.\\*\\s+/var/log/kern.log\\s*",
+    "match": "true",
+    "LHS": "kern.\\*\\s+.*",
+    "value": "kern.* \t\t\t\t/var/log/kern.log"
+  },
+  "5_1_3c": {
+    "filename": "/etc/rsyslog.conf",
+    "score": "false",
+    "level": "1",
+    "comment": "Configure /etc/rsyslog.conf",
+    "regexp": "daemon.\\*\\s+/var/log/daemon.log\\s*",
+    "match": "true",
+    "LHS": "daemon.\\*\\s+.*",
+    "value": "daemon.* \t\t\t\t/var/log/daemon.log"
+  },
+  "5_1_3d": {
+    "filename": "/etc/rsyslog.conf",
+    "score": "false",
+    "level": "1",
+    "comment": "Configure /etc/rsyslog.conf",
+    "regexp": "syslog.\\*\\s+/var/log/syslog\\s*",
+    "match": "true",
+    "LHS": "syslog.\\*\\s+.*",
+    "value": "syslog.* \t\t\t\t/var/log/syslog"
+  },
+  "5_1_3e": {
+    "filename": "/etc/rsyslog.conf",
+    "score": "false",
+    "level": "1",
+    "comment": "Configure /etc/rsyslog.conf",
+    "regexp": "lpr,news,uucp,local0,local1,local2,local3,local4,local5,local6.*\\s+/var/log/unused.log\\s*",
+    "match": "true",
+    "LHS": "lpr,news,uucp,local0,local1,local2,local3,local4,local5,local6.*\\s+.*",
+    "value": "lpr,news,uucp,local0,local1,local2,local3,local4,local5,local6.* /var/log/unused.log"
+  },
+  "5_1_5": {
+    "filename": "/etc/rsyslog.conf",
+    "score": "true",
+    "level": "1",
+    "comment": "Configure rsyslog to Send Logs to a Remote Log Hosts",
+    "regexp": "^\\*.\\*\\s*\\@\\@.*",
+    "match": "true"
+  },
+  "5_1_6": {
+    "filename": "/etc/rsyslog.conf",
+    "score": "false",
+    "level": "1",
+    "comment": "Accept Remote rsyslog Messages Only on Designated Log Hosts",
+    "regexp": "$ModLoad\\s+imtcp.so",
+    "match": "false"
+  },
+  "5_1_6b": {
+    "filename": "/etc/rsyslog.conf",
+    "score": "false",
+    "level": "1",
+    "comment": "Accept Remote rsyslog Messages Only on Designated Log Hosts",
+    "regexp": "$InputTCPServerRun\\s+514",
+    "match": "false"
+  },
+  "5_2_1_1": {
+    "filename": "/etc/audit/auditd.conf",
+    "score": "false",
+    "level": "2",
+    "comment": "Configure Audit Log Storage Size",
+    "regexp": "\\s*max_log_file\\s+=\\s+.*\\s*",
+    "match": "true"
+  },
+  "5_2_1_2a": {
+    "filename": "/etc/audit/auditd.conf",
+    "score": "false",
+    "level": "2",
+    "comment": "Disable System on Audit Log Full",
+    "regexp": "\\s*space_left_action\\s+=\\s+email\\s*",
+    "match": "true",
+    "LHS": "space_left_action",
+    "value": "email"
+  },
+  "5_2_1_2b": {
+    "filename": "/etc/audit/auditd.conf",
+    "score": "false",
+    "level": "2",
+    "comment": "Disable System on Audit Log Full",
+    "regexp": "\\s*action_mail_acct\\s+=\\s+root\\s*",
+    "match": "true",
+    "LHS": "action_mail_acct",
+    "value": "root"
+  },
+  "5_2_1_2c": {
+    "filename": "/etc/audit/auditd.conf",
+    "score": "false",
+    "level": "2",
+    "comment": "Disable System on Audit Log Full",
+    "regexp": "\\s*admin_space_left_action\\s+=\\s+halt\\s*",
+    "match": "true",
+    "LHS": "admin_space_left_action",
+    "value": "halt"
+  },
+  "5_2_1_3": {
+    "filename": "/etc/audit/auditd.conf",
+    "score": "true",
+    "level": "2",
+    "comment": "Keep All Auditing Informations",
+    "regexp": "\\s*max_log_file_action\\s+=\\s+keep_logs\\s*",
+    "match": "true",
+    "LHS": "max_log_file_action",
+    "value": "keep_logs"
+  },
+  "5_2_3": {
+    "filename": "/etc/grub2.cfg",
+    "score": "true",
+    "level": "2",
+    "comment": "Enable Auditing for Processes That Start Prior to auditd",
+    "regexp": "^\\s*linux.*\\s+/vmlinuz.*audit=1.*",
+    "match": "true"
+  },
+  "5_2_4a": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Record Events That Modify Date and Time Information",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b64\\s+-S\\s+adjtimex\\s+-S\\s+settimeofday\\s+-k\\s+time-change\\s*",
+    "match": "true"
+  },
+  "5_2_4b": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Record Events That Modify Date and Time Information",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b32\\s+-S\\s+adjtimex\\s+-S\\s+settimeofday\\s+-S\\s+stime\\s+-k\\s+time-change\\s*",
+    "match": "true"
+  },
+  "5_2_4c": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Record Events That Modify Date and Time Information",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b64\\s+-S\\s+clock_settime\\s+-k\\s+time-change\\s*",
+    "match": "true"
+  },
+  "5_2_4d": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Record Events That Modify Date and Time Information",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b32\\s+-S\\s+clock_settime\\s+-k\\s+time-change\\s*",
+    "match": "true"
+  },
+  "5_2_4e": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Record Events That Modify Date and Time Information",
+    "regexp": "^\\s*-w\\s+/etc/localtime\\s+-p\\s+wa\\s+-k\\s+time-change\\s*",
+    "match": "true"
+  },
+  "5_2_5a": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Record Events That Modify User/Group Information",
+    "regexp": "^\\s*-w\\s+/etc/group\\s+-p\\s+wa\\s+-k\\s+identity\\s*",
+    "match": "true"
+  },
+  "5_2_5b": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Record Events That Modify User/Group Information",
+    "regexp": "^\\s*-w\\s+/etc/passwd\\s+-p\\s+wa\\s+-k\\s+identity\\s*",
+    "match": "true"
+  },
+  "5_2_5c": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Record Events That Modify User/Group Information",
+    "regexp": "^\\s*-w\\s+/etc/gshadow\\s+-p\\s+wa\\s+-k\\s+identity\\s*",
+    "match": "true"
+  },
+  "5_2_5d": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Record Events That Modify User/Group Information",
+    "regexp": "^\\s*-w\\s+/etc/shadow\\s+-p\\s+wa\\s+-k\\s+identity\\s*",
+    "match": "true"
+  },
+  "5_2_5e": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Record Events That Modify User/Group Information",
+    "regexp": "^\\s*-w\\s+/etc/security/opasswd\\s+-p\\s+wa\\s+-k\\s+identity\\s*",
+    "match": "true"
+  },
+  "5_2_6a": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Record Events That Modify the System's Network Environment",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b64\\s+-S\\s+sethostname\\s+-S\\s+setdomainname\\s+-k\\s+system-locale\\s*",
+    "match": "true"
+  },
+  "5_2_6b": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Record Events That Modify the System's Network Environment",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b32\\s+-S\\s+sethostname\\s+-S\\s+setdomainname\\s+-k\\s+system-locale\\s*",
+    "match": "true"
+  },
+  "5_2_6c": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Record Events That Modify the System's Network Environment",
+    "regexp": "^\\s*-w\\s+/etc/issue\\s+-p\\s+wa\\s+-k\\s+system-locale\\s*",
+    "match": "true"
+  },
+  "5_2_6d": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Record Events That Modify the System's Network Environment",
+    "regexp": "^\\s*-w\\s+/etc/issue.net\\s+-p\\s+wa\\s+-k\\s+system-locale\\s*",
+    "match": "true"
+  },
+  "5_2_6e": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Record Events That Modify the System's Network Environment",
+    "regexp": "^\\s*-w\\s+/etc/hosts\\s+-p\\s+wa\\s+-k\\s+system-locale\\s*",
+    "match": "true"
+  },
+  "5_2_6f": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Record Events That Modify the System's Network Environment",
+    "regexp": "^\\s*-w\\s+/etc/sysconfig/network\\s+-p\\s+wa\\s+-k\\s+system-locale\\s*",
+    "match": "true"
+  },
+  "5_2_7": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Record Events That Modify the System's Mandatory Access Controls",
+    "regexp": "^\\s*-w\\s+/etc/selinux/\\s+-p\\s+wa\\s+-k\\s+MAC-policy\\s*",
+    "match": "true"
+  },
+  "5_2_8a": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Login and Logout Events",
+    "regexp": "^\\s*-w\\s+/var/log/faillog\\s+-p\\s+wa\\s+-k\\s+logins\\s*",
+    "match": "true"
+  },
+  "5_2_8b": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Login and Logout Events",
+    "regexp": "^\\s*-w\\s+/var/log/lastlog\\s+-p\\s+wa\\s+-k\\s+logins\\s*",
+    "match": "true"
+  },
+  "5_2_8c": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Login and Logout Events",
+    "regexp": "^\\s*-w\\s+/var/log/tallylog\\s+-p\\s+wa\\s+-k\\s+logins\\s*",
+    "match": "true"
+  },
+  "5_2_9a": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Session Initiation Information",
+    "regexp": "^\\s*-w\\s+/var/run/utmp\\s+-p\\s+wa\\s+-k\\s+session\\s*",
+    "match": "true"
+  },
+  "5_2_9b": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Session Initiation Information",
+    "regexp": "^\\s*-w\\s+/var/log/wtmp\\s+-p\\s+wa\\s+-k\\s+session\\s*",
+    "match": "true"
+  }, 
+  "5_2_9c": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Session Initiation Information",
+    "regexp": "^\\s*-w\\s+/var/log/btmp\\s+-p\\s+wa\\s+-k\\s+session\\s*",
+    "match": "true"
+  }, 
+  "5_2_10a": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Discretionary Access Control Permission Modification Events",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b64\\s+-S\\s+chmod\\s+-S\\s+fchmod\\s+-S\\s+fchmodat\\s+-F\\s+auid>=1000\\s+-F\\s+auid\\!=4294967295\\s+-k\\s+perm_mod\\s*",
+    "match": "true"
+  }, 
+  "5_2_10b": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Discretionary Access Control Permission Modification Events",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b32\\s+-S\\s+chmod\\s+-S\\s+fchmod\\s+-S\\s+fchmodat\\s+-F\\s+auid>=1000\\s+-F\\s+auid\\!=4294967295\\s+-k\\s+perm_mod\\s*",
+    "match": "true"
+  }, 
+  "5_2_10c": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Discretionary Access Control Permission Modification Events",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b64\\s+-S\\s+chown\\s+-S\\s+fchown\\s+-S\\s+fchownat\\s+-S\\s+lchown\\s+-F\\s+auid>=1000\\s+-F\\s+auid\\!=4294967295\\s+-k\\s+perm_mod\\s*",
+    "match": "true"
+  }, 
+  "5_2_10d": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Discretionary Access Control Permission Modification Events",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b32\\s+-S\\s+chown\\s+-S\\s+fchown\\s+-S\\s+fchownat\\s+-S\\s+lchown\\s+-F\\s+auid>=1000\\s+-F\\s+auid\\!=4294967295\\s+-k\\s+perm_mod\\s*",
+    "match": "true"
+  }, 
+  "5_2_10e": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Discretionary Access Control Permission Modification Events",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b64\\s+-S\\s+setxattr\\s+-S\\s+lsetxattr\\s+-S\\s+fsetxattr\\s+-S\\s+removexattr\\s+-S\\s+lremovexattr\\s+-S\\s+fremovexattr\\s+-F\\s+auid>=1000\\s+-F\\s+auid\\!=4294967295\\s+-k\\s+perm_mod\\s*",
+    "match": "true"
+  }, 
+  "5_2_10f": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Discretionary Access Control Permission Modification Events",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b32\\s+-S\\s+setxattr\\s+-S\\s+lsetxattr\\s+-S\\s+fsetxattr\\s+-S\\s+removexattr\\s+-S\\s+lremovexattr\\s+-S\\s+fremovexattr\\s+-F\\s+auid>=1000\\s+-F\\s+auid\\!=4294967295\\s+-k\\s+perm_mod\\s*",
+    "match": "true"
+  }, 
+  "5_2_11a": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Unsuccessful Unauthorized Access Attempts to Files",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b64\\s+-S\\s+creat\\s+-S\\s+open\\s+-S\\s+openat\\s+-S\\s+truncate\\s+-S\\s+ftruncate\\s+-F\\s+exit=-EACCES\\s+-F\\s+auid>=1000\\s+-F\\s+auid\\!=4294967295\\s+-k\\s+access\\s*",
+    "match": "true"
+  }, 
+  "5_2_11b": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Unsuccessful Unauthorized Access Attempts to Files",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b32\\s+-S\\s+creat\\s+-S\\s+open\\s+-S\\s+openat\\s+-S\\s+truncate\\s+-S\\s+ftruncate\\s+-F\\s+exit=-EACCES\\s+-F\\s+auid>=1000\\s+-F\\s+auid\\!=4294967295\\s+-k\\s+access\\s*",
+    "match": "true"
+  }, 
+  "5_2_11c": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Unsuccessful Unauthorized Access Attempts to Files",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b64\\s+-S\\s+creat\\s+-S\\s+open\\s+-S\\s+openat\\s+-S\\s+truncate\\s+-S\\s+ftruncate\\s+-F\\s+exit=-EPERM\\s+-F\\s+auid>=1000\\s+-F\\s+auid\\!=4294967295\\s+-k\\s+access\\s*",
+    "match": "true"
+  }, 
+  "5_2_11d": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Unsuccessful Unauthorized Access Attempts to Files",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b32\\s+-S\\s+creat\\s+-S\\s+open\\s+-S\\s+openat\\s+-S\\s+truncate\\s+-S\\s+ftruncate\\s+-F\\s+exit=-EPERM\\s+-F\\s+auid>=1000\\s+-F\\s+auid\\!=4294967295\\s+-k\\s+access\\s*",
+    "match": "true"
+  }, 
+  "5_2_12a": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Use of Privileged Commands",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+path=/usr/bin/passwd\\s+-F\\s+perm=x\\s+-F\\s+auid>=1000\\s+-F\\s+auid\\!=4294967295\\s+-k\\s+privileged\\s*",
+    "match": "true"
+  }, 
+  "5_2_12b": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Use of Privileged Commands",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+path=/usr/bin/sudo\\s+-F\\s+perm=x\\s+-F\\s+auid>=1000\\s+-F\\s+auid\\!=4294967295\\s+-k\\s+privileged\\s*",
+    "match": "true"
+  }, 
+  "5_2_12c": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Use of Privileged Commands",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+path=/usr/bin/pkexec\\s+-F\\s+perm=x\\s+-F\\s+auid>=1000\\s+-F\\s+auid\\!=4294967295\\s+-k\\s+privileged\\s*",
+    "match": "true"
+  }, 
+  "5_2_13a": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Successful File System Mounts",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b64\\s+-S\\s+mount\\s+-F\\s+auid>=1000\\s+-F\\s+auid\\!=4294967295\\s+-k\\s+mounts\\s*",
+    "match": "true"
+  }, 
+  "5_2_13b": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Successful File System Mounts",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b32\\s+-S\\s+mount\\s+-F\\s+auid>=1000\\s+-F\\s+auid\\!=4294967295\\s+-k\\s+mounts\\s*",
+    "match": "true"
+  }, 
+  "5_2_14a": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect File Deletion Events by User",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b64\\s+-S\\s+unlink\\s+-S\\s+unlinkat\\s+-S\\s+rename\\s+-S\\s+renameat\\s+-F\\s+auid>=1000\\s+-F\\s+auid\\!=4294967295\\s+-k\\s+delete\\s*",
+    "match": "true"
+  }, 
+  "5_2_14b": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect File Deletion Events by User",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b32\\s+-S\\s+unlink\\s+-S\\s+unlinkat\\s+-S\\s+rename\\s+-S\\s+renameat\\s+-F\\s+auid>=1000\\s+-F\\s+auid\\!=4294967295\\s+-k\\s+delete\\s*",
+    "match": "true"
+  }, 
+  "5_2_15": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Changes to System Administration Scope (sudoers)",
+    "regexp": "^\\s*-w\\s+/etc/sudoers\\s+-p\\s+wa\\s+-k\\s+scope\\s*",
+    "match": "true"
+  }, 
+  "5_2_16": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect System Administrator Actions (sudolog)",
+    "regexp": "^\\s*-w\\s+/var/log/sudo.log\\s+-p\\s+wa\\s+-k\\s+actions\\s*",
+    "match": "true"
+  }, 
+  "5_2_17a": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Kernel Module Loading and Unloading",
+    "regexp": "^\\s*-w\\s+/sbin/insmod\\s+-p\\s+x\\s+-k\\s+modules\\s*",
+    "match": "true"
+  }, 
+  "5_2_17b": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Kernel Module Loading and Unloading",
+    "regexp": "^\\s*-w\\s+/sbin/rmmod\\s+-p\\s+x\\s+-k\\s+modules\\s*",
+    "match": "true"
+  }, 
+  "5_2_17c": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Kernel Module Loading and Unloading",
+    "regexp": "^\\s*-w\\s+/sbin/modprobe\\s+-p\\s+x\\s+-k\\s+modules\\s*",
+    "match": "true"
+  }, 
+  "5_2_17d": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Collect Kernel Module Loading and Unloading",
+    "regexp": "^\\s*-a\\s+(exit,always|always,exit)\\s+-F\\s+arch=b64\\s+-S\\s+init_module\\s+-S\\s+delete_module\\s+-k\\s+modules\\s*",
+    "match": "true"
+  }, 
+  "5_2_18": {
+    "filename": "/etc/audit/audit.rules",
+    "score": "true",
+    "level": "2",
+    "comment": "Make the Audit Configuration Immutable",
+    "regexp": "^\\-e\\s+2\\s*",
+    "match": "true"
+  },
+  "5_3a": {
+    "filename": "/etc/logrotate.d/syslog",
+    "score": "false",
+    "level": "1",
+    "comment": "Configure logrotate",
+    "regexp": "\\s*/var/log/messages\\s*",
+    "match": "true"
+  },
+  "5_3b": {
+    "filename": "/etc/logrotate.d/syslog",
+    "score": "false",
+    "level": "1",
+    "comment": "Configure logrotate",
+    "regexp": "\\s*/var/log/secure\\s*",
+    "match": "true"
+  },
+  "5_3c": {
+    "filename": "/etc/logrotate.d/syslog",
+    "score": "false",
+    "level": "1",
+    "comment": "Configure logrotate",
+    "regexp": "\\s*/var/log/maillog\\s*",
+    "match": "true"
+  },
+  "5_3d": {
+    "filename": "/etc/logrotate.d/syslog",
+    "score": "false",
+    "level": "1",
+    "comment": "Configure logrotate",
+    "regexp": "\\s*/var/log/spooler\\s*",
+    "match": "true"
+  },
+  "5_3e": {
+    "filename": "/etc/logrotate.d/syslog",
+    "score": "false",
+    "level": "1",
+    "comment": "Configure logrotate",
+    "regexp": "\\s*/var/log/boot.log\\s*",
+    "match": "true"
+  },
+  "5_3f": {
+    "filename": "/etc/logrotate.d/syslog",
+    "score": "false",
+    "level": "1",
+    "comment": "Configure logrotate",
+    "regexp": "\\s*/var/log/cron\\s*",
+    "match": "true"
+  },
+  "6_2_1": {
+    "filename": "/etc/ssh/sshd_config",
+    "score": "true",
+    "level": "1",
+    "comment": "Set SSH Protocol to 2",
+    "regexp": "(?!\\s*#.*$)\\s*(?i)Protocol(?-i)\\s+2\\s*",
+    "match": "true",
+    "LHS": "Protocol",
+    "value": "2"
+  },
+  "6_2_2": {
+    "filename": "/etc/ssh/sshd_config",
+    "score": "true",
+    "level": "1",
+    "comment": "Set LogLevel to INFO",
+    "regexp": "(?!\\s*#.*$)\\s*(?i)LogLevel(?-i)\\s+INFO\\s*",
+    "match": "true",
+    "LHS": "LogLevel",
+    "value": "INFO"
+  },
+  "6_2_4": {
+    "filename": "/etc/ssh/sshd_config",
+    "score": "true",
+    "level": "1",
+    "comment": "Disable SSH X11 Forwarding",
+    "regexp": "(?!\\s*#.*$)\\s*(?i)X11Forwarding(?-i)\\s+no\\s*",
+    "match": "true",
+    "LHS": "X11Forwarding",
+    "value": "no"
+  },
+  "6_2_5": {
+    "filename": "/etc/ssh/sshd_config",
+    "score": "true",
+    "level": "1",
+    "comment": "Set SSH MaxAuthTries to 4 or Less",
+    "regexp": "(?!\\s*#.*$)\\s*(?i)MaxAuthTries(?-i)\\s+(1|2|3|4)\\s*",
+    "match": "true",
+    "LHS": "MaxAuthTries",
+    "value": "4"
+  },
+  "6_2_6": {
+    "filename": "/etc/ssh/sshd_config",
+    "score": "true",
+    "level": "1",
+    "comment": "Set SSH IgnoreRhosts to Yes",
+    "regexp": "(?!\\s*#.*$)\\s*(?i)IgnoreRhosts(?-i)\\s+yes\\s*",
+    "match": "true",
+    "LHS": "IgnoreRhosts",
+    "value": "yes"
+  },
+  "6_2_7": {
+    "filename": "/etc/ssh/sshd_config",
+    "score": "true",
+    "level": "1",
+    "comment": "Set SSH HostbasedAuthentication to No",
+    "regexp": "(?!\\s*#.*$)\\s*(?i)HostbasedAuthentication(?-i)\\s+yes\\s*",
+    "match": "false",
+    "LHS": "HostbasedAuthentication",
+    "value": "no"
+  },
+  "6_2_8": {
+    "filename": "/etc/ssh/sshd_config",
+    "score": "true",
+    "level": "1",
+    "comment": "Disable SSH Root Login",
+    "regexp": "(?!\\s*#.*$)\\s*(?i)PermitRootLogin(?-i)\\s+no\\s*",
+    "match": "true",
+    "LHS": "PermitRootLogin",
+    "value": "no"
+  },
+  "6_2_8_VW": {
+    "filename": "/etc/ssh/sshd_config",
+    "score": "true",
+    "level": "1",
+    "comment": "Disable SSH Root Login",
+    "regexp": "(?!\\s*#.*$)\\s*(?i)PermitRootLogin(?-i)\\s+without-password\\s*",
+    "match": "true"
+  },
+  "6_2_9": {
+    "filename": "/etc/ssh/sshd_config",
+    "score": "true",
+    "level": "1",
+    "comment": "Set SSH PermitEmptyPasswords to no",
+    "regexp": "(?!\\s*#.*$)\\s*(?i)PermitEmptyPasswords(?-i)\\s+no\\s*",
+    "match": "true",
+    "LHS": "PermitEmptyPasswords",
+    "value": "no"
+  },
+  "6_2_10": {
+    "filename": "/etc/ssh/sshd_config",
+    "score": "true",
+    "level": "1",
+    "comment": "Do Not Allow Users to Set Environment Options",
+    "regexp": "(?!\\s*#.*$)\\s*(?i)PermitUserEnvironment(?-i)\\s*no\\s*",
+    "match": "true",
+    "LHS": "PermitUserEnvironment",
+    "value": "no"
+  },
+  "6_2_11": {
+    "filename": "/etc/ssh/sshd_config",
+    "score": "true",
+    "level": "1",
+    "comment": "Use Only Approved Cipher in Counter Mode",
+    "regexp": "(?!\\s*#.*$)\\s*(?i)Ciphers(?-i)\\s+(aes128-ctr,aes192-ctr,aes256-ctr)\\s*",
+    "match": "true",
+    "LHS": "Ciphers",
+    "value": "aes128-ctr,aes192-ctr,aes256-ctr"
+  },
+  "6_2_12a": {
+    "filename": "/etc/ssh/sshd_config",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Idle Timeout Interval for User Login",
+    "regexp": "(?!\\s*#.*$)\\s*(?i)ClientAliveInterval(?-i)\\s+(300)\\s*",
+    "match": "true",
+    "LHS": "ClientAliveInterval",
+    "value": "300"
+  },
+  "6_2_12b": {
+    "filename": "/etc/ssh/sshd_config",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Idle Timeout Interval for User Login",
+    "regexp": "(?!\\s*#.*$)\\s*(?i)ClientAliveCountMax(?-i)\\s+(0)\\s*",
+    "match": "true",
+    "LHS": "ClientAliveCountMax",
+    "value": "0"
+  },
+  "6_2_14": {
+    "filename": "/etc/ssh/sshd_config",
+    "score": "true",
+    "level": "1",
+    "comment": "Set SSH Banner",
+    "regexp": "(?!\\s*#.*$)\\s*(?i)Banner(?-i)\\s*(?!\\s*none.*).*",
+    "match": "true"
+  },
+  "6_3_2": {
+    "filename": "/etc/security/pwquality.conf",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Password Creation Requirement Parameters Using pam_pwquality",
+    "regexp": "minlen=14",
+    "match": "true",
+    "LHS": "minlen",
+    "value": "14"
+  },
+  "6_3_2b": {
+    "filename": "/etc/security/pwquality.conf",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Password Creation Requirement Parameters Using pam_pwquality",
+    "regexp": "dcredit=-1",
+    "match": "true",
+    "LHS": "dcredit",
+    "value": "-1"
+  },
+  "6_3_2c": {
+    "filename": "/etc/security/pwquality.conf",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Password Creation Requirement Parameters Using pam_pwquality",
+    "regexp": "ucredit=-1",
+    "match": "true",
+    "LHS": "ucredit",
+    "value": "-1"
+  },
+  "6_3_2d": {
+    "filename": "/etc/security/pwquality.conf",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Password Creation Requirement Parameters Using pam_pwquality",
+    "regexp": "ocredit=-1",
+    "match": "true",
+    "LHS": "ocredit",
+    "value": "-1"
+  },
+  "6_3_2e": {
+    "filename": "/etc/security/pwquality.conf",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Password Creation Requirement Parameters Using pam_pwquality",
+    "regexp": "lcredit=-1",
+    "match": "true",
+    "LHS": "lcredit",
+    "value": "-1"
+  },
+  "6_3_2f": {
+    "filename": "/etc/pam.d/system-auth",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Password Creation Requirement Parameters Using pam_pwquality",
+    "regexp": "password\\s+requisite\\s+pam_pwquality.so\\s+try_first_pass\\s+local_users_only\\s+retry=3\\s+authtok_type=\\s*",
+    "match": "true"
+  },
+
+  "6_3_4": {
+    "filename": "/etc/pam.d/system-auth",
+    "score": "true",
+    "level": "1",
+    "comment": "Limit Password Reuse",
+    "regexp": "(?!\\s*#.*$)\\s*password\\s+sufficient\\s+.*(remember=5)\\s*.*",
+    "match": "true",
+    "LHS": ".*password\\s+sufficient\\s+remember=.*",
+    "value": "password sufficient remember=5"
+  },
+  "6_4": {
+    "filename": "/etc/securetty",
+    "score": "true",
+    "level": "1",
+    "comment": "Restrict root Login to System Console",
+    "regexp": "(?!\\s*#.*$)(console)",
+    "match": "true"
+  },
+  "6_5": {
+    "filename": "/etc/pam.d/su",
+    "score": "true",
+    "level": "1",
+    "comment": "Restrict Access to the su Command",
+    "regexp": "(?!\\s*#.*$)\\s*(auth\\s+required\\s+pam_wheel.so\\s+use_uid)\\s*",
+    "match": "true"
+  },
+  "7_1_1": {
+    "filename": "/etc/login.defs",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Password Expiration Days",
+    "regexp": "(?!\\s*#.*$)\\s*(PASS_MAX_DAYS\\s+90)\\s*",
+    "match": "true",
+    "LHS": "PASS_MAX_DAYS",
+    "value": "90"
+  },
+  "7_1_2": {
+    "filename": "/etc/login.defs",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Password Change Minimum Number of Days",
+    "regexp": "(?!\\s*#.*$)\\s*(PASS_MIN_DAYS\\s+7)\\s*",
+    "match": "true",
+    "LHS": "PASS_MIN_DAYS",
+    "value": "7"
+  },
+  "7_1_3": {
+    "filename": "/etc/login.defs",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Password Expiring Warning Days",
+    "regexp": "(?!\\s*#.*$)\\s*(PASS_WARN_AGE\\s+7)\\s*",
+    "match": "true",
+    "LHS": "PASS_WARN_AGE",
+    "value": "7"
+  },
+  "7_3": {
+    "filename": "/etc/passwd",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Default Group for root Account",
+    "regexp": "(?!\\s*#.*$)(root\\:x\\:0\\:0).*\\s*",
+    "match": "true"
+  },
+  "7_4a": {
+    "filename": "/etc/bashrc",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Default umask for Users",
+    "regexp": "(?!\\s*#.*$)\\s*(umask\\s+077)\\s*",
+    "match": "true",
+    "LHS": "\\s*umask\\s+.*",
+    "value": "\\t\\tumask 077"
+  },
+  "7_4b": {
+    "filename": "/etc/profile",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Default umask for Users",
+    "regexp": "(?!\\s*#.*$)\\s*(umask\\s+077)\\s*",
+    "match": "true",
+    "LHS": "\\s*umask\\s+.*",
+    "value": "\\t\\tumask 077"
+  },
+  "8_2a": {
+    "filename": "/etc/issue",
+    "score": "true",
+    "level": "1",
+    "comment": "Remove OS Information from Login Warning Banners",
+    "regexp": "\\s*.*(\\\\m| \\\\r| \\\\s| \\\\v)\\s*.*",
+    "match": "false"
+  },
+  "8_2b": {
+    "filename": "/etc/motd",
+    "score": "true",
+    "level": "1",
+    "comment": "Remove OS Information from Login Warning Banners",
+    "regexp": "\\s*.*(\\\\m| \\\\r| \\\\s| \\\\v)\\s*",
+    "match": "false"
+  },
+  "8_2c": {
+    "filename": "/etc/issue.net",
+    "score": "true",
+    "level": "1",
+    "comment": "Remove OS Information from Login Warning Banners",
+    "regexp": "\\s*.*(\\\\m| \\\\r| \\\\s| \\\\v)\\s*",
+    "match": "false"
+  },
+  "8_3a": {
+    "filename": "/etc/dconf/db/gdm.d/01-banner-message",
+    "score": "false",
+    "level": "1",
+    "comment": "Set GNOME Warning Banner",
+    "regexp": "(?!\\s*#.*$)(banner-message-enable=true)\\s*",
+    "match": "true",
+    "failedifnofile": "false"
+  },
+  "8_3b": {
+    "filename": "/etc/dconf/db/gdm.d/01-banner-message",
+    "score": "false",
+    "level": "1",
+    "comment": "Set GNOME Warning Banner",
+    "regexp": "(?!\\s*#.*$)(banner-message-text=\\'.*\\')\\s*",
+    "match": "true",
+    "failedifnofile": "false"
+  },
+  "9_2_1": {
+    "filename": "/etc/shadow",
+    "score": "true",
+    "level": "1",
+    "comment": "Ensure Password Fields are Not Empty",
+    "regexp": "[^:]::.*",
+    "match": "false"
+  },
+  "9_2_2": {
+    "filename": "/etc/passwd",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify No Legacy \"+\" Entries Exist in /etc/passwd File",
+    "regexp": "\\+:.*",
+    "match": "false"
+  },
+  "9_2_3": {
+    "filename": "/etc/shadow",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify No Legacy \"+\" Entries Exist in /etc/shadow File",
+    "regexp": "\\+:.*",
+    "match": "false"
+  },
+  "9_2_4": {
+    "filename": "/etc/group",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify No Legacy \"+\" Entries Exist in /etc/group File",
+    "regexp": "\\+:.*",
+    "match": "false"
+  }
+}
