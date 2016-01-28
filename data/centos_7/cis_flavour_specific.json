@@ -1,15 +1,9 @@
 {
   "1_2_1": {
-    "comment": "Configure Connection to the RHN RPM Repositories",
-    "score": "false",
-    "level": "1",
-    "bundle": "redhat_repo_enabled"
-  },
-  "1_2_2": {
-    "comment": "Verify Red Hat GPG Key is Installed",
+    "comment": "Verify CentOS GPG Key is Installed",
     "score": "true",
     "level": "1",
-    "bundle": "redhat_gpg_key"
+    "bundle": "centos_gpg_key"
   },
   "6_3_1": {
     "comment": "Upgrade Password Hashing Algorithm to SHA-512",
