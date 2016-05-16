@@ -1,0 +1,15 @@
+{
+  "1_2_1": {
+    "comment": "Verify CentOS GPG Key is Installed",
+    "score": "true",
+    "level": "1",
+    "bundle": "centos_gpg_key"
+  },
+  "6_3_1": {
+    "comment": "Upgrade Password Hashing Algorithm to SHA-512",
+    "score": "true",
+    "level": "1",
+    "bundle": "password_hash_sha512"
+  }
+}
+

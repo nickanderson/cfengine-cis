@@ -2,7 +2,7 @@ bundle agent cis_input
 #@
 #@ Collect all input files for CIS compliance
 #@
-#@ Note: if placed in ../inputs/services/autorun/, this 
+#@ Note: if placed in ../inputs/services/autorun/, this
 #@ bundle and its variables are available for calling in
 #@ promises.cf without any adjustments (even without a
 #@ tag given here)
@@ -16,7 +16,24 @@ vars:
    "bdir"                 string => "$(this.promise_dirname)/../CIS/";
 
    # collect components
-   "general"          slist  => lsdir("$(bdir)",".*\.cf","true");
+   #"general"          slist  => lsdir("$(bdir)",".*\.cf","true");
+
+      "general" slist => {
+                           "$(bdir)/cis_stdlib.cf",
+                           "$(bdir)/cis_wrapper.cf",
+                           "$(bdir)/cis_configure.cf",
+
+                           "$(bdir)/cis_filepermissions.cf",
+                           "$(bdir)/cis_file_regexp.cf",
+
+                           "$(bdir)/cis_command_output.cf",
+                           "$(bdir)/cis_packages.cf",
+                           # "$(bdir)/cis_services.cf",
+                           "$(bdir)/cis_kernelvalues.cf", # depends_on cis_enforce_file_content.cf
+                           "$(bdir)/cis_enforce_file_content.cf",
+
+      };
+
    "flavour"          slist  => lsdir("$(bdir)/$(sys.flavour)/",".*\.cf","true"),
                       ifvarclass => isdir("$(bdir)/$(sys.flavour)/");
    "flavour"          slist  => { },

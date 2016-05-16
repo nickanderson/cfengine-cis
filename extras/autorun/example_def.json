@@ -1,0 +1,18 @@
+{
+  "classes": {
+    "services_autorun": [ "any" ],
+    "DEBUG_cis_command_output": [ "!any" ],
+    "DEBUG_cis_command": [ "!any" ],
+    "DEBUG_CIS_set_inventory_class": [ "!any" ],
+    "DEBUG_CIS_package_installed": [ "!any" ],
+    "DEBUG_cis_filepermissions": [ "!any" ],
+    "CIS_summary": [ "any" ]
+  },
+
+  "vars": {
+    "CIS_enforce": [ "1_1_1_1_a" ],
+    "CIS_cache": "false",
+    "CIS_interval": "60",
+    "CIS_grace": "120"
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "2.1.1.a": {
+    "comment": "Disable chargen-dgram",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "chargen-dgram"
+  },
+  "2.1.1.b": {
+    "comment": "Disable chargen-stream",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "chargen-stream"
+  },
+  "2.1.2.a": {
+    "comment": "Disable daytime-dgram",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "daytime-dgram"
+  },
+  "2.1.2.b": {
+    "comment": "Disable daytime-stream",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "daytime-stream"
+  },
+  "2.1.4.a": {
+    "comment": "Disable echo-dgram",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "echo-dgram"
+  },
+  "2.1.4.b": {
+    "comment": "Disable echo-stream",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "echo-stream"
+  },
+
+  "2.2.3": {
+    "comment": "Disable Avahi Server",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "avahi-daemon"
+  },
+  "2.2.4": {
+    "comment": "Disable Print Server - CUPS",
+    "score": "false",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "cups"
+  },
+  "2.2.5": {
+    "comment": "Ensure DHCP Server is not enabled",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "dhcp"
+  },
+  "2.2.7.a": {
+    "comment": "Disable NFS and RPC",
+    "score": "false",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "nfslock"
+  },
+
+  "2.2.7.b": {
+    "comment": "Disable NFS and RPC",
+    "score": "false",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "rpcbind"
+  },
+
+  "4.2.1.1": {
+    "comment": "Ensure rsyslog service is enabled",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "true",
+    "service": "rsyslog"
+  },
+  "4.1.2": {
+    "comment": "Ensure auditd service is enabled",
+    "score": "true",
+    "level": "2",
+    "supposed_running": "true",
+    "service": "auditd"
+  },
+  "5.1.1": {
+    "comment": "Ensure cron daemon is enabled",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "true",
+    "service": "crond"
+  }
+}

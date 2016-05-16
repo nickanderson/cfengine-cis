@@ -1,4 +1,4 @@
-bundle agent cis_filepermission
+bundle agent cis_filepermissions
 #@
 #@
 #@
@@ -13,26 +13,32 @@ meta:
                     },
       ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
 
-vars:
-   "infile"   string => "$(this.promise_dirname)/data/$(sys.flavour)/(this.bundle).json";
-   "interval" string => "60";
+  vars:
+      "infile"   string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
+
+  classes:
+      "infile_exists"     expression => fileexists("$(infile)");
+
+      # general debugging class specific for a bundle, should work with 3.6 & 3.7
+      "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
+
+  vars:
+
+   "interval" string => "$(cis_configure.interval)";
 
    infile_exists::
       # read input
-      "cis_permissions" data => readdata("$(infile)","auto");
+      "cis_permissions" data => readdata( $(infile), "auto");
 
-      # get all paragraphs covered, and give it a meta tag to collect all paragraphs covered by general methods
-      "paragraphs"       slist => getindices("cis_permissions"),
-                         meta  => { "CIS" , "CISSECTIONS" };
+      # get all paragraphs covered, and give it a meta tag to collect all
+      # paragraphs covered by general methods
+      "paragraphs"
+        slist => getindices("cis_permissions"),
+        meta  => { "CIS" , "CISSECTIONS" };
 
    DEBUG_THIS_BUNDLE::
       "CISFOUND"  slist  => classesmatching("CIS_finding_.*", "defined_from=$(this.bundle)" );
-
-classes:
-   "infile_exists"     expression => fileexists("$(infile)");
-
-   # general debugging class specific for a bundle, should work with 3.6 & 3.7
-   "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
+      "s_paragraphs" string => join(", ", paragraphs);
 
 
 methods:
@@ -53,7 +59,8 @@ methods:
 
 reports:
    DEBUG_THIS_BUNDLE::
-      "DEBUG $(this.bundle): paragraphs $(paragraphs)";
+      "DEBUG $(this.bundle): Data = '$(infile)'";
+      "DEBUG $(this.bundle): Covers '$(s_paragraphs)'";
       "DEBUG $(this.bundle): CISFOUND $(CISFOUND)";
       "DEBUG $(this.bundle): CISENFORCE_$(paragraphs) is set"
         ifvarclass => classmatch("CISENFORCE_$(paragraphs)");

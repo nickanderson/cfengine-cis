@@ -1,0 +1,146 @@
+{
+
+  "1.1.2": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "2",
+    "comment": "Separate Partition for /tmp",
+    "regexp": ".*\\s+/tmp\\s+.*",
+    "match": "true"
+  },
+
+  "1.1.3": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "1",
+    "comment": "Ensure nodev option set on /tmp partition",
+    "regexp": ".*\\s+/tmp\\s+.*nodev.*",
+    "match": "true"
+  },
+
+  "1.1.4": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "1",
+    "comment": "Ensure nosuid option set on /tmp partition",
+    "regexp": ".*\\s+/tmp\\s+.*nosuid.*",
+    "match": "true"
+  },
+
+  "1.1.5": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "1",
+    "comment": "Set noexec option for /tmp Partition",
+    "regexp": ".*\\s+/tmp\\s+.*noexec.*",
+    "match": "true"
+  },
+
+  "1.1.6": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "2",
+    "comment": "Create Separate Partition for /var",
+    "regexp": ".*\\s+/var\\s+.*",
+    "match": "true"
+  },
+
+  "1.1.7": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "2",
+    "comment": "Separate Partition for /var/tmp",
+    "regexp": ".*\\s+/var/tmp\\s+.*",
+    "match": "true"
+  },
+
+  "1.1.8": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "1",
+    "comment": "Ensure nodev option set on /var/tmp partition",
+    "regexp": ".*\\s+/var/tmp\\s+.*nodev.*",
+    "match": "true"
+  },
+
+  "1.1.9": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "1",
+    "comment": "Ensure nosuid option set on /var/tmp partition",
+    "regexp": ".*\\s+/var/tmp\\s+.*nosuid.*",
+    "match": "true"
+  },
+
+  "1.1.10": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "1",
+    "comment": "Ensure noexec option set on /var/tmp partition",
+    "regexp": ".*\\s+/var/tmp\\s+.*noexec.*",
+    "match": "true"
+  },
+
+  "1.1.11": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "2",
+    "comment": "Separate partition for /var/log",
+    "regexp": ".*\\s+/var/log\\s+.*",
+    "match": "true"
+  },
+
+  "1.1.12": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "2",
+    "comment": "Separate partition for /var/log/audit",
+    "regexp": ".*\\s+/var/log/audit\\s+.*",
+    "match": "true"
+  },
+
+  "1.1.13": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "2",
+    "comment": "Separate partition for /home",
+    "regexp": ".*\\s+/home\\s+.*",
+    "match": "true"
+  },
+
+  "1.1.14": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "1",
+    "comment": "Ensure nodev option set on /home",
+    "regexp": ".*\\s+/home\\s+.*nodev.*",
+    "match": "true"
+  },
+
+  "1.1.15": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "1",
+    "comment": "Add nodev Option to /dev/shm Partition",
+    "regexp": ".*\\s+/dev/shm\\s+.*nodev.*",
+    "match": "true"
+  },
+
+  "1.1.16": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "1",
+    "comment": "Add nosuid Option to /dev/shm Partition",
+    "regexp": ".*\\s+/dev/shm\\s+.*nosuid.*",
+    "match": "true"
+  },
+
+  "1.1.17": {
+    "filename": "/proc/mounts",
+    "score": "true",
+    "level": "1",
+    "comment": "Add noexec Option to /dev/shm Partition",
+    "regexp": ".*\\s+/dev/shm\\s+.*noexec.*",
+    "match": "true"
+  }
+}

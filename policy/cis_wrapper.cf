@@ -85,7 +85,7 @@ bundle agent cis_wrapper_summary
 {
   classes:
       # general debugging class specific for a bundle, should work with 3.6 & 3.7
-      "DEBUG_THIS_BUNDLE"  or => { "DEBUG", "DEBUG_$(this.bundle)" };
+      "DEBUG_THIS_BUNDLE"  or => { "CIS_summary", "DEBUG", "DEBUG_$(this.bundle)" };
 
   vars:
    DEBUG_THIS_BUNDLE::
@@ -115,22 +115,27 @@ bundle agent cis_wrapper_summary
 
       # And finally we sort that lexically for consistency.
       "complete_para"     slist  => sort("tmp3","lex");
+      "s_para" string => join(", ", complete_para);
+      "count_complete_para"  int  => length( "complete_para" );
 
       "CIS_findings"
-        slist  => classesmatching("CIS_finding_.*"),
+        #slist  => classesmatching("CIS_finding_.*"),
+        slist => variablesmatching(".*", "CIS:finding"),
         comment => "It's important to get a combined list of all
-                    classes that indicate non compliance with the CIS
+                    variables that indicate non compliance with the CIS
                     rule sets.";
 
       "CIS_findings_count"
         int => length( "CIS_findings" );
+      "l" slist => maplist("$($(this))", @(CIS_findings));
+      "s" string => join( ', ', l);
 
 
 reports:
    DEBUG_THIS_BUNDLE::
-      "DEBUG $(this.bundle): Covers $(sys.flavor) CIS Benchmarks Version? '$(complete_para)'";
-      "DEBUG $(this.bundle): Found '$(CIS_findings_count)' CIS Findings";
-      "DEBUG $(this.bundle): CIS Finding: $(CIS_findings)";
+      "DEBUG $(this.bundle): CIS Benchmark '$(sys.flavor)'";
+      "DEBUG $(this.bundle): '$(count_complete_para)' checks: '$(s_para)'";
+      "DEBUG $(this.bundle): '$(CIS_findings_count)' findings: '$(s)'";
 }
 
 bundle agent cis_replay

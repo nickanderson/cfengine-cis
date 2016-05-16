@@ -10,27 +10,39 @@ bundle agent CIS_package_installed(paragraph,
 {
 
 vars:
-   "pkg"   data   => packagesmatching("$(pkgname)" , "[0-9].*", ".*", ".*"); # version is supposed to start with a digits, avoids confusing results
+      # version is supposed to start with a digits, avoids confusing results
+      "pkg"
+        data => packagesmatching($(pkgname) , "[0-9].*", ".*", ".*");
 
 methods:
     # if supposed_installed == true, check whether the packages IS installed
-    "CIS_$(paragraph)" usebundle  => CIS_set_inventory_class("$(paragraph)","$(score)","$(level)","$(this.bundle)","$(comment)"),
-                       ifvarclass => and(not(isvariable("pkg[0]")),strcmp("$(supposed_installed)","true"));
+      "CIS_$(paragraph)"
+        usebundle  => CIS_set_inventory_class("$(paragraph)",
+                                              "$(score)",
+                                              "$(level)",
+                                              "$(this.bundle)",
+                                              "$(comment)"),
+        ifvarclass => and(not(isvariable("pkg[0]")),strcmp("$(supposed_installed)","true"));
 
-    # if supposed_installed == false, check that the package IS NOT instaled
-    "CIS_$(paragraph)" usebundle  => CIS_set_inventory_class("$(paragraph)","$(score)","$(level)","$(this.bundle)","$(comment)"),
-                       ifvarclass => and(isvariable("pkg[0]"),strcmp("$(supposed_installed)","false"));
+    # if supposed_installed == false, check that the package IS NOT installed
+      "CIS_$(paragraph)"
+        usebundle  => CIS_set_inventory_class("$(paragraph)",
+                                              "$(score)",
+                                              "$(level)",
+                                              "$(this.bundle)",
+                                              "$(comment)"),
+        ifvarclass => and(isvariable("pkg[0]"),strcmp("$(supposed_installed)","false"));
 
 classes:
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
    "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
-                       
+
 reports:
    DEBUG_THIS_BUNDLE::
-      "$(this.bundle) $(paragraph), $(pkgname), $(score), $(level), $(comment), $(supposed_installed) $(pkg[0])";
-      "isvariable(pkg[0]):: $(this.bundle) $(paragraph), $(pkgname), $(score), $(level), $(comment), $(supposed_installed) $(pkg[0])"
-           ifvarclass => isvariable("pkg[0]");
+      "$(this.bundle) $(paragraph) Package '$(pkg[0][name])' should be installed: '$(supposed_installed)'"
+        if => isvariable("pkg[0]");
 
+      "$(this.bundle) $(paragraph), $(pkgname), $(score), $(level), $(comment), $(supposed_installed)";
 }
 
 bundle agent CIS_mog_report(paragraph,
@@ -88,8 +100,11 @@ bundle agent CIS_set_inventory_class(paragraph,score,level,defined_from,comment)
 vars:
    "fill"  string     => "Not",
            ifvarclass => strcmp("$(score)","false");
+
    "fill"  string     => "",
            ifvarclass => strcmp("$(score)","true");
+
+   "c_paragraph" string => canonify( $(paragraph) );
 
 files:
    CIS_cache::
@@ -100,13 +115,29 @@ files:
           create    => "true",
           perms     => m("u+rw,go-rwx"),
           edit_line => insert_lines("$(paragraph) ; CIS_$(paragraph) ; $(score) ; $(level) ; $(defined_from) ; $(comment)");
-       
+
+  vars:
+
+    !CIS_cache::
+      "$(c_paragraph)" -> { "CIS" }
+      string => "$(paragraph)",
+      meta        => { "CIS:finding", "CIS:scored=$(score)", "CIS:level=$(level)", "defined_from=$(defined_from)", "inventory", "attribute_name=CIS Level $(level) Finding ($(fill) Scored)"},
+      comment     => "$(comment)",
+      ifvarclass  => not(classmatch("CISBLACKLIST_$(paragraph)"));
+
+    CIS_cache::
+      "CIS_finding_$(paragraph)" -> { "CIS" }
+      string => "$(paragraph)",
+      meta        => { "CIS:finding", "CIS:scored=$(score)", "CIS:level=$(level)", "defined_from=$(defined_from)", "inventory", "attribute_name=CIS Level $(level) Finding ($(fill) Scored)"},
+      comment     => "$(comment)",
+      ifvarclass  => not(classmatch("CISBLACKLIST_$(paragraph)"));
+
 classes:
    #
    !CIS_cache::
       "CIS_finding_$(paragraph)" -> { "CIS" }
          expression  => "cfengine",
-         meta        => { "CIS:scored=$(score)", "CIS:level=$(level)", "defined_from=$(defined_from)", "inventory", "attribute_name=CIS Level $(level) Finding ($(fill) Scored)"},
+         #meta        => { "CIS:scored=$(score)", "CIS:level=$(level)", "defined_from=$(defined_from)", "inventory", "attribute_name=CIS Level $(level) Finding ($(fill) Scored)"},
          scope       => "namespace",
          comment     => "$(comment)",
          ifvarclass  => not(classmatch("CISBLACKLIST_$(paragraph)"));
@@ -114,12 +145,15 @@ classes:
    CIS_cache::
       "CIS_finding_$(paragraph)" -> { "CIS" }
          expression  => "cfengine",
-         meta        => { "CIS:scored=$(score)", "CIS:level=$(level)", "defined_from=$(defined_from)", "inventory", "attribute_name=CIS Level $(level) Finding ($(fill) Scored)"},
+         #meta        => { "CIS:scored=$(score)", "CIS:level=$(level)", "defined_from=$(defined_from)", "inventory", "attribute_name=CIS Level $(level) Finding ($(fill) Scored)"},
          scope       => "namespace",
          comment     => "$(comment)",
          persistence => "$(cis_configure.grace)",
          ifvarclass  => not(classmatch("CISBLACKLIST_$(paragraph)"));
 
+  reports:
+    "DEBUG|DEBUG_$(this.bundle)"::
+      "CIS finding $(paragraph)";
 }
 
 bundle agent CIS_user_data
@@ -150,7 +184,7 @@ classes:
 
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
    "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
-   
+
 reports:
    DEBUG_THIS_BUNDLE::
       "$(this.bundle) dummy $(dummy)";
@@ -173,4 +207,3 @@ body action fix_or_warn_on_interval(action,interval)
    action_policy => "$(action)";
    ifelapsed => "$(interval)";
 }
-

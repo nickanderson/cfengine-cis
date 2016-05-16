@@ -10,23 +10,23 @@ bundle agent cis_kernelvalues
 #@ Improvements to be done: Do not call augeas_like(...) directly but use other
 #@ bundle to facilitate other operating systems than linux.
 {
+  meta:
+      "tags"
+        slist => {
+                   "CIS",
+                   "security",
+                   "reporting"
+                  },
+        ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
 
-meta:
-   "tags"  slist => {
-                     "CIS",
-                     "security",
-                     "reporting"
-                    },
-      ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
 
-
-vars:
-   "infile"  string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
+  vars:
+      "infile"  string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
 
    infile_exists::
 
      # read data for packages supposed to be installed / not intalled
-     "values"           data  => readdata("$(infile)","auto");
+     "values"           data  => readdata( $(infile), "auto");
 
      # get all paragraphs covered, and give it a meta tag to collect all paragraphs covered by general methods
      "paragraphs"    slist => getindices("values"),

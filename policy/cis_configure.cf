@@ -1,13 +1,13 @@
 bundle agent cis_configure
 #@ Central configuration file for the CIS framework.
-#@ 
+#@
 #@ The following parameters have to be set, and mean the following:
 #@
 #@ cache: if true, the framework works in cached mode and intermediately saves the results
 #@        in $(sys.workdir)/tmp/CIS.csv for caching.
 #@ interval: in case cache==true, the bundles will only be called every $(interval) minutes.
 #@           At intermediate runs of cf-agent, the classes are "replayed" from the cache.
-#@ grace: In cached mode, the classes are set persistent. Set grace in a way that 
+#@ grace: In cached mode, the classes are set persistent. Set grace in a way that
 #@        a single non cached run will not take longer than grace-interval minutes.
 #@        In case this is not true, the worst thing that happens is that sone benchmarks
 #@        are not set correctly in the exeeding time.
@@ -48,26 +48,72 @@ vars:
                                 "9_2_13", "9_2_14", "9_2_15", "9_2_16", "9_2_17", "9_2_18",
                                 "9_2_19", "9_2_2", "9_2_20", "9_2_3", "9_2_4", "9_2_5", "9_2_7",
                                 "9_2_8", "9_2_9" };
-
       "blacklist"   slist  =>  { "1_1_1", "1_1_2", "1_1_10", "1_1_10b",
                                  "1_1_14", "1_1_15", "1_1_16", "1_1_16b",
                                  "1_1_2b", "1_1_3", "1_1_3b", "1_1_4", "1_1_4b",
                                  "1_1_5", "1_1_6", "1_1_7", "1_1_8", "1_1_9", "4_7" };
 
-   any::
-      # default, very conservative -- run once a day, assume the scan will not
-      # run more than 3 hours = 180 min =  1620 - 1440
-      #
-      # enforce nothing
-      "cache"       string => "true",
-                ifvarclass => not(isvariable("cache"));
-      "interval"    string => "1440",
-                ifvarclass => not(isvariable("interval"));
-      "grace"       string => "1620",
-                ifvarclass => not(isvariable("grace"));
-      "enforce"     slist  => { },
-                ifvarclass => not(isvariable("enforce"));
-      "blacklist"   slist  => { },
-                ifvarclass => not(isvariable("blacklist"));
+    any::
+
+      # Here we set the values based on user definitions in def. We expect these
+      # are most likely to be defined by the augments file.
+
+      "cache"
+        string => "$(def.CIS_cache)",
+        if => isvariable("def.CIS_cache"),
+        comment => "We want uses to be able to define this from the augments
+                    file";
+      "interval"
+        string => "$(def.CIS_interval)",
+        if => isvariable("def.CIS_interval"),
+        comment => "We want uses to be able to define this from the augments
+                    file";
+      "grace"
+        string => "$(def.CIS_grace)",
+        if => isvariable("def.CIS_grace"),
+        comment => "We want uses to be able to define this from the augments
+                    file";
+      "enforce"
+        slist => { @(def.CIS_enforce) },
+        if => isvariable("def.CIS_enforce"),
+        comment => "We want uses to be able to define this from the augments
+                    file";
+      "blacklist"
+        slist => { @(def.CIS_blacklist) },
+        if => isvariable("def.CIS_blacklist"),
+        comment => "We want uses to be able to define this from the augments
+                    file";
+
+      # Here we provide sane defaults if values were not already configured.
+
+      "cache"
+        string => "true",
+        ifvarclass => not(isvariable("cache")),
+        comment => "By default we cache the results of our scan so we don't have
+                    to do all of the work each time and we report on the cached
+                    values.";
+
+      "interval"
+        string => "1440",
+        ifvarclass => not(isvariable("interval")),
+        comment => "By default we will re-validate each compliance rule no more
+                    than once a day.";
+
+      "grace"
+        string => "1620",
+        ifvarclass => not(isvariable("grace")),
+        comment => "We assume the scan will not run more than 3 hours ( 180min =
+                   1620-1440).";
+
+      "enforce"
+        slist  => { },
+        ifvarclass => not(isvariable("enforce")),
+        comment => "We don't want to automatically re mediate anything by default
+                    as it could be dangerous.";
+
+      "blacklist"
+        slist  => { },
+        ifvarclass => not(isvariable("blacklist")),
+        comment => "By default we don't skip any specific compliance checks.";
 
 }

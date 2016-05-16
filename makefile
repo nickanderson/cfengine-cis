@@ -12,6 +12,7 @@ install:
 ifeq ($(AUTORUN),true)
 	cp extras/autorun/$(AUTORUN_POLICY) $(POLICY_ROOT)/services/autorun/
 endif
+	find $(DEPLOY_DIR) -type f | xargs chmod 600
 
 uninstall:
 	# Remove deployed policy
