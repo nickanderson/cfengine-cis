@@ -21,7 +21,7 @@ vars:
                          meta  => { "CIS" , "CISSECTIONS" };
 
    DEBUG_THIS_BUNDLE::
-      "CISFOUND"  slist  => classesmatching(".*CIS.*");
+      "CISFOUND"  slist  => classesmatching("CIS_finding_.*", "defined_from=$(this.bundle)" );
       "reg"       slist  => classesmatching(".*regmatch.*");
 
 classes:
@@ -44,7 +44,7 @@ classes:
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
    "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
 
-                     
+
 methods:
    # supposed match
    "$(paragraphs)" usebundle  => CIS_set_inventory_class("$(paragraphs)",

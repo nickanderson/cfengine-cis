@@ -14,7 +14,7 @@ meta:
 
 vars:
    "infile"       string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
-   "interval"     string => "$(cis_wrapper.interval)";
+   "interval"     string => "$(cis_configure.interval)";
    "action"       string => "warn";   # might be overwritten with fix below
 
    infile_exists::
@@ -39,7 +39,7 @@ classes:
 
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
    "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
-   
+
 files:
    "$(localfs.paths)"
        comment        => "no world writable files should exist",
@@ -49,7 +49,7 @@ files:
        handle         => "security: $(this.bundle)",
        classes        => if_notkept("cis1"),
        action         => fix_or_warn_on_interval("$(action)","$(interval)");
- 
+
 methods:
    cis1::
       "cis1" usebundle => CIS_set_inventory_class("$(paragraph)","$(score)","$(level)","$(this.bundle)","$(comment)");
@@ -80,7 +80,7 @@ meta:
 
 vars:
    "infile"       string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
-   "interval"     string => "$(cis_wrapper.interval)";
+   "interval"     string => "$(cis_configure.interval)";
    "action"       string => "warn";   # might be overwritten with fix below
 
    infile_exists::

@@ -26,8 +26,8 @@ vars:
                          meta  => { "CIS" , "CISSECTIONS" };
 
    DEBUG_THIS_BUNDLE::
-      "CISFOUND"  slist  => classesmatching(".*CIS.*");
-      
+      "CISFOUND"  slist  => classesmatching("CIS_finding_.*", "defined_from=$(this.bundle)" );
+
 classes:
    "infile_exists"     expression => fileexists("$(infile)");
 
@@ -53,9 +53,10 @@ methods:
 
 reports:
    DEBUG_THIS_BUNDLE::
-      "paragraphs $(paragraphs)";
-      "CISFOUND $(CISFOUND)";
-      "$(this.bundle) CISENFORCE_$(paragraphs) is set" ifvarclass => classmatch("CISENFORCE_$(paragraphs)");
+      "DEBUG $(this.bundle): paragraphs $(paragraphs)";
+      "DEBUG $(this.bundle): CISFOUND $(CISFOUND)";
+      "DEBUG $(this.bundle): CISENFORCE_$(paragraphs) is set"
+        ifvarclass => classmatch("CISENFORCE_$(paragraphs)");
 }
 
 bundle agent CIS_mog_enforce(file,

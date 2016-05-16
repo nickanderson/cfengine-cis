@@ -26,16 +26,16 @@ vars:
                   meta  => { "CIS" , "CISSECTIONS" };
 
    DEBUG_THIS_BUNDLE::
-      "CISFOUND"  slist  => classesmatching(".*CIS.*");
+      "CISFOUND"  slist  => classesmatching("CIS_finding_.*", "defined_from=$(this.bundle)" );
 
 
 classes:
    # platform OS specific needs to exist
    "infile_exists"     expression => fileexists("$(infile)");
-   
+
    # general debugging class specific for a bundle, should work with 3.6 & 3.7
    "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
-   
+
 
 methods:
    "$(paragraphs)" usebundle => CIS_package_installed("$(paragraphs)",
@@ -61,6 +61,5 @@ reports:
       # "$(this.bundle) paragraphs $(paragraphs)";
       "$(this.bundle) CISFOUND $(CISFOUND)";
       # "$(this.bundle) CIS_package_installed($(paragraphs),$(pkgs[$(paragraphs)][pkgname])";
-      
-}
 
+}

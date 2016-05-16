@@ -1,0 +1,142 @@
+{
+  "1_2_4": {
+    "comment": "Disable the rhnsd Daemon",
+    "score": "false",
+    "level": "2",
+    "supposed_running": "false",
+    "service": "rhnsd"
+  },
+  "2_1_12": {
+    "comment": "Disable chargen-dgram",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "chargen-dgram"
+  },
+  "2_1_13": {
+    "comment": "Disable chargen-stream",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "chargen-stream"
+  },
+  "2_1_14": {
+    "comment": "Disable daytime-dgram",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "daytime-dgram"
+  },
+  "2_1_15": {
+    "comment": "Disable daytime-stream",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "daytime-stream"
+  },
+  "2_1_16": {
+    "comment": "Disable echo-dgram",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "echo-dgram"
+  },
+  "2_1_17": {
+    "comment": "Disable echo-stream",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "echo-stream"
+  },
+  "2_1_18": {
+    "comment": "Disable tcpmux-server",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "tcpmux-server"
+  },
+  "3_3": {
+    "comment": "Disable Avahi Server",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "avahi-daemon"
+  },
+  "3_4": {
+    "comment": "Disable Print Server - CUPS",
+    "score": "false",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "cups"
+  },
+  "3_5": {
+    "comment": "Remove DHCP Server",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "dhcp"
+  },
+  "3_8": {
+    "comment": "Disable NFS and RPC",
+    "score": "false",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "nfslock"
+  },
+  "3_8b": {
+    "comment": "Disable NFS and RPC",
+    "score": "false",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "rpcgssd"
+  },
+  "3_8c": {
+    "comment": "Disable NFS and RPC",
+    "score": "false",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "rpcbind"
+  },
+  "3_8d": {
+    "comment": "Disable NFS and RPC",
+    "score": "false",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "rpcidmapd"
+  },
+  "3_8e": {
+    "comment": "Disable NFS and RPC",
+    "score": "false",
+    "level": "1",
+    "supposed_running": "false",
+    "service": "rpcsvcgssd"
+  },
+  "4_7": {
+    "comment": "Enable firewalld",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "true",
+    "service": "firewalld"
+  },
+  "5_1_2": {
+    "comment": "Activate the rsyslog Service",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "true",
+    "service": "rsyslog"
+  },
+  "5_2_2": {
+    "comment": "Enable auditd Service",
+    "score": "true",
+    "level": "2",
+    "supposed_running": "true",
+    "service": "auditd"
+  },
+  "6_1_2": {
+    "comment": "Enable crond Daemon",
+    "score": "true",
+    "level": "1",
+    "supposed_running": "true",
+    "service": "crond"
+  }
+}

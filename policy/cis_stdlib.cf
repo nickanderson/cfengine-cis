@@ -104,7 +104,7 @@ files:
 classes:
    #
    !CIS_cache::
-      "CIS_$(paragraph)" -> { "CIS" }
+      "CIS_finding_$(paragraph)" -> { "CIS" }
          expression  => "cfengine",
          meta        => { "CIS:scored=$(score)", "CIS:level=$(level)", "defined_from=$(defined_from)", "inventory", "attribute_name=CIS Level $(level) Finding ($(fill) Scored)"},
          scope       => "namespace",
@@ -112,7 +112,7 @@ classes:
          ifvarclass  => not(classmatch("CISBLACKLIST_$(paragraph)"));
    #
    CIS_cache::
-      "CIS_$(paragraph)" -> { "CIS" }
+      "CIS_finding_$(paragraph)" -> { "CIS" }
          expression  => "cfengine",
          meta        => { "CIS:scored=$(score)", "CIS:level=$(level)", "defined_from=$(defined_from)", "inventory", "attribute_name=CIS Level $(level) Finding ($(fill) Scored)"},
          scope       => "namespace",
