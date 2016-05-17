@@ -31,6 +31,9 @@ vars:
                            # "$(bdir)/cis_services.cf",
                            "$(bdir)/cis_kernelvalues.cf", # depends_on cis_enforce_file_content.cf
                            "$(bdir)/cis_enforce_file_content.cf",
+                           #cis_flavour_specific.cf
+                           #cis_userrelated.cf
+                           #cis_world_writable.cf
 
       };
 
