@@ -232,7 +232,7 @@ reports:
 body action warn_hourly
 {
    action_policy => "warn";
-   ifelapsed => "60";
+   ifelapsed => "$(cis_configure.interval)";
 }
 
 body action fix_or_warn_on_interval(action,interval)

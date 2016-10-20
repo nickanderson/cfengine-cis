@@ -12,7 +12,7 @@
   "vars": {
     "CIS_enforce": [ "1_1_1_1_a" ],
     "CIS_cache": "false",
-    "CIS_interval": "60",
+    "CIS_interval": "$(cis_configure.interval)",
     "CIS_grace": "120"
   }
 }

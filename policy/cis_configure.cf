@@ -25,7 +25,7 @@ vars:
    !any::
       # cloud installations, quite small FS
       # "cache"       string => "true";
-      # "interval"    string => "60";
+      # "interval"    string => "$(cis_configure.interval)";
       # "grace"       string => "120";
       # "enforce"     slist  => { "1_2_2", "1_2_3", "1_5_1", "1_5_2", "1_6_1",
       #                           "1_6_2", "2_1_1", "2_1_10", "2_1_12", "2_1_13",

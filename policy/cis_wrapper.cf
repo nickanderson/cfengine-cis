@@ -61,7 +61,7 @@ bundle agent cis_wrapper_activate
       "$(sys.workdir)/tmp/CIS.csv"
         handle => "purge_stale_cis_finding_cache",
         delete  => tidy,
-        action  => fix_or_warn_on_interval("fix","60"),
+        action  => fix_or_warn_on_interval("fix","$(cis_configure.interval)"),
         classes => if_ok("timeout");
 
   methods:

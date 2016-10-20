@@ -72,11 +72,11 @@ services:
       # then loop only over those to be enforced started
       "$(cis_services[$(enforce_start)][service])"
         service_policy => "start",
-        action         => fix_or_warn_on_interval("fix","60");
+        action         => fix_or_warn_on_interval("fix","$(cis_configure.interval)");
       # then loop only over those to be enforced stopped
       "$(cis_services[$(enforce_stop)][service])"
         service_policy => "stop",
-        action         => fix_or_warn_on_interval("fix","60");
+        action         => fix_or_warn_on_interval("fix","$(cis_configure.interval)");
 
   methods:
     centos_6|redhat_6::
