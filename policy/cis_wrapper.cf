@@ -1,6 +1,12 @@
 bundle agent cis_wrapper
 #@ brief Main driver for CIS Framework
 {
+  meta:
+      # TODO Clean this up. We want to avoid people changing the shipped policy,
+      # and instead provide other ways for them to customize the behavior.
+
+      "tags" slist => { "use_this_do_set_custom_tags" };
+
   methods:
       "Init" usebundle => cis_wrapper_init;
       "Activate" usebundle => cis_wrapper_activate;
