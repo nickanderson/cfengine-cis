@@ -229,12 +229,6 @@ reports:
       "$(this.bundle) has_duplicate_uids ist set";
 }
 
-body action warn_hourly
-{
-   action_policy => "warn";
-   ifelapsed => "$(cis_configure.interval)";
-}
-
 body action fix_or_warn_on_interval(action,interval)
 {
    action_policy => "$(action)";
