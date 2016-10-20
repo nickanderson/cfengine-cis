@@ -1,5 +1,5 @@
 {
-  "9_2_5": {
+  "9.2.5": {
     "comment": "Verify No UID 0 Accounts Exist Other Than root",
     "level": "1",
     "score": "true"

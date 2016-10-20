@@ -1,12 +1,12 @@
 {
-  "9_2_8": {
+  "9.2.8": {
     "regexp": "\\.[A-Za-z0-9]*",
     "level": "1",
     "mode": "go-w",
     "score": "true",
     "comment": "Check User Dot File Permissions"
   },
-  "9_2_9": {
+  "9.2.9": {
     "regexp": "\\.netrc",
     "level": "1",
     "mode":  "go-rwx",

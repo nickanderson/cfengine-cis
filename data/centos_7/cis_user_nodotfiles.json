@@ -1,17 +1,17 @@
 {
-  "9_2_10": {
+  "9.2.10": {
     "file": ".rhosts",
     "comment": "Check for Presence of User .rhosts Files",
     "level": "1",
     "score": "true"
   },
-  "9_2_19": {
+  "9.2.19": {
     "file": ".netrc",
     "comment": "Check for Presence of User .netrc Files",
     "level": "1",
     "score": "true"
   },
-  "9_2_20": {
+  "9.2.20": {
     "file": ".forward",
     "comment": "Check for Presence of User .forward Files",
     "level": "1",

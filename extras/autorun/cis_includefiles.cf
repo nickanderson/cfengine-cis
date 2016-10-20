@@ -11,9 +11,9 @@ bundle agent cis_input
   meta:
     "tags" slist => { "autorun" };
 
-vars:
+  vars:
    # set the base directory for CIS
-   "bdir"                 string => "$(this.promise_dirname)/../CIS/";
+      "bdir" string => "$(this.promise_dirname)/../CIS/";
 
    # collect components
    #"general"          slist  => lsdir("$(bdir)",".*\.cf","true");
@@ -28,12 +28,12 @@ vars:
 
                            "$(bdir)/cis_command_output.cf",
                            "$(bdir)/cis_packages.cf",
-                           # "$(bdir)/cis_services.cf",
+                           "$(bdir)/cis_services.cf", # Services are not super duper reliable in return codes for checking
                            "$(bdir)/cis_kernelvalues.cf", # depends_on cis_enforce_file_content.cf
                            "$(bdir)/cis_enforce_file_content.cf",
-                           #cis_flavour_specific.cf
+                           "$(bdir)/cis_flavour_specific.cf",
+#                           "$(bdir)/cis_world_writable.cf",
                            #cis_userrelated.cf
-                           #cis_world_writable.cf
 
       };
 

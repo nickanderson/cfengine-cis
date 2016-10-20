@@ -1,5 +1,5 @@
 {
-  "1_6_1": {
+  "1.6.1": {
     "score": "true",
     "level": "1",
     "comment": "Restrict Core Dumps",
@@ -7,7 +7,7 @@
     "value": "0",
     "match": "true"
   },
-  "1_6_2": {
+  "1.6.2": {
     "score": "true",
     "level": "1",
     "comment": "Enable Randomized Virtual Memory Region Placement",
@@ -15,7 +15,7 @@
     "value": "2",
     "match": "true"
   },
-  "4_1_1": {
+  "4.1.1": {
     "score": "true",
     "level": "1",
     "comment": "Disable IP Forwarding",
@@ -23,7 +23,7 @@
     "value": "0",
     "match": "true"
   },
-  "4_1_2": {
+  "4.1.2": {
     "score": "true",
     "level": "1",
     "comment": "Disable Send Packet Redirects",
@@ -31,7 +31,7 @@
     "value": "0",
     "match": "true"
   },
-  "4_1_2b": {
+  "4.1.2b": {
     "score": "true",
     "level": "1",
     "comment": "Disable Send Packet Redirects",
@@ -39,7 +39,7 @@
     "value": "0",
     "match": "true"
   },
-  "4_2_1": {
+  "4.2.1": {
     "score": "true",
     "level": "1",
     "comment": "Disable Source Routed Packet Acceptance",
@@ -47,7 +47,7 @@
     "value": "0",
     "match": "true"
   },
-  "4_2_1b": {
+  "4.2.1b": {
     "score": "true",
     "level": "1",
     "comment": "Disable Source Routed Packet Acceptance",
@@ -55,7 +55,7 @@
     "value": "0",
     "match": "true"
   },
-  "4_2_2": {
+  "4.2.2": {
     "score": "true",
     "level": "1",
     "comment": "Disable ICMP Redirect Acceptance",
@@ -63,7 +63,7 @@
     "value": "0",
     "match": "true"
   },
-  "4_2_2b": {
+  "4.2.2b": {
     "score": "true",
     "level": "1",
     "comment": "Disable ICMP Redirect Acceptance",
@@ -71,7 +71,7 @@
     "value": "0",
     "match": "true"
   },
-  "4_2_3": {
+  "4.2.3": {
     "score": "true",
     "level": "2",
     "comment": "Disable Secure ICMP Redirect Acceptance",
@@ -79,7 +79,7 @@
     "value": "0",
     "match": "true"
   },
-  "4_2_3b": {
+  "4.2.3b": {
     "score": "true",
     "level": "2",
     "comment": "Disable Secure ICMP Redirect Acceptance",
@@ -87,7 +87,7 @@
     "value": "0",
     "match": "true"
   },
-  "4_2_4": {
+  "4.2.4": {
     "score": "true",
     "level": "1",
     "comment": "Log Suspicious Packets",
@@ -95,7 +95,7 @@
     "value": "1",
     "match": "true"
   },
-  "4_2_4b": {
+  "4.2.4b": {
     "score": "true",
     "level": "1",
     "comment": "Log Suspicious Packets",
@@ -103,7 +103,7 @@
     "value": "1",
     "match": "true"
   },
-  "4_2_5": {
+  "4.2.5": {
     "score": "true",
     "level": "1",
     "comment": "Enable Ignore Broadcast Requests",
@@ -111,7 +111,7 @@
     "value": "1",
     "match": "true"
   },
-  "4_2_6": {
+  "4.2.6": {
     "score": "true",
     "level": "1",
     "comment": "Enable Bad Error Message Protection",
@@ -119,7 +119,7 @@
     "value": "1",
     "match": "true"
   },
-  "4_2_7": {
+  "4.2.7": {
     "score": "true",
     "level": "2",
     "comment": "Enable RFC-recommended Source Route Validation",
@@ -127,7 +127,7 @@
     "value": "1",
     "match": "true"
   },
-  "4_2_7b": {
+  "4.2.7b": {
     "score": "true",
     "level": "2",
     "comment": "Enable RFC-recommended Source Route Validation",
@@ -135,7 +135,7 @@
     "value": "1",
     "match": "true"
   },
-  "4_2_8": {
+  "4.2.8": {
     "score": "true",
     "level": "1",
     "comment": "Enable TCP SYN Cookies",
@@ -143,7 +143,7 @@
     "value": "1",
     "match": "true"
   },
-  "4_4_1_1": {
+  "4.4.1.1": {
     "score": "false",
     "level": "1",
     "comment": "Disable IPv6 Router Advertisements",
@@ -151,7 +151,7 @@
     "value": "0",
     "match": "true"
   },
-  "4_4_1_1b": {
+  "4.4.1.1b": {
     "score": "false",
     "level": "1",
     "comment": "Disable IPv6 Router Advertisements",
@@ -159,7 +159,7 @@
     "value": "0",
     "match": "true"
   },
-  "4_4_1_2": {
+  "4.4.1.2": {
     "score": "false",
     "level": "1",
     "comment": "Disable IPv6 Redirect Acceptance",
@@ -167,7 +167,7 @@
     "value": "0",
     "match": "true"
   },
-  "4_4_1_2b": {
+  "4.4.1.2b": {
     "score": "false",
     "level": "1",
     "comment": "Disable IPv6 Redirect Acceptance",
@@ -175,7 +175,7 @@
     "value": "0",
     "match": "true"
   },
-  "4_4_2": {
+  "4.4.2": {
     "score": "false",
     "level": "1",
     "comment": "Disable IPv6",

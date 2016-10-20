@@ -91,6 +91,8 @@ bundle agent CIS_set_inventory_class(paragraph,score,level,defined_from,comment)
 #@
 #@ !!If CISBLACKLIST_$(paragraph) is set, the bundle will not report the finding for a clean report!!
 #@
+#@ !! if cis_configure.blacklist contains $(paragraph) the bundle will not report the finding!
+#@
 #@ If the global class "CIS_cache" is set, it will also write this to $(sys.workdir)/tmp/CIS.csv
 #@ for reference and caching. This will not be surpressed by CISBLACKLIST_$(paragraph).
 #@
@@ -98,13 +100,18 @@ bundle agent CIS_set_inventory_class(paragraph,score,level,defined_from,comment)
 {
 
 vars:
-   "fill"  string     => "Not",
+   "fill"  string     => "Not ",
            ifvarclass => strcmp("$(score)","false");
 
    "fill"  string     => "",
            ifvarclass => strcmp("$(score)","true");
 
    "c_paragraph" string => canonify( $(paragraph) );
+
+      "_e_p"
+        string => escape( $(paragraph) ),
+        comment => "We need to escape the compliance identifier for reliable
+                    searching";
 
 files:
    CIS_cache::
@@ -119,18 +126,30 @@ files:
   vars:
 
     !CIS_cache::
-      "$(c_paragraph)" -> { "CIS" }
-      string => "$(paragraph)",
-      meta        => { "CIS:finding", "CIS:scored=$(score)", "CIS:level=$(level)", "defined_from=$(defined_from)", "inventory", "attribute_name=CIS Level $(level) Finding ($(fill) Scored)"},
-      comment     => "$(comment)",
-      ifvarclass  => not(classmatch("CISBLACKLIST_$(paragraph)"));
+      "CIS_finding_$(c_paragraph)" -> { "CIS" }
+        string      => "$(paragraph)",
+        meta        => { "CIS:finding",
+                         "CIS:scored=$(score)",
+                         "CIS:level=$(level)",
+                         "defined_from=$(defined_from)",
+                         "inventory", "report",
+                         "attribute_name=CIS Level $(level) Finding ($(fill)Scored)"},
+        comment     => "$(comment)",
+        ifvarclass  => not(classmatch("CISBLACKLIST_$(paragraph)"));
+        #ifvarclass => none( $(_e_p), "cis_configure.blacklist" );
 
     CIS_cache::
-      "CIS_finding_$(paragraph)" -> { "CIS" }
-      string => "$(paragraph)",
-      meta        => { "CIS:finding", "CIS:scored=$(score)", "CIS:level=$(level)", "defined_from=$(defined_from)", "inventory", "attribute_name=CIS Level $(level) Finding ($(fill) Scored)"},
-      comment     => "$(comment)",
-      ifvarclass  => not(classmatch("CISBLACKLIST_$(paragraph)"));
+      "CIS_finding_$(c_paragraph)" -> { "CIS" }
+        string      => "$(paragraph)",
+        meta        => { "CIS:finding",
+                         "CIS:scored=$(score)",
+                         "CIS:level=$(level)",
+                         "defined_from=$(defined_from)",
+                         "inventory", "report",
+                         "attribute_name=CIS Level $(level) Finding ($(fill)Scored)"},
+        comment     => "$(comment)",
+        ifvarclass  => not(classmatch("CISBLACKLIST_$(paragraph)"));
+        #ifvarclass => none( $(_e_p), "cis_configure.blacklist" );
 
 classes:
    #
@@ -139,21 +158,35 @@ classes:
          expression  => "cfengine",
          #meta        => { "CIS:scored=$(score)", "CIS:level=$(level)", "defined_from=$(defined_from)", "inventory", "attribute_name=CIS Level $(level) Finding ($(fill) Scored)"},
          scope       => "namespace",
+         meta => { "report" },
          comment     => "$(comment)",
          ifvarclass  => not(classmatch("CISBLACKLIST_$(paragraph)"));
+         #ifvarclass => none( $(_e_p), "cis_configure.blacklist" );
    #
    CIS_cache::
       "CIS_finding_$(paragraph)" -> { "CIS" }
          expression  => "cfengine",
          #meta        => { "CIS:scored=$(score)", "CIS:level=$(level)", "defined_from=$(defined_from)", "inventory", "attribute_name=CIS Level $(level) Finding ($(fill) Scored)"},
          scope       => "namespace",
+         meta => { "report" },
          comment     => "$(comment)",
          persistence => "$(cis_configure.grace)",
          ifvarclass  => not(classmatch("CISBLACKLIST_$(paragraph)"));
+         #ifvarclass => none( $(_e_p), "cis_configure.blacklist" );
 
   reports:
+
+      "CIS_finding_1_1_1_1_a"::
+         "Class CIS_finding_1_1_1_1_a is defined";
+
     "DEBUG|DEBUG_$(this.bundle)"::
-      "CIS finding $(paragraph)";
+
+      # Show each inventoried finding when debugging policy
+
+      "CIS finding $(paragraph)"
+        ifvarclass  => not(classmatch("CISBLACKLIST_$(paragraph)"));
+
+
 }
 
 bundle agent CIS_user_data

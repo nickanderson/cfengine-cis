@@ -1,187 +1,187 @@
 {
-  "1_3_1": {
+  "1.3.1": {
     "comment": "Install AIDE",
     "score": "true",
     "level": "2",
     "supposed_installed": "true",
     "pkgname": "aide"
   },
-  "1_4_4": {
+  "1.4.4": {
     "comment": "Remove SETroubleshoot",
     "score": "true",
     "level": "2",
     "supposed_installed": "false",
     "pkgname": "setroubleshoot"
   },
-  "1_4_5": {
+  "1.4.5": {
     "comment": "Remove MCS Translation Service",
     "score": "true",
     "level": "2",
     "supposed_installed": "false",
     "pkgname": "mcstrans"
   },
-  "2_1_1": {
+  "2.1.1": {
     "comment": "Remove telnet-server",
     "score": "true",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "telnet-server"
   },
-  "2_1_2": {
+  "2.1.2": {
     "comment": "Remove telnet Clients",
     "score": "true",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "telnet"
   },
-  "2_1_3": {
+  "2.1.3": {
     "comment": "Remove rsh-server",
     "score": "true",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "rsh-server"
   },
-  "2_1_4": {
+  "2.1.4": {
     "comment": "Remove rsh",
     "score": "true",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "rsh"
   },
-  "2_1_5": {
+  "2.1.5": {
     "comment": "Remove NIS Client",
     "score": "true",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "ypbind"
   },
-  "2_1_6": {
+  "2.1.6": {
     "comment": "Remove NIS Server",
     "score": "true",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "ypserv"
   },
-  "2_1_7": {
+  "2.1.7": {
     "comment": "Remove tftp",
     "score": "true",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "tftp"
   },
-  "2_1_8": {
+  "2.1.8": {
     "comment": "Remove tftp-server",
     "score": "true",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "tftp-server"
   },
-  "2_1_9": {
+  "2.1.9": {
     "comment": "Remove talk",
     "score": "true",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "talk"
   },
-  "2_1_10": {
+  "2.1.10": {
     "comment": "Remove talk-server",
     "score": "true",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "talk-server"
   },
-  "2_1_11": {
+  "2.1.11": {
     "comment": "Remove xinetd",
     "score": "true",
     "level": "2",
     "supposed_installed": "false",
     "pkgname": "xinetd"
   },
-  "3_2b": {
+  "3.2b": {
     "comment": "Remove the X Window System",
     "score": "true",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "xorg-x11-server-common"
   },
-  "3_5": {
+  "3.5": {
     "comment": "Remove DHCP Server",
     "score": "true",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "dhcp"
   },
-  "3_7": {
+  "3.7": {
     "comment": "Remove LDAP",
     "score": "false",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "openldap-clients"
   },
-  "3_9": {
+  "3.9": {
     "comment": "Remove DNS Server",
     "score": "false",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "bind"
   },
-  "3_10": {
+  "3.10": {
     "comment": "Remove FTP Server",
     "score": "false",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "vsftpd"
   },
-  "3_11": {
+  "3.11": {
     "comment": "Remove HTTP Server",
     "score": "false",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "httpd"
   },
-  "3_12": {
+  "3.12": {
     "comment": "Remove Dovecot (IMAP and POP3 services)",
     "score": "false",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "dovecot"
   },
-  "3_13": {
+  "3.13": {
     "comment": "Remove Samba",
     "score": "false",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "samba"
   },
-  "3_14": {
+  "3.14": {
     "comment": "Remove HTTP Proxy Server",
     "score": "false",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "squid"
   },
-  "3_15": {
+  "3.15": {
     "comment": "Remove SNMP Server",
     "score": "false",
     "level": "1",
     "supposed_installed": "false",
     "pkgname": "net-snmp"
   },
-  "4_5_1": {
+  "4.5.1": {
     "comment": "Install TCP Wrappers",
     "score": "false",
     "level": "1",
     "supposed_installed": "true",
     "pkgname": "tcp_wrappers"
   },
-  "5_1_1": {
+  "5.1.1": {
     "comment": "Install the rsyslog package",
     "score": "true",
     "level": "1",
     "supposed_installed": "true",
     "pkgname": "rsyslog"
   },
-  "6_1_1": {
+  "6.1.1": {
     "comment": "Enable anacron Daemon",
     "score": "true",
     "level": "1",

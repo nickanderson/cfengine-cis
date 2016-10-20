@@ -1,138 +1,138 @@
 {
-  "1_2_4": {
+  "1.2.4": {
     "comment": "Disable the rhnsd Daemon",
     "score": "false",
     "level": "2",
     "supposed_running": "false",
     "service": "rhnsd"
   },
-  "2_1_12": {
+  "2.1.12": {
     "comment": "Disable chargen-dgram",
     "score": "true",
     "level": "1",
     "supposed_running": "false",
     "service": "chargen-dgram"
   },
-  "2_1_13": {
+  "2.1.13": {
     "comment": "Disable chargen-stream",
     "score": "true",
     "level": "1",
     "supposed_running": "false",
     "service": "chargen-stream"
   },
-  "2_1_14": {
+  "2.1.14": {
     "comment": "Disable daytime-dgram",
     "score": "true",
     "level": "1",
     "supposed_running": "false",
     "service": "daytime-dgram"
   },
-  "2_1_15": {
+  "2.1.15": {
     "comment": "Disable daytime-stream",
     "score": "true",
     "level": "1",
     "supposed_running": "false",
     "service": "daytime-stream"
   },
-  "2_1_16": {
+  "2.1.16": {
     "comment": "Disable echo-dgram",
     "score": "true",
     "level": "1",
     "supposed_running": "false",
     "service": "echo-dgram"
   },
-  "2_1_17": {
+  "2.1.17": {
     "comment": "Disable echo-stream",
     "score": "true",
     "level": "1",
     "supposed_running": "false",
     "service": "echo-stream"
   },
-  "2_1_18": {
+  "2.1.18": {
     "comment": "Disable tcpmux-server",
     "score": "true",
     "level": "1",
     "supposed_running": "false",
     "service": "tcpmux-server"
   },
-  "3_3": {
+  "3.3": {
     "comment": "Disable Avahi Server",
     "score": "true",
     "level": "1",
     "supposed_running": "false",
     "service": "avahi-daemon"
   },
-  "3_4": {
+  "3.4": {
     "comment": "Disable Print Server - CUPS",
     "score": "false",
     "level": "1",
     "supposed_running": "false",
     "service": "cups"
   },
-  "3_5": {
+  "3.5": {
     "comment": "Remove DHCP Server",
     "score": "true",
     "level": "1",
     "supposed_running": "false",
     "service": "dhcp"
   },
-  "3_8": {
+  "3.8": {
     "comment": "Disable NFS and RPC",
     "score": "false",
     "level": "1",
     "supposed_running": "false",
     "service": "nfslock"
   },
-  "3_8b": {
+  "3.8b": {
     "comment": "Disable NFS and RPC",
     "score": "false",
     "level": "1",
     "supposed_running": "false",
     "service": "rpcgssd"
   },
-  "3_8c": {
+  "3.8c": {
     "comment": "Disable NFS and RPC",
     "score": "false",
     "level": "1",
     "supposed_running": "false",
     "service": "rpcbind"
   },
-  "3_8d": {
+  "3.8d": {
     "comment": "Disable NFS and RPC",
     "score": "false",
     "level": "1",
     "supposed_running": "false",
     "service": "rpcidmapd"
   },
-  "3_8e": {
+  "3.8e": {
     "comment": "Disable NFS and RPC",
     "score": "false",
     "level": "1",
     "supposed_running": "false",
     "service": "rpcsvcgssd"
   },
-  "4_7": {
+  "4.7": {
     "comment": "Enable firewalld",
     "score": "true",
     "level": "1",
     "supposed_running": "true",
     "service": "firewalld"
   },
-  "5_1_2": {
+  "5.1.2": {
     "comment": "Activate the rsyslog Service",
     "score": "true",
     "level": "1",
     "supposed_running": "true",
     "service": "rsyslog"
   },
-  "5_2_2": {
+  "5.2.2": {
     "comment": "Enable auditd Service",
     "score": "true",
     "level": "2",
     "supposed_running": "true",
     "service": "auditd"
   },
-  "6_1_2": {
+  "6.1.2": {
     "comment": "Enable crond Daemon",
     "score": "true",
     "level": "1",

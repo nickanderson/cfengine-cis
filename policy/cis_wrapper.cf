@@ -144,35 +144,37 @@ bundle agent cis_replay
 #@ to the class setting function CIS_set_inventory_class(...)
 #@
 {
+  classes:
+    "cached_cis_csv_exists"
+      expression => fileexists("$(sys.workdir)/tmp/CIS.csv");
 
-classes:
-   "cached_cis_csv_exists"
-     expression => fileexists("$(sys.workdir)/tmp/CIS.csv");
-
-vars:
-   cached_cis_csv_exists::
+  vars:
+    cached_cis_csv_exists::
      # This is guarded in order to suppress error messages that can cause agent
      # email storms.
-     "dummy"
-       int => readstringarray( "input",
-                               "$(sys.workdir)/tmp/CIS.csv",
-                               "",
-                               " ; ",
-                               "500",
-                               "100K" );
+      "dummy"
+         int => readstringarray( "input",
+                                 "$(sys.workdir)/tmp/CIS.csv",
+                                 "",
+                                 " ; ",
+                                 "500",
+                                 "100K" );
 
-     "p"     slist => getindices("input");
+       "p"     slist => getindices("input");
 
-methods:
-   "$(p)" usebundle  => CIS_set_inventory_class("$(p)",
-                                                "$(input[$(p)][2])",
-                                                "$(input[$(p)][3])",
-                                                "$(input[$(p)][4])",
-                                                "$(input[$(p)][5])");
+  methods:
+      "$(p)" usebundle  => CIS_set_inventory_class("$(p)",
+                                                   "$(input[$(p)][2])",
+                                                   "$(input[$(p)][3])",
+                                                   "$(input[$(p)][4])",
+                                                   "$(input[$(p)][5])");
 
-reports:
-  !cached_cis_csv_exists::
-    "Error: $(this.bundle): '$(sys.workdir)/tmp/CIS.csv' does not exist. Unable to replay cached results.";
+  reports:
+    DEBUG|DEBUG_cis_replay::
+      "DEBUG $(this.bundle): Replaying Cached inventoried finding '$(p)'";
+
+    !cached_cis_csv_exists::
+      "Error: $(this.bundle): '$(sys.workdir)/tmp/CIS.csv' does not exist. Unable to replay cached results.";
 }
 
 

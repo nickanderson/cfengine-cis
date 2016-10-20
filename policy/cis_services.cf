@@ -9,6 +9,7 @@ bundle agent cis_services
 #@
 #@
 #@ Known bugs: redhat_7:: rhnsd is still chkconfig, hence services promise does not work
+#@ TODO: implement service enforcement
 #@
 {
 
@@ -23,16 +24,20 @@ meta:
 vars:
 
    # platform OS specific input file
-   "infile"         string => "$(this.promise_dirname)/data/$(sys.flavour)/services.json";
+   "infile"         string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
 
    infile_exists::
-      "cis_services" data  => readjson("$(infile)","100K");
+      "cis_services" data  => readjson( $(infile), 100K);
 
       "paragraphs"   slist => getindices("cis_services"),
                      meta  => { "CIS" , "CISSECTIONS" };
 
-      "tmp[$(paragraphs)]"  string => "$(paragraphs)",
-                        ifvarclass => classmatch("CISENFORCE_$(paragraphs)");
+
+      # Figure out which sections should have automatic remediation
+      # (CISENFORECE_X_Y_Z)
+      "tmp[$(paragraphs)]"
+        string => "$(paragraphs)",
+        ifvarclass => canonify("CISENFORCE_$(paragraphs)");
 
       # get intersection with those meant to be enforced to yield paragraphs_enforced
       "paragraphs_enforced"   slist => getindices("tmp");
@@ -45,10 +50,13 @@ vars:
       "stop_para"           slist  => difference("paragraphs","start_para");
       "enforce_stop"        slist  => intersection("stop_para","paragraphs_enforced");
 
-      # not nice, but the service promise does set if_notkept badly when called with warning
-      # should be put into a different bundle
+      # With 'action_policy => "warn";' attached to a services (or methods for
+      # that matter) promise the bundle actuation is not performed and so the
+      # service is not checked.
+      #
+      # Enforcement should be in its own bundle and should leverage the same data.
       redhat_7::
-         "service_list"     string => execresult('echo ; $(paths.path[systemctl]) list-units --type service --state=running -q|\
+         "service_list"     string => execresult('echo ; $(paths.systemctl) list-units --type service --state=running -q|\
                                                   $(paths.path[grep]) "\.service" | $(paths.path[cut]) -f 1 -d. ; echo',
                                                    "useshell");
 
@@ -70,25 +78,55 @@ services:
         service_policy => "stop",
         action         => fix_or_warn_on_interval("fix","60");
 
-methods:
-   # set the CIS classes properly
-   "$(start_para)" usebundle  => CIS_set_inventory_class("$(start_para)",
-                                                         "$(cis_services[$(start_para)][score])",
-                                                         "$(cis_services[$(start_para)][level])",
-                                                         "$(this.bundle)",
-                                                         "$(cis_services[$(start_para)][comment])"),
-                   ifvarclass => not(regcmp(".*[$(const.n)]$(cis_services[$(start_para)][service])$(const.n).*","$(service_list)"));
-   "$(stop_para)" usebundle   => CIS_set_inventory_class("$(stop_para)",
-                                                         "$(cis_services[$(stop_para)][score])",
-                                                         "$(cis_services[$(stop_para)][level])",
-                                                         "$(this.bundle)",
-                                                         "$(cis_services[$(stop_para)][comment])"),
-                   ifvarclass => regcmp(".*$(const.n)$(cis_services[$(stop_para)][service])$(const.n).*","$(service_list)");
+  methods:
+    centos_6|redhat_6::
+
+      "$(start_para)"
+        usebundle  => CIS_set_inventory_class("$(start_para)",
+                                              "$(cis_services[$(start_para)][score])",
+                                              "$(cis_services[$(start_para)][level])",
+                                              "$(this.bundle)",
+                                              "$(cis_services[$(start_para)][comment])"),
+        ifvarclass => not(returnszero( "$(paths.service) $(cis_services[$(start_para)][service]) status > /dev/null", "useshell")),
+        comment => "We want to inventory services that are supposed to be running, but according to the service command are not.";
+
+      "$(stop_para)"
+        usebundle   => CIS_set_inventory_class("$(stop_para)",
+                                               "$(cis_services[$(stop_para)][score])",
+                                               "$(cis_services[$(stop_para)][level])",
+                                               "$(this.bundle)",
+                                               "$(cis_services[$(stop_para)][comment])"),
+        ifvarclass => returnszero( "$(paths.service) $(cis_services[$(stop_para)][service]) status > /dev/null", "useshell"),
+        comment => "We want to inventory services that should not be running, but according to the service command are.";
+
+
+    centos_7|redhat_7::
+      "$(start_para)"
+        usebundle  => CIS_set_inventory_class("$(start_para)",
+                                              "$(cis_services[$(start_para)][score])",
+                                              "$(cis_services[$(start_para)][level])",
+                                              "$(this.bundle)",
+                                              "$(cis_services[$(start_para)][comment])"),
+        ifvarclass => not(regcmp(".*[$(const.n)]$(cis_services[$(start_para)][service])$(const.n).*","$(service_list)")),
+        comment => "We want to inventory services that should be running, but according to systemctl are not.";
+
+      "$(stop_para)"
+        usebundle => CIS_set_inventory_class("$(stop_para)",
+                                             "$(cis_services[$(stop_para)][score])",
+                                             "$(cis_services[$(stop_para)][level])",
+                                             "$(this.bundle)",
+                                             "$(cis_services[$(stop_para)][comment])"),
+        ifvarclass => regcmp(".*$(const.n)$(cis_services[$(stop_para)][service])$(const.n).*","$(service_list)"),
+        comment => "We want to inventory services that should not be running, but according to systemctl are.";
 
 reports:
    DEBUG_THIS_BUNDLE::
-      "$(cis_services[$(paragraphs_enforced)][service]) should be stopped"
-        ifvarclass     => strcmp("$(cis_services[$(paragraphs_enforced)][supposed_running])","false");
+      "$(this.bundle): service '$(cis_services[$(stop_para)][service])' should be stopped"
+        ifvarclass => strcmp("$(cis_services[$(stop_para)][supposed_running])", "false");
+
+      "$(this.bundle): service '$(cis_services[$(start_para)][service])' should be running"
+        ifvarclass => strcmp("$(cis_services[$(start_para)][supposed_running])", "true");
+
       "$(this.bundle) paragraphs_enforced $(paragraphs_enforced)";
       "$(this.bundle) infile $(infile)";
       "$(this.bundle) infile $(infile) exists";
