@@ -3,7 +3,6 @@
 :ID:       e2ca7ef8-d3c5-4d28-acbc-84ea97639c7f
 :END:
 
-
 This is a framework to check Linux (Unix) installations for
 CIS-compliance.
 
