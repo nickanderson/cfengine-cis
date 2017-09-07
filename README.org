@@ -29,7 +29,7 @@ Variables:
   - =POLICY_ROOT= :: The directory where your policy exists (by default =/var/cfengine/masterfiles=).
   - =DEPLOY_DIR= :: The directory where the CIS policy should be deployed (by default =$(POLICY_ROOT)/services/CIS=).
   - =AUTORUN= :: Whether or not to install a policy tagged with =autorun= into
-       =${POLICY_ROOT}/services/autorun=. (Defaults to *true*).
+       =${POLICY_ROOT}/services/autorun=. (Defaults to *true*). **NOTE:** autorun itself needs to be enabled for this to work (the class services_autorun must be defined).
 
 #+BEGIN_SRC sh
   cd cfengine-cis
@@ -72,7 +72,7 @@ Variables:
         "services_autorun": [
           "any"
         ],
-        # "CIS_summary": [
+        "CIS_summary": [
           "any"
         ]
       }
