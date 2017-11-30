@@ -1,0 +1,76 @@
+{
+  "1.3.1": {
+    "comment": "Install AIDE",
+    "score": "true",
+    "level": "1",
+    "supposed_installed": "true",
+    "pkgname": "aide"
+  },
+  "1.6.1.4": {
+    "comment": "Remove SETroubleshoot",
+    "score": "true",
+    "level": "2",
+    "supposed_installed": "false",
+    "pkgname": "setroubleshoot"
+  },
+  "1.6.1.5": {
+    "comment": "Remove MCS Translation Service",
+    "score": "true",
+    "level": "2",
+    "supposed_installed": "false",
+    "pkgname": "mcstrans"
+  },
+  "2.1.8": {
+    "comment": "Remove telnet-server",
+    "score": "true",
+    "level": "1",
+    "supposed_installed": "false",
+    "pkgname": "telnet-server"
+  },
+  "2.3.4": {
+    "comment": "Remove telnet Clients",
+    "score": "true",
+    "level": "1",
+    "supposed_installed": "false",
+    "pkgname": "telnet"
+  },
+  "2.1.6": {
+    "comment": "Remove rsh-server",
+    "score": "true",
+    "level": "1",
+    "supposed_installed": "false",
+    "pkgname": "rsh-server"
+  },
+  "2.3.2": {
+    "comment": "Remove rsh",
+    "score": "true",
+    "level": "1",
+    "supposed_installed": "false",
+    "pkgname": "rsh"
+  },
+  "2.3.1": {
+    "comment": "Remove NIS Client",
+    "score": "true",
+    "level": "1",
+    "supposed_installed": "false",
+    "pkgname": "ypbind"
+  },
+
+
+  "2.2.2": {
+    "comment": "Remove the X Window System",
+    "score": "true",
+    "level": "1",
+    "supposed_installed": "false",
+    "pkgname": "xorg-x11-server-common"
+  },
+
+    "3.4.1": {
+    "comment": "Install TCP Wrappers",
+    "score": "false",
+    "level": "1",
+    "supposed_installed": "true",
+    "pkgname": "tcp_wrappers"
+  }
+
+}

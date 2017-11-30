@@ -1,0 +1,26 @@
+{
+  "9.2.14": {
+    "score": "true",
+    "level": "1",
+    "comment": "Check for Duplicate UIDs",
+    "part": "duplicate_uid"
+  },
+  "9.2.15": {
+    "score": "true",
+    "level": "1",
+    "comment": "Check for Duplicate GIDs",
+    "part": "duplicate_gid"
+  },
+  "9.2.17": {
+    "score": "true",
+    "level": "1",
+    "comment": "Check for Duplicate User Names",
+    "part": "duplicate_usernames"
+  },
+  "9.2.18": {
+    "score": "true",
+    "level": "1",
+    "comment": "Check for Duplicate Group Names",
+    "part": "duplicate_groupnames"
+  }
+}

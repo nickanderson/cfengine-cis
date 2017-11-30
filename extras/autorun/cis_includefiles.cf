@@ -1,0 +1,60 @@
+bundle agent cis_input
+#@
+#@ Collect all input files for CIS compliance
+#@
+#@ Note: if placed in ../inputs/services/autorun/, this
+#@ bundle and its variables are available for calling in
+#@ promises.cf without any adjustments (even without a
+#@ tag given here)
+#@
+{
+  meta:
+    "tags" slist => { "autorun" };
+
+  vars:
+   # set the base directory for CIS
+      "bdir" string => "$(this.promise_dirname)/../CIS/";
+
+   # collect components
+   #"general"          slist  => lsdir("$(bdir)",".*\.cf","true");
+
+      "general" slist => {
+                           "$(bdir)/cis_stdlib.cf",
+                           "$(bdir)/cis_wrapper.cf",
+                           "$(bdir)/cis_configure.cf",
+
+                           "$(bdir)/cis_filepermissions.cf",
+                           "$(bdir)/cis_file_regexp.cf",
+
+                           "$(bdir)/cis_command_output.cf",
+                           "$(bdir)/cis_packages.cf",
+                           "$(bdir)/cis_services.cf", # Services are not super duper reliable in return codes for checking
+                           "$(bdir)/cis_kernelvalues.cf", # depends_on cis_enforce_file_content.cf
+                           "$(bdir)/cis_enforce_file_content.cf",
+                           "$(bdir)/cis_flavour_specific.cf",
+#                           "$(bdir)/cis_world_writable.cf",
+                           #cis_userrelated.cf
+
+      };
+
+   "flavour"          slist  => lsdir("$(bdir)/$(sys.flavour)/",".*\.cf","true"),
+                      ifvarclass => isdir("$(bdir)/$(sys.flavour)/");
+   "flavour"          slist  => { },
+                      ifvarclass => not(isdir("$(bdir)/$(sys.flavour)/"));
+
+   # stich them together
+   "input_files"      slist  => { @(general) , @(flavour) };
+
+  methods:
+    "Activate CIS Compliance Policy Framework"
+      usebundle => cis_wrapper;
+
+  reports:
+    DEBUG|DEBUG_cis_input::
+    "DEBUG $(this.bundle)";
+}
+
+body file control
+{
+  inputs => { @(cis_input.input_files) };
+}

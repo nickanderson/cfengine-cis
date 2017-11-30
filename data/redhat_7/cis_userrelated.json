@@ -1,0 +1,26 @@
+{
+  "9_2_14": {
+    "score": "true",
+    "level": "1",
+    "comment": "Check for Duplicate UIDs",
+    "part": "duplicate_uid"
+  },
+  "9_2_15": {
+    "score": "true",
+    "level": "1",
+    "comment": "Check for Duplicate GIDs",
+    "part": "duplicate_gid"
+  },
+  "9_2_17": {
+    "score": "true",
+    "level": "1",
+    "comment": "Check for Duplicate User Names",
+    "part": "duplicate_usernames"
+  },
+  "9_2_18": {
+    "score": "true",
+    "level": "1",
+    "comment": "Check for Duplicate Group Names",
+    "part": "duplicate_groupnames"
+  }
+}

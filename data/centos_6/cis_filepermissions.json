@@ -1,0 +1,177 @@
+{
+  "1.4.1": {
+    "filename": "/boot/grub/grub.conf",
+    "score": "true",
+    "level": "1",
+    "comment": "Ensure ownership of bootloader config",
+    "mode": "600",
+    "uid": "0",
+    "gid": "0"
+  },
+
+  "3.4.4": {
+    "filename": "/etc/hosts.allow",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify Permissions on /etc/hosts.allow",
+    "mode": "644",
+    "uid": "0",
+    "gid": "0"
+  },
+  "3.4.5": {
+    "filename": "/etc/hosts.deny",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify Permissions on /etc/hosts.deny",
+    "mode": "644",
+    "uid": "0",
+    "gid": "0"
+  },
+  "5.1.2": {
+    "filename": "/etc/crontab",
+    "score": "true",
+    "level": "1",
+    "comment": "Ensure permissions on /etc/crontab",
+    "mode": "600",
+    "uid": "0",
+    "gid": "0"
+  },
+  "5.1.3": {
+    "filename": "/etc/cron.hourly",
+    "score": "true",
+    "level": "1",
+    "comment": "Set User/Group Owner and Permission on /etc/cron.hourly",
+    "mode": "600",
+    "uid": "0",
+    "gid": "0"
+  },
+  "5.1.4": {
+    "filename": "/etc/cron.daily",
+    "score": "true",
+    "level": "1",
+    "comment": "Set User/Group Owner and Permission on /etc/cron.daily",
+    "mode": "600",
+    "uid": "0",
+    "gid": "0"
+  },
+  "5.1.5": {
+    "filename": "/etc/cron.weekly",
+    "score": "true",
+    "level": "1",
+    "comment": "Set User/Group Owner and Permission on /etc/cron.weekly",
+    "mode": "600",
+    "uid": "0",
+    "gid": "0"
+  },
+  "5.1.6": {
+    "filename": "/etc/cron.monthly",
+    "score": "true",
+    "level": "1",
+    "comment": "Set User/Group Owner and Permission on /etc/cron.monthly",
+    "mode": "600",
+    "uid": "0",
+    "gid": "0"
+  },
+  "5.1.7": {
+    "filename": "/etc/cron.d",
+    "score": "true",
+    "level": "1",
+    "comment": "Set User/Group Owner and Permission on /etc/cron.d",
+    "mode": "600",
+    "uid": "0",
+    "gid": "0"
+  },
+
+  "5.1.8.a": {
+    "filename": "/etc/cron.allow",
+    "score": "true",
+    "level": "1",
+    "comment": "Set User/Group Owner and Permission on /etc/cron.d",
+    "mode": "600",
+    "uid": "0",
+    "gid": "0"
+  },
+  "5.1.8.b": {
+    "filename": "/etc/at.allow",
+    "score": "true",
+    "level": "1",
+    "comment": "Set User/Group Owner and Permission on /etc/cron.d",
+    "mode": "600",
+    "uid": "0",
+    "gid": "0"
+  },
+  "5.2.1": {
+    "filename": "/etc/ssh/sshd_config",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Permissions on /etc/ssh/sshd_config",
+    "mode": "600",
+    "uid": "0",
+    "gid": "0"
+  },
+
+  "1.7.1.4": {
+    "filename": "/etc/motd",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Warning Banner for Standard Login Services",
+    "mode": "644",
+    "uid": "0",
+    "gid": "0"
+  },
+  "1.7.1.5": {
+    "filename": "/etc/issue",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Warning Banner for Standard Login Services",
+    "mode": "644",
+    "uid": "0",
+    "gid": "0"
+  },
+  "1.7.1.6": {
+    "filename": "/etc/issuenet",
+    "score": "true",
+    "level": "1",
+    "comment": "Set Warning Banner for Standard Login Services",
+    "mode": "644",
+    "uid": "0",
+    "gid": "0"
+  },
+  "6.1.2": {
+    "filename": "/etc/passwd",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify Permissions on /etc/passwd",
+    "mode": "644",
+    "uid": "0",
+    "gid": "0"
+  },
+  "6.1.3": {
+    "filename": "/etc/shadow",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify Permissions on /etc/shadow",
+    "mode": "000",
+    "uid": "0",
+    "gid": "0"
+  },
+
+  "6.1.4": {
+    "filename": "/etc/group",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify Permissions on /etc/group",
+    "mode": "644",
+    "uid": "0",
+    "gid": "0"
+  },
+  "6.1.5": {
+    "filename": "/etc/gshadow",
+    "score": "true",
+    "level": "1",
+    "comment": "Verify User/Group Ownership on /etc/gshadow",
+    "mode": "600",
+    "uid": "0",
+    "gid": "0"
+  }
+}

@@ -1,0 +1,189 @@
+bundle agent cis_enforce_file_content
+{
+
+meta:
+   "tags"  slist => {
+                     "security",
+                     "CISENFORCE",
+                     "CIS"
+                    },
+      ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
+
+vars:
+   # platform OS specific input file
+   "infile" string => "$(this.promise_dirname)/data/$(sys.flavour)/file_regexp.json";
+
+   # a delimiter not part of any LHS or RHS, and not expandable as PCRE
+   "delim"  string => ";---;"; 
+
+   infile_exists::
+      # read the input file
+      "cis_file_reg"   data  => readjson("$(infile)","100K");
+
+      # get all paragraphs covered, and give it a meta tag to collect all paragraphs covered by general methods
+      "p_in"           slist => getindices("cis_file_reg"),
+                       meta  => { "CIS" , "CISSECTIONS" };
+
+      "tmp3[$(p_in)]"  string => "$(p_in)",
+                   ifvarclass => classmatch("CISENFORCE_$(p_in)");
+
+      # get intersection with relevant paragraphs
+      "paragraphs"     slist  => getindices("tmp3");
+
+      # files concerned
+      "files"          slist  => maplist("$(cis_file_reg[$(this)][filename])","@(paragraphs)");
+      "can[$(files)]"  string => canonify("$(files)");
+
+      # rearrange input, first LHS, then value, then filename
+      "tmp"            slist  => maplist("$(cis_file_reg[$(this)][LHS])$(delim)$(cis_file_reg[$(this)][value])$(delim)$(cis_file_reg[$(this)][filename])",
+                                           "@(paragraphs)");
+      "tmp2"           slist  => filter(".*\]\[value\]\).*","tmp","true","true","1000");  # sort out the lines without a value specified
+
+      "dummy_$(can[$(files)])"
+                       slist  => filter(".*$(delim)$(files)","tmp2","true","false","100");
+      "str_$(can[$(files)])" 
+                       string => join("$(const.n)","dummy_$(can[$(files)])");
+
+   # emergency brake --> see that nothing is looped over unless very sure
+   (!infile_exists)|(!CISENFORCE)::
+      "paragraphs"     slist  => { };
+      "files"          slist  => { };
+
+classes:
+   # platform OS specific needs to exist
+   "infile_exists" expression => fileexists("$(infile)");
+
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
+   
+methods:
+   CISENFORCE.infile_exists::
+      # invoke line editing with knowledge of file structure, skip files with no specification (empty string)
+      "$(files)"   usebundle => augeas_like("$(files)","$(str_$(can[$(files)]))","$(delim)"),
+                  ifvarclass => not(strcmp("$(str_$(can[$(files)]))",""));      
+
+reports:
+   DEBUG_THIS_BUNDLE::
+      "$(this.bundle) paragraphs $(paragraphs)";
+      "$(this.bundle) files ---$(files)---";
+      "$(this.bundle) $(LHS_$(can[$(files)])) $(files)";
+      "$(this.bundle) tmp $(tmp)";
+      "$(this.bundle) tmp2 $(tmp2)";
+      "$(this.bundle) can $(can[$(files)])";
+      "$(this.bundle) dummy_canfiles $(dummy_$(can[$(files)]))";
+      "$(this.bundle) str $(str_$(can[$(files)]))";
+
+}
+
+bundle agent augeas_like(file,inblock,separator)
+#@
+#@ Set Content in "file" according to "inblock".
+#@
+#@ "inblock" is a line separated set of parameters in the form of
+#@ LHS"$(separator)"RHS
+#@
+#@ The function knows about the syntax of a couple of file types:
+#@
+#@
+{
+
+vars:
+   "c"      string  => hash("$(file)-$(inblock)","md5");
+   "tmp"    int     => parsestringarray("input","$(inblock)","","$(separator)","100","10000");
+   "i"      slist   => getindices("input");
+   "LHS_$(c)[$(i)]"
+            string  => "$(input[$(i)][1])";
+
+   "create" string  => "false"; # might be overwritten below
+   "create" string  => "true",
+         ifvarclass => or (
+                        strcmp("$(file)","/etc/modprobe.d/CIS.conf"),
+                        strcmp("$(file)","/etc/sysctl.d/99-CIS-sysctl.conf")
+                       );
+
+                       
+classes:
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
+
+files:
+   # file which are recognized as have LHS\s+RHS with # as a comment, and basically disregard most whitespace
+   "$(file)" 
+         edit_line     => set_line_based( "augeas_like.LHS_$(c)" , " " , "\s+" , ".*" , "\s*#\s*" ),
+         create        => "$(create)",
+         classes       => if_repaired("repaired"),
+         ifvarclass    => or(
+                           regcmp(".*/sshd_config", "$(file)"),
+                           strcmp("/etc/login.defs","$(file)")
+                          );
+
+   # Files which recognized as have LHS=RHS with # as a comment, and basically disregard most whitespace
+   "$(file)" 
+         edit_line     => set_line_based( "augeas_like.LHS_$(c)" , "=" , "\s*=\s*" , ".*" , "\s*#\s*" ),
+         create        => "$(create)",
+         classes       => if_repaired("repaired"),
+         ifvarclass    => or(
+                           strcmp("/etc/security/pwquality.conf","$(file)"),
+                           strcmp("/etc/postfix/main.cf","$(file)"),
+                           strcmp("/etc/selinux/config","$(file)"),
+                           strcmp("/etc/audit/auditd.conf","$(file)"),
+                           strcmp("/boot/grub2/grub.cfg","$(file)"),
+                           strcmp("/etc/sysctl.d/99-CIS-sysctl.conf","$(file)"),
+                           strcmp("/etc/yum.conf","$(file)")
+                          );
+
+   # files using replace_or_add
+   "$(file)" 
+         edit_line     => replace_or_add("$(i)" , "$(augeas_like.LHS_$(c)[$(i)])"),
+         create        => "$(create)",
+         classes       => if_repaired("repaired"),
+         ifvarclass    => or(
+                           regcmp("/etc/modprobe.d/.*\.conf","$(file)"),
+                           strcmp("/etc/rsyslog.conf","$(file)"),
+                           strcmp("/etc/ntp.conf","$(file)"),
+                           strcmp("/etc/sysconfig/ntpd","$(file)"),
+                           strcmp("/etc/hosts.allow","$(file)"),
+                           strcmp("/etc/hosts.deny","$(file)"),
+                           strcmp("/etc/security/limits.conf","$(file)"),
+                           strcmp("/etc/sysconfig/init","$(file)"),
+                           strcmp("/etc/pam.d/system-auth","$(file)"),
+                           strcmp("/etc/bashrc","$(file)"),
+                           strcmp("/etc/profile","$(file)")
+                          );
+methods:
+   repaired::
+      "doasappropriate" usebundle => doasappropriate("$(file)");
+
+reports:
+   DEBUG_THIS_BUNDLE::
+      "$(this.bundle) $(file) $(i)";
+      "$(this.bundle) input values $(file) $(inblock)";
+      "$(this.bundle) replace_or_add($(i) , $(augeas_like.LHS_$(c)[$(i)]))";
+      "$(this.bundle) set_line_based( augeas_like.LHS_$(c) , $(sep) , $(bp) , .* , $(cp) )"
+           ifvarclass => regcmp(".*/sshd_config","$(file)");
+}
+
+bundle agent doasappropriate(f)
+#@
+#@ Does the appropriate action in case the file f has been changed.
+#@ 
+#@ For instance, in case /etc/ssh/sshd_config has changed, restart the sshd
+#@ 
+#@ At present only implemented for redhat_7
+{
+
+commands:
+   redhat_7::
+      "/bin/systemctl restart sshd"
+          ifvarclass => regcmp(".*/sshd_config", "$(f)");
+      "/bin/systemctl restart postfix"
+          ifvarclass => strcmp("/etc/postfix/main.cf", "$(f)");
+      "/bin/systemctl restart rsyslog"
+          ifvarclass => strcmp("/etc/rsyslog.conf", "$(f)");
+      "/bin/systemctl restart ntpd"
+          ifvarclass => or(strcmp("/etc/ntp.conf", "$(f)"),
+                           strcmp("/etc/sysconfig/ntpd", "$(f)"));
+      "/sbin/sysctl -p /etc/sysctl.d/99-CIS-sysctl.conf"
+          ifvarclass => strcmp("/etc/sysctl.d/99-CIS-sysctl.conf", "$(file)");
+
+}

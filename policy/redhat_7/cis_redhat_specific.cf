@@ -1,0 +1,97 @@
+bundle agent redhat_gpg_key(p)
+#@
+#@ Checks whether the redhat package signing key is present
+#@
+#@ Automatic remediation: Yes
+#@
+#@ Improvements: it might not suffice to check the finger pront of the key, which is only 64 bits.
+{
+
+vars:
+   "score"          string => "$(cis_flavour_specific.input[$(p)][score])";
+   "level"          string => "$(cis_flavour_specific.input[$(p)][level])";
+   "comment"        string => "$(cis_flavour_specific.input[$(p)][comment])";
+
+   # bundle specific
+   "installedkeys"  string => execresult("/bin/rpm -q  gpg-pubkey","noshell");
+
+classes:
+   "act"          expression => classmatch("CISENFORCE_$(p)");
+
+   # bundle specific
+   "gpginstalled" expression => and(regcmp(".*gpg-pubkey-fd431d51-4ae0493b.*","$(installedkeys)"),
+                                    regcmp(".*gpg-pubkey-2fa658e0-45700c69.*","$(installedkeys)"));
+
+methods:
+   !gpginstalled::
+     "failed"  usebundle => CIS_set_inventory_class("$(p)","$(score)","$(level)","$(this.bundle)","$(comment)");
+
+commands:
+   CISENFORCE.act.!gpginstalled::
+      "/bin/rpmkeys --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release";
+
+reports:
+   DEBUG::
+      "$(this.bundle) $(p)";
+}
+
+
+bundle agent password_hash_sha512(p)
+#@
+#@ Checks password hash algorithm is SHA-512
+#@
+#@ Automatic remediation: Yes
+#@
+{
+
+vars:
+   "score"          string => "$(cis_flavour_specific.input[$(p)][score])";
+   "level"          string => "$(cis_flavour_specific.input[$(p)][level])";
+   "comment"        string => "$(cis_flavour_specific.input[$(p)][comment])";
+
+   # bundle specific
+   "authconfig"  string => execresult("/sbin/authconfig --test","noshell");
+
+classes:
+   "act"          expression => classmatch("CISENFORCE_$(p)");
+
+   # bundle specific
+   "sha512" expression => regcmp(".*password hashing algorithm is sha512.*","$(authconfig)");
+
+methods:
+   !sha512::
+     "failed"  usebundle => CIS_set_inventory_class("$(p)","$(score)","$(level)","$(this.bundle)","$(comment)");
+
+commands:
+   CISENFORCE.act.!sha512::
+      "/sbin/authconfig --passalgo=sha512 --update";
+
+reports:
+   DEBUG::
+      "$(this.bundle) $(p) -- $(authconfig) -- ";
+}
+
+
+bundle agent redhat_repo_enabled(p)
+#@
+#@ Checks password hash algorithm is SHA-512
+#@
+#@ Automatic remediation: No
+#@
+{
+
+vars:
+   "score"          string => "$(cis_flavour_specific.input[$(p)][score])";
+   "level"          string => "$(cis_flavour_specific.input[$(p)][level])";
+   "comment"        string => "$(cis_flavour_specific.input[$(p)][comment])";
+
+
+classes:
+   # bundle specific
+   "yumupdate"  expression => returnszero("/bin/yum check-update","noshell");
+
+methods:
+   !yumupdate::
+     "failed"  usebundle => CIS_set_inventory_class("$(p)","$(score)","$(level)","$(this.bundle)","$(comment)");
+
+}

@@ -1,0 +1,247 @@
+bundle agent cis_world_writable_files
+#@
+#@
+#@
+{
+
+meta:
+   "tags"  slist => {
+                     "CIS",
+                     "security",
+                     "reporting"
+                    },
+      ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
+
+vars:
+   "infile"       string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
+   "interval"     string => "$(cis_configure.interval)";
+   "action"       string => "warn";   # might be overwritten with fix below
+
+      "cache_found_dirs" string => "$(sys.workdir)/tmp/discovered_world_writeable_dirs";
+
+   infile_exists::
+      "input"      data   => readjson("$(infile)","100K");
+      "paragraphs" slist  => getindices("input"),
+                   meta   => { "CIS" , "CISSECTIONS" };
+
+   any::
+     "paragraph"  string => join("","paragraphs");
+
+   infile_exists::
+      "comment"    string => "$(input[$(paragraph)][comment])";
+      "level"      string => "$(input[$(paragraph)][level])";
+      "score"      string => "$(input[$(paragraph)][score])";
+
+   infile_exists.CISENFORCE::
+      "action"    string => "fix",
+              ifvarclass => classmatch("CISENFORCE_$(paragraph)");
+
+classes:
+   "infile_exists"     expression => fileexists("$(infile)");
+
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
+
+files:
+   "$(localfs.paths)"
+       comment        => "no world writable files should exist",
+       perms          => m("o-w"),
+       depth_search   => recurse_in_fs,
+       file_select    => world_writable_files,
+       handle         => "security: $(this.bundle)",
+       classes        => if_notkept("cis1"),
+       action         => fix_or_warn_on_interval("$(action)","$(interval)");
+
+methods:
+   cis1::
+      "cis1" usebundle => CIS_set_inventory_class("$(paragraph)","$(score)","$(level)","$(this.bundle)","$(comment)");
+
+reports:
+   DEBUG_THIS_BUNDLE::
+      "$(this.bundle) score $(score)";
+      "$(this.bundle) input $(input)";
+      "$(this.bundle) infile $(infile)";
+   DEBUG_THIS_BUNDLE.cis1::
+      "$(this.bundle) cis usebundle => CIS_set_inventory_class($(paragraph),$(score),$(level),$(this.bundle),$(comment))";
+
+}
+
+bundle agent cis_world_writable_dirs
+#@
+#@
+#@
+{
+
+meta:
+
+   "tags"  slist => {
+                     "CIS",
+                     "security",
+                     "reporting"
+                     },
+      ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
+
+  vars:
+
+      "infile"       string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
+      "interval"     string => "$(cis_configure.interval)";
+
+      "cache"
+        string => "$(sys.statedir)/world_writeable_dirs",
+        comment => "Because discovering all of the world write-able directories
+                    is a potentially *long* running job. We expect the process
+                    that generates this data will be executed outside of
+                    CFEngine.";
+
+    infile_exists::
+      "input"      data   => readjson("$(infile)","100K");
+      "paragraphs" slist  => getindices("input"),
+        meta   => { "CIS" , "CISSECTIONS" };
+
+    any::
+      "paragraph"   string => join("","paragraphs");
+
+    infile_exists::
+      "comment"    string => "$(input[$(paragraph)][comment])";
+      "level"      string => "$(input[$(paragraph)][level])";
+      "score"      string => "$(input[$(paragraph)][score])";
+
+      "action"     string => "warn";  # might be overwritten with fix below
+
+    infile_exists.CISENFORCE::
+      "action"     string => "fix",
+        ifvarclass => classmatch("CISENFORCE_$(paragraph)");
+
+  classes:
+
+      "missing_world_writeable_dirs_cache"
+        not => fileexists( $(cache) );
+
+  reports:
+
+    missing_world_writeable_dirs_cache::
+
+      "ERROR: $(this.bundle) requires '$(cache)' but it does not exist.";
+
+  vars:
+
+    !missing_world_writeable_dirs_cache::
+
+      "dirs"
+        slist => readstringlist( $(cache), "", "\n", inf, inf),
+        meta => { "inventory", "attribute_name=World Write-able Directories" },
+        unless => isvariable( dirs ),
+        comment => "This is the list of directories found to be world
+                    write-able. We inventory them for CFEngine Enterprise
+                    Reporting.";
+
+      "dirs_count"
+        int => length( dirs ),
+        meta => { "inventory", "attribute_name=World Write-able Directory Count" },
+        comment => "We count and inventory this because it is useful for reporting";
+
+  classes:
+
+      "have_some_world_writeable_dirs" expression => some( ".*", dirs );
+
+  files:
+
+    have_some_world_writeable_dirs::
+
+      "$(dirs)"
+        comment => "All world write-able directories should have the sticky bit
+                   set to prevent users from deleting or renaming files they do
+                   not own. In order to reduce resource usage we only apply this
+                   every $(interval) minutes.",
+        perms          => m("+t"),
+        depth_search   => recurse_in_fs,
+        file_select    => world_writable_dirs,
+        classes        => results("bundle", "world_writeable_dirs"),
+        action         => fix_or_warn_on_interval("$(action)","$(interval)");
+
+  vars:
+
+classes:
+   "infile_exists"     expression => fileexists("$(infile)");
+
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)"};
+
+#files:
+#   "$(localfs.paths)"
+#       comment        => "no world writable directory should exist",
+#       perms          => m("+t"),
+#       depth_search   => recurse_in_fs,
+#       file_select    => world_writable_dirs,
+#       handle         => "security: $(this.bundle)",
+#       classes        => if_notkept("cis"),
+#       action         => fix_or_warn_on_interval("$(action)","$(interval)");
+
+  methods:
+      "Inventory"
+        usebundle => CIS_set_inventory_class("$(paragraph)","$(score)","$(level)","$(this.bundle)","$(comment)");
+
+reports:
+   DEBUG_THIS_BUNDLE::
+      "$(this.bundle) score $(score)";
+      "$(this.bundle) input $(input)";
+      "$(this.bundle) infile $(infile)";
+   DEBUG_THIS_BUNDLE.cis::
+      "$(this.bundle) cis usebundle => CIS_set_inventory_class($(paragraph),$(score),$(level),$(this.bundle),$(comment))";
+
+}
+
+
+
+bundle agent localfs
+#@
+#@
+#@
+#@
+{
+
+vars:
+   linux::
+      "tmp"     string => execresult("$(paths.path[df]) --local | $(paths.path[sed]) 's/.* //'","useshell");
+      "tmp2"    int    => parsestringarray("tmp3","$(tmp)",""," ","100","10000");
+      "paths"  slist  => getindices("tmp3");
+
+   !linux::
+      "paths"  slist  => { "/" };
+
+}
+
+body depth_search recurse_in_fs
+#@
+#@
+#@
+{
+   depth            => "inf";
+   include_basedir  => "true";
+   xdev             => "true";
+}
+
+
+body file_select world_writable_files
+#@
+#@
+#@
+{
+
+   search_mode => { "o+w" };
+   file_types  => { "plain" };
+   file_result => "mode.file_types";
+
+}
+
+body file_select world_writable_dirs
+#@
+#@
+#@
+{
+
+   search_mode => { "-t,o+w" };
+   file_types  => { "dir" };
+   file_result => "mode.file_types";
+
+}

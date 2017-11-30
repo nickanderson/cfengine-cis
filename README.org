@@ -1,64 +1,252 @@
-* Center for Internet Security (CIS) policy
+* Center for Internet Security (CIS) policy framework
+:PROPERTIES:
+:ID:       e2ca7ef8-d3c5-4d28-acbc-84ea97639c7f
+:END:
 
-** cis_centos_linux_6_benchmark_v1_0_0_section_1_1
+This is a framework to check Linux (Unix) installations for
+CIS-compliance.
 
-   Wrapper bundle to activate bundles related to section 1.1
+It will, if used with the CFEngine Enterprise Edition, collect the
+implemented CIS benchmarks and report them into mission portal. For an
+example how to use the mission portals inventory report with this,
+refer to [[docs/mission_portal.org][this presentation]]. In case you are deploying the CFEngine
+Community Edition, the easiest method to get a compliance report is to
+used the cached mode of this framework, which will generate a file
+=$(sys.workdir)/tmp/CIS.csv=.
+* Installation
+:PROPERTIES:
+:ID:       9ffa3df0-bc97-465b-953b-dc354a4b9168
+:END:
 
-** cis_centos_linux_6_benchmark_v1_0_0_section_1_1_filesystem_mounts_inventory
+Get the policy from upstream.
 
-This bundle implements inventory for sections 1.1.1 through 1.1.17 to check
-that various filesystems exist and have restricted mount opitons.
+#+BEGIN_SRC sh
+  git clone -b v2 https://git@github.com/nickanderson/cfengine-cis
+#+END_SRC
 
-** cis_centos_linux_6_benchmark_v1_0_0_section_1_1_filesystem_support_inventory
+Variables:
 
-This bundle implements inventory for sections 1.1.18 through 1.1.24 to check
-that unneeded filesystem types are specifically disabled from mounting.
-Removing support for unneeded filesystem types reduces the local attack surface
-of the server.
+  - =POLICY_ROOT= :: The directory where your policy exists (by default =/var/cfengine/masterfiles=).
+  - =DEPLOY_DIR= :: The directory where the CIS policy should be deployed (by default =$(POLICY_ROOT)/services/CIS=).
+  - =AUTORUN= :: Whether or not to install a policy tagged with =autorun= into
+       =${POLICY_ROOT}/services/autorun=. (Defaults to *true*). **NOTE:** autorun itself needs to be enabled for this to work (the class services_autorun must be defined).
 
-** How to integrate into your policy
-First get the policy into your masterfiles
-
-#+begin_src sh
-  cd /tmp
-  export MASTERFILES=/var/cfengine/masterfiles
-  git clone https://github.com/nickanderson/cfengine-cis.git
+#+BEGIN_SRC sh
   cd cfengine-cis
-  mkdir -p $MASTERFILES/services/cis
-  git archive master | tar -x -C $MASTERFILES/services/cis
-#+end_src
+  DEPLOY_DIR=/var/cfengine/masterfiles POLICY_ROOT=${POLICY_ROOT}/services/CIS make install
+#+END_SRC
 
-Include def.cf into your inputs
+* File Structure and Components
+:PROPERTIES:
+:ID:       9cb43bd1-8fba-40b7-8bf5-75cf75bc7518
+:END:
 
-#+begin_src cfengine
-  body common control
-  {
-        inputs => { 
-                    # Reports
-                    @(cfengine_reports.inputs),
-  
-                   "services/cis/def.cf",
-                    
-                    # autorun system
-                    @(services_autorun.inputs),
-        };
-  }
-#+end_src
+* Customizable files
+:PROPERTIES:
+:ID:       e2482a43-eb30-4a68-a20f-d2d495faf904
+:END:
+- [[policy/cis_configure.cf][cis_configure.cf]]
 
-Activate the features you want in the proper context.
+* Configuration
+:PROPERTIES:
+:ID:       bfe2e362-fab3-4e1c-bf1e-b335f86f0c08
+:END:
 
-For example to activate
-`cis_centos_linux_6_benchmark_v1_0_0_section_1_1` on all CentOS 6
-nodes:
+- =CIS_summary=
 
-#+begin_src cfengine3
-  bundle agent main
-  # User Defined Service Catalogue
-  {
-    methods:
-      # Activate your custom policies here
-      centos_6::
-        "Inventory CIS section 1.1" -> { "security", "CIS" }
-          usebundle => cis_centos_linux_6_benchmark_v1_0_0_section_1_1;
-  }
-#+end_src
+  When this class is defined reports about findings will be printed.
+
+  Use =jq= to easily extend your current definitions:
+
+  #+BEGIN_EXAMPLE
+    [root@localhost masterfiles]# cat def.json
+    {
+      "classes": {
+        "services_autorun": [ "any" ]
+      }
+
+    }
+    [root@localhost masterfiles]# cat def.json  | jq '. *  { "classes": { "CIS_summary" : [ "any" ] } } ' | tee def.json
+    {
+      "classes": {
+        "services_autorun": [
+          "any"
+        ],
+        "CIS_summary": [
+          "any"
+        ]
+      }
+    }
+  #+END_EXAMPLE
+
+- =cis_configure.cache=
+
+  If =def.CIS_cache= is defined =cis_configure.cache= will be set to that value.
+  Else it defaults to *true*.
+
+  When this variable is set to true the results of the CIS run are cached.
+
+- =cis_configure.interval=
+
+  If =def.CIS_interval= is defined =cis_configure.interval= will be set to that
+  value. Else it defaults to =1440= (1 day).
+
+  This is how often the CIS policy is allowed to run.
+
+#+BEGIN_SRC cfengine3
+  vars:
+      "interval"
+        string => "1440",
+        ifvarclass => not(isvariable("interval")),
+        comment => "By default we will re-validate each compliance rule no more
+                    than once a day.";
+#+END_SRC
+
+
+- =cis_configure.grace=
+
+  When =CIS_cache= is defined this controls how long in minutes the class for
+  each CIS finding should persist.
+
+  If =def.CIS_cache= is defined that value will be used, else it defaults to
+  =1620= minutes (3 hours).
+
+- =cis_configure.enforce=
+
+  This defines a list of individual compliance checks that should be
+  automatically enforced (if possible).
+
+  If =def.CIS_enforce= is defined that value will be used, else it defaults to
+  an empty list.
+
+  Classes are automatically defined in the format =CISENFORCE_x= where x
+  is the canonified list element.
+
+- =cis_configure.blacklist=
+
+  This defines a list of individual compliance checks that should not be
+  checked.
+
+  If =def.CIS_enforce= is defined that value will be used, else it defaults to
+  an empty list.
+
+  Classes are automatically defined in the format =CISBLACKLIST_x= where x is
+  the canonified list element.
+
+
+* ToDos
+:PROPERTIES:
+:ID:       99531628-a438-4c9c-a000-ae86e2392e63
+:END:
+
+** TODO Instrument configuration for use with augments file
+:PROPERTIES:
+:ID:       ded85e59-6372-43cb-9dbe-fbeb09c2ac1e
+:END:
+ wv
+
+*** TODO Allow setting cache from augments
+:PROPERTIES:
+:ID:       7b9694ff-07d3-431d-8994-85bdbfd7e939
+:END:
+
+      "cache"
+        string => "$(def.CIS_cache)",
+        if => isvariable("def.CIS_cache"),
+        comment => "We want uses to be able to define this from the augments
+                    file";
+       "cache"
+        string => "true",
+        ifvarclass => not(isvariable("cache")),
+        comment => "By default we cache the results of our scan so we don't have
+                    to do all of the work each time and we report on the cached
+                    values.";
+
+
+*** TODO Allow setting interval from augments
+:PROPERTIES:
+:ID:       6b37b3ce-08cf-43c9-9817-1ede287bab80
+:END:
+     "interval"
+        string => "$(def.CIS_interval)",
+        if => isvariable("def.CIS_interval"),
+        comment => "We want uses to be able to define this from the augments
+                    file";
+
+      "interval"
+        string => "1440",
+        ifvarclass => not(isvariable("interval")),
+        comment => "By default we will re-validate each compliance rule no more
+                    than once a day.";
+
+
+*** TODO Allow setting grace from augments
+:PROPERTIES:
+:ID:       4bd5825f-e7da-4522-b528-537fc8ee5213
+:END:
+      "grace"
+        string => "$(def.CIS_grace)",
+        if => isvariable("def.CIS_grace"),
+        comment => "We want uses to be able to define this from the augments
+                    file";
+      "grace"
+        string => "1620",
+        ifvarclass => not(isvariable("grace")),
+        comment => "We assume the scan will not run more than 3 hours ( 180min =
+                   1620-1440).";
+
+
+*** TODO Allow setting enforce from augments
+:PROPERTIES:
+:ID:       88459671-db0b-4a72-a512-ccb1bf4d6679
+:END:
+
+      "enforce"
+        slist => { @(def.CIS_enforce) },
+        if => isvariable("def.CIS_enforce"),
+        comment => "We want uses to be able to define this from the augments
+                    file";
+
+
+      "enforce"
+        slist  => { },
+        ifvarclass => not(isvariable("enforce")),
+        comment => "We don't want to automatically re mediate anything by default
+                    as it could be dangerous.";
+
+
+*** TODO Allow setting blacklist from augments
+:PROPERTIES:
+:ID:       78b9e965-e046-4f31-ad45-bfb369c35ccb
+:END:
+      "blacklist"
+        slist => { @(def.CIS_blacklist) },
+        if => isvariable("def.CIS_blacklist"),
+        comment => "We want uses to be able to define this from the augments
+                    file";
+      "blacklist"
+        slist  => { },
+        ifvarclass => not(isvariable("blacklist")),
+        comment => "By default we don't skip any specific compliance checks.";
+
+
+** TODO Adhere CFEngine design rules
+:PROPERTIES:
+:ID:       8fa1e1bb-c664-460e-ac43-69b7d6548945
+:END:
+** TODO remove all dependencies to redhat_7 which are not required by technology
+:PROPERTIES:
+:ID:       1d8a756c-932c-4b26-8ffa-86ee878f168f
+:END:
+** TODO Improve customizability
+:PROPERTIES:
+:ID:       27a24177-3ab6-4368-8b09-e70ec2608c5c
+:END:
+** TODO Prevent high (IO)-load functions from being run
+:PROPERTIES:
+:ID:       5487a67a-b5d7-4dc5-8280-279c06fe8d90
+:END:
+** TODO Define automated test cases for platforms supported
+:PROPERTIES:
+:ID:       8b7968d4-fee8-42ca-9238-6b5e59685070
+:END:

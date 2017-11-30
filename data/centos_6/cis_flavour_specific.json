@@ -1,0 +1,9 @@
+{
+  "5.3.4": {
+    "comment": "Upgrade Password Hashing Algorithm to SHA-512",
+    "score": "true",
+    "level": "1",
+    "bundle": "password_hash_sha512"
+  }
+}
+

@@ -1,0 +1,105 @@
+bundle agent cis_kernelvalues
+# @ brief Report on kernel compliance
+# @
+# @ Reads input from .json: Yes
+# @ Enforcement possible: Yes (when match is "true")
+# @
+# @ Improvements to be done: Do not call augeas_like(...) directly but use other
+# @ bundle to facilitate other operating systems than linux.
+{
+  meta:
+      "tags"
+        slist => {
+                   "CIS",
+                   "security",
+                   "reporting"
+                  },
+        ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
+
+  vars:
+
+      "infile"  string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
+
+   infile_exists::
+
+     # read data for packages supposed to be installed / not intalled
+     "values" data  => readdata( $(infile), "auto");
+
+     # get all paragraphs covered, and give it a meta tag to collect all
+     # paragraphs covered by general methods
+     "paragraphs" slist => getindices("values"),
+                  meta  => { "CIS" , "CISSECTIONS" };
+
+     # get all needed sysctl values
+      # Here we build a map of cis section identifier to the key that will be
+      # inspected and then pull a consolidated list of keys from the values of
+      # the map.
+     "tmp[$(paragraphs)]" string => "$(values[$(paragraphs)][key])";
+     "sysctlneeded"       slist => getvalues("tmp");
+
+      # Here we build a map for the current key values for all requested
+      # controls
+      # This implementation is susceptible to 4K limits
+      # TODO Refactor to use a data_regextract and operate with a temporary file.
+      "sysctlvars"    string => join(" ","sysctlneeded");
+      "sysctl_in"     string => execresult("/sbin/sysctl $(sysctlvars)","noshell");
+      "tmp2" int => parsestringarray("sysctlarray","$(sysctl_in)",""," = ","10240","204400");
+      "sysctl[$(sysctlneeded)]" string => "$(sysctlarray[$(sysctlneeded)][1])";
+
+  classes:
+      "infile_exists"      expression => fileexists("$(infile)");
+
+      # general debugging class specific for a bundle, should work with 3.6 & 3.7
+      "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
+
+  methods:
+   # supposed match
+      "$(paragraphs)"
+        usebundle  => CIS_set_inventory_class("$(paragraphs)",
+                                              "$(values[$(paragraphs)][score])",
+                                              "$(values[$(paragraphs)][level])",
+                                              "$(this.bundle)",
+                                              "$(values[$(paragraphs)][comment])"),
+        ifvarclass => or(
+                          and(
+                               not(strcmp("$(values[$(paragraphs)][value])",
+                                          "$(sysctl[$(values[$(paragraphs)][key])])")),
+                               strcmp("$(values[$(paragraphs)][match])","true")),
+
+                          and(
+                               strcmp("$(values[$(paragraphs)][value])",
+                                      "$(sysctl[$(values[$(paragraphs)][key])])"),
+                               strcmp("$(values[$(paragraphs)][match])","false"))
+                         );
+
+   # supposed not match
+# Moved into Or in above inventory actuation
+#      "$(paragraphs)"
+#        usebundle  => CIS_set_inventory_class("$(paragraphs)",
+#                                              "$(values[$(paragraphs)][score])",
+#                                              "$(values[$(paragraphs)][level])",
+#                                              "$(this.bundle)",
+#                                              "$(values[$(paragraphs)][comment])"),
+#        ifvarclass => and(
+#                           strcmp("$(values[$(paragraphs)][value])",
+#                                  "$(sysctl[$(values[$(paragraphs)][key])])"),
+#                           strcmp("$(values[$(paragraphs)][match])","false"));
+
+      # Enforcement for CIS, only for supposed match (not match is hard to achieve)
+      # TODO This should be factored out into it's own bundle so that
+      # enforcement and checking are completely independent.
+      "$(paragraphs)"
+        usebundle  => augeas_like( "/etc/sysctl.d/99-CIS-sysctl.conf",
+                                   "$(values[$(paragraphs)][key])=$(values[$(paragraphs)][value])",
+                                   "="),
+        ifvarclass => and(
+                           classmatch("CISENFORCE_$(paragraphs)"),
+                           strcmp("$(values[$(paragraphs)][match])","true"));
+
+  reports:
+    DEBUG_THIS_BUNDLE::
+      "DEBUG $(this.bundle): $(paragraphs) '$(values[$(paragraphs)][key])=$(values[$(paragraphs)][value])' actual=$(sysctl[$(values[$(paragraphs)][key])])"
+          ifvarclass => not(strcmp("$(values[$(paragraphs)][value])","$(sysctl[$(values[$(paragraphs)][key])])"));
+      #"$(this.bundle) sysctlneeded $(sysctlneeded)";
+
+}

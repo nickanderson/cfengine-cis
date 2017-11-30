@@ -1,0 +1,8 @@
+{
+  "1.1.17": {
+  "comment": "Set Sticky Bit on All World-Writable Directories",
+  "level": "1",
+  "score": "true"
+  }
+}
+

@@ -1,0 +1,263 @@
+bundle agent cis_wrapper
+#@ brief Main driver for CIS Framework
+{
+  meta:
+      # TODO Clean this up. We want to avoid people changing the shipped policy,
+      # and instead provide other ways for them to customize the behavior.
+
+      "tags" slist => { "use_this_do_set_custom_tags" };
+
+  methods:
+      "Init" usebundle => cis_wrapper_init;
+      "Activate" usebundle => cis_wrapper_activate;
+      "Summary" usebundle => cis_wrapper_summary;
+}
+
+bundle agent cis_wrapper_init
+#@ breif Fnding cis bundles that should be activated
+{
+  classes:
+      # general debugging class specific for a bundle, should work with 3.6 & 3.7
+      "DEBUG_THIS_BUNDLE"  or => { "DEBUG", "DEBUG_$(this.bundle)" };
+
+  vars:
+
+      # collect all bundles
+      "to_be_called"  slist  => bundlesmatching("default:cis_.*","CIS");
+
+      #
+      "interval"  string     => "$(cis_configure.interval)";
+
+    DEBUG_THIS_BUNDLE::
+      "to_be_called_count" int => length( "to_be_called" );
+
+  reports:
+    DEBUG_THIS_BUNDLE::
+      "DEBUG $(this.bundle): Found '$(to_be_called_count)' CIS bundle to activate";
+      "DEBUG $(this.bundle): Found CIS bundle to activate: '$(to_be_called)'";
+}
+
+bundle agent cis_wrapper_activate
+#@ breif Activate discoverd cis bundles
+{
+
+  classes:
+      "CIS_cache"
+        expression  => strcmp("$(cis_configure.cache)","true"),
+        scope       => "namespace";
+
+      "CISBLACKLIST_$(cis_configure.blacklist)"
+        or          => { "any" },
+        scope       => "namespace";
+
+      "CISENFORCE_$(cis_configure.enforce)"
+        or          => { "any" },
+        scope       => "namespace";
+
+      "CISENFORCE"
+        expression  => not(strcmp(length("cis_configure.enforce"),"0")),
+        scope       => "namespace";
+
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE"  or => { "DEBUG", "DEBUG_$(this.bundle)" };
+
+  files:
+    CIS_cache::
+      # remove the cache regularly to enforce recalculation
+      "$(sys.workdir)/tmp/CIS.csv"
+        handle => "purge_stale_cis_finding_cache",
+        delete  => tidy,
+        action  => fix_or_warn_on_interval("fix","$(cis_configure.interval)"),
+        classes => if_ok("timeout");
+
+  methods:
+      # call the bundles
+    timeout|!CIS_cache::
+      "$(cis_wrapper_init.to_be_called)"
+        usebundle => "$(cis_wrapper_init.to_be_called)",
+        classes => scoped_classes_generic("bundle", "_cis_inventory");
+
+      # !timeout:: replay
+    CIS_cache.!timeout::
+      "replay"
+        usebundle => cis_replay,
+        classes => scoped_classes_generic("bundle", "_cis_inventory");
+
+}
+
+bundle agent cis_wrapper_summary
+#@ breif Summarize CIS Findings
+# This bundle is really only useful when debugging the policy interactively
+{
+  classes:
+      # general debugging class specific for a bundle, should work with 3.6 & 3.7
+      "DEBUG_THIS_BUNDLE"  or => { "CIS_summary", "DEBUG", "DEBUG_$(this.bundle)" };
+
+  vars:
+   DEBUG_THIS_BUNDLE::
+      # Each implementation bundle should contan a list variable named paragraphs that contains
+      # a list of each control implemented by the bundle (derived from the data source)
+      # First we find all of these variables
+      "allparagraphsvars" slist  => variablesmatching("default:cis_.*\.paragraphs");
+
+      # Then we construct an array where each key is named for a cis
+      # bundle that defined the paragraphs variable and the value of
+      # the key is a space separted string listing each control
+      # implemented by that bundle.
+      "array[$(allparagraphsvars)]"
+                          string => join(" ","$(allparagraphsvars)");
+
+      # We then get a list of each space seperated string
+      "tmp"               slist  => getvalues("array");
+
+      # And then join that list back together in to a single space
+      # seperted string.  Warning: This could be problematic if the
+      # size of the string grows over 4k
+      "tmp2"              string => join(" ","tmp");
+
+      # Then we split the long string on the spaces to get a unified
+      # list of all covered controls/rule ids.
+      "tmp3"              slist  => splitstring("$(tmp2)"," ","10000");
+
+      # And finally we sort that lexically for consistency.
+      "complete_para"     slist  => sort("tmp3","lex");
+      "s_para" string => join(", ", complete_para);
+      "count_complete_para"  int  => length( "complete_para" );
+
+      "CIS_findings"
+        #slist  => classesmatching("CIS_finding_.*"),
+        slist => variablesmatching(".*", "CIS:finding"),
+        comment => "It's important to get a combined list of all
+                    variables that indicate non compliance with the CIS
+                    rule sets.";
+
+      "CIS_findings_count"
+        int => length( "CIS_findings" );
+      "l" slist => maplist("$($(this))", @(CIS_findings));
+      "s" string => join( ', ', l);
+
+
+reports:
+   DEBUG_THIS_BUNDLE::
+      "DEBUG $(this.bundle): CIS Benchmark '$(sys.flavor)'";
+      "DEBUG $(this.bundle): '$(count_complete_para)' checks: '$(s_para)'";
+      "DEBUG $(this.bundle): '$(CIS_findings_count)' findings: '$(s)'";
+}
+
+bundle agent cis_replay
+#@
+#@ In case caching is active, just replay the content of "$(sys.workdir)/tmp/CIS.csv"
+#@ to the class setting function CIS_set_inventory_class(...)
+#@
+{
+  classes:
+    "cached_cis_csv_exists"
+      expression => fileexists("$(sys.workdir)/tmp/CIS.csv");
+
+  vars:
+    cached_cis_csv_exists::
+     # This is guarded in order to suppress error messages that can cause agent
+     # email storms.
+      "dummy"
+         int => readstringarray( "input",
+                                 "$(sys.workdir)/tmp/CIS.csv",
+                                 "",
+                                 " ; ",
+                                 "500",
+                                 "100K" );
+
+       "p"     slist => getindices("input");
+
+  methods:
+      "$(p)" usebundle  => CIS_set_inventory_class("$(p)",
+                                                   "$(input[$(p)][2])",
+                                                   "$(input[$(p)][3])",
+                                                   "$(input[$(p)][4])",
+                                                   "$(input[$(p)][5])");
+
+  reports:
+    DEBUG|DEBUG_cis_replay::
+      "DEBUG $(this.bundle): Replaying Cached inventoried finding '$(p)'";
+
+    !cached_cis_csv_exists::
+      "Error: $(this.bundle): '$(sys.workdir)/tmp/CIS.csv' does not exist. Unable to replay cached results.";
+}
+
+
+bundle agent cis_inventory
+#@
+#@ If called directly, generate a .csv-file with the paragraphs covered.
+#@
+#@ Otherwise the bundle only provides a merged input data datam.
+#@
+#@
+{
+
+  classes:
+      "_have_jsondir" expression => isdir($(jsondir));
+
+  vars:
+      "jsondir"     string => "$(this.promise_dirname)/data/$(sys.flavour)/";
+
+    _have_json_dir::
+      "injsons"     slist  => lsdir("$(jsondir)",".*\.json","true"),
+        ifvarclass => isdir("$(jsondir)/");
+
+      "can[$(injsons)]"
+        string => canonify("$(injsons)");
+
+      "data_$(can[$(injsons)])"
+        data   => readjson("$(injsons)","100K");
+
+      # merge all data together
+      "datam"      data   => parsejson('[]'),             policy => "free";
+      "datam"      data   => mergedata("datam","data_$(can[$(injsons)])"), policy => "free";
+      "p"          slist  => getindices("datam");
+
+classes:
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
+
+reports:
+    _have_jsondir::
+      "$(this.bundle) ; $(p) ; $(p) ; $(datam[$(p)][comment]) ; $(datam[$(p)][level]) ; $(datam[$(p)][score]) ";
+   DEBUG_THIS_BUNDLE::
+      "$(this.bundle) DEBUG";
+      "$(this.bundle) jsondir $(jsondir)";
+      "$(this.bundle) p $(p)";
+      "$(this.bundle) datam $(datam)";
+      "$(this.bundle) injsons $(injsons)";
+
+}
+
+bundle common cis_enforce
+#@
+#@ Sets the classes CISENFORCE_$(p) according to the classes
+#@ CISENFORCE_LEVEL1_FALSE//CISENFORCE_LEVEL2_FALSE//CISENFORCE_LEVEL1_TRUE//CISENFORCE_LEVEL2_TRUE
+#@
+{
+
+vars:
+   DEBUG_THIS_BUNDLE::
+      "cisenforce"  slist => classesmatching("CISENFORCE.*");
+
+classes:
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or=> { "DEBUG","DEBUG_$(this.bundle)" };
+
+   CISENFORCE.CISENFORCE_LEVEL1_FALSE::
+      "CISENFORCE_$(cis_inventory.p)"  expression => and(strcmp("$(cis_inventory.datam[$(cis_inventory.p)][level])","1"),
+                                                         strcmp("$(cis_inventory.datam[$(cis_inventory.p)][score])","false"));
+   CISENFORCE.CISENFORCE_LEVEL2_FALSE::
+      "CISENFORCE_$(cis_inventory.p)"  expression => and(strcmp("$(cis_inventory.datam[$(cis_inventory.p)][level])","2"),
+                                                         strcmp("$(cis_inventory.datam[$(cis_inventory.p)][score])","false"));
+   CISENFORCE.CISENFORCE_LEVEL1_TRUE::
+      "CISENFORCE_$(cis_inventory.p)"  expression => and(strcmp("$(cis_inventory.datam[$(cis_inventory.p)][level])","1"),
+                                                         strcmp("$(cis_inventory.datam[$(cis_inventory.p)][score])","true"));
+   CISENFORCE.CISENFORCE_LEVEL2_TRUE::
+      "CISENFORCE_$(cis_inventory.p)"  expression => and(strcmp("$(cis_inventory.datam[$(cis_inventory.p)][level])","2"),
+                                                         strcmp("$(cis_inventory.datam[$(cis_inventory.p)][score])","true"));
+reports:
+   DEBUG_THIS_BUNDLE::
+      "$(this.bundle) cisenforce $(cisenforce)";
+} # cis_enforce

@@ -1,0 +1,65 @@
+bundle agent cis_packages
+#@
+#@
+#@
+{
+
+meta:
+  "tags"  slist => {
+                   "CIS",
+                   "CISENFORCE",
+                   "security",
+                   "reporting"
+                    },
+     ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
+
+
+vars:
+   "infile" string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
+
+   infile_exists::
+     # read data for packages supposed to be installed / not intalled
+     "pkgs" data   => readjson("$(infile)","100K");
+
+     # get all paragraphs covered, and give it a meta tag to collect all paragraphs covered by general methods
+     "paragraphs" slist => getindices("pkgs"),
+                  meta  => { "CIS" , "CISSECTIONS" };
+
+   DEBUG_THIS_BUNDLE::
+      "CISFOUND"  slist  => classesmatching("CIS_finding_.*", "defined_from=$(this.bundle)" );
+
+
+classes:
+   # platform OS specific needs to exist
+   "infile_exists"     expression => fileexists("$(infile)");
+
+   # general debugging class specific for a bundle, should work with 3.6 & 3.7
+   "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
+
+
+methods:
+   "$(paragraphs)" usebundle => CIS_package_installed("$(paragraphs)",
+                                                    "$(pkgs[$(paragraphs)][pkgname])",
+                                                    "$(pkgs[$(paragraphs)][score])",
+                                                    "$(pkgs[$(paragraphs)][level])",
+                                                    "$(pkgs[$(paragraphs)][comment])",
+                                                    "$(pkgs[$(paragraphs)][supposed_installed])");
+
+packages:
+   CISENFORCE::
+      "$(pkgs[$(paragraphs)][pkgname])"
+           package_policy => "add",
+           ifvarclass     => and(strcmp("$(pkgs[$(paragraphs)][supposed_installed])","true"),
+                                 classmatch("CISENFORCE_$(paragraphs)"));
+      "$(pkgs[$(paragraphs)][pkgname])"
+           package_policy => "delete",
+           ifvarclass     => and(strcmp("$(pkgs[$(paragraphs)][supposed_installed])","false"),
+                                 classmatch("CISENFORCE_$(paragraphs)"));
+
+reports:
+   DEBUG_THIS_BUNDLE::
+      # "$(this.bundle) paragraphs $(paragraphs)";
+      "$(this.bundle) CISFOUND $(CISFOUND)";
+      # "$(this.bundle) CIS_package_installed($(paragraphs),$(pkgs[$(paragraphs)][pkgname])";
+
+}

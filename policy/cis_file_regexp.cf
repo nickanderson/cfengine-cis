@@ -1,0 +1,108 @@
+bundle agent cis_file_regexp
+{
+
+meta:
+   "tags"  slist => {
+                     "security",
+                     "reporting",
+                     "CIS",
+                    },
+      ifvarclass => isdir("$(this.promise_dirname)/data/$(sys.flavour)/");
+
+vars:
+      "infile" string => "$(this.promise_dirname)/data/$(sys.flavour)/$(this.bundle).json";
+
+
+   infile_exists::
+      # read input
+      "cis_file_reg" data => readdata( $(infile), "auto");
+
+      # get all paragraphs covered, and give it a meta tag to collect all
+      # paragraphs covered by general methods
+      "paragraphs"       slist => getindices("cis_file_reg"),
+                         meta  => { "CIS" , "CISSECTIONS" };
+
+   DEBUG_THIS_BUNDLE::
+      "CISFOUND"  slist  => classesmatching("CIS_finding_.*", "defined_from=$(this.bundle)" );
+      "reg"       slist  => classesmatching(".*regmatch.*");
+
+  classes:
+      # platform OS specific needs to exist
+      "infile_exists" expression => fileexists( $(infile) );
+
+      # helper classes
+      "fileexists_$(paragraphs)"
+        expression => fileexists( "$(cis_file_reg[$(paragraphs)][filename])" );
+
+      "failedifnofile_$(paragraphs)"
+        expression => not(strcmp("$(cis_file_reg[$(paragraphs)][failedifnofile])","false"));
+
+      "regmatch_$(paragraphs)"
+        expression => regline("$(cis_file_reg[$(paragraphs)][regexp])",
+                              "$(cis_file_reg[$(paragraphs)][filename])" );
+
+      "noregmatch_$(paragraphs)"
+        not => "regmatch_$(paragraphs)";
+
+      # general debugging class specific for a bundle, should work with 3.6 & 3.7
+      "DEBUG_THIS_BUNDLE" or => { "DEBUG", "DEBUG_$(this.bundle)" };
+
+  methods:
+      # Inventory
+      "$(paragraphs)"
+        usebundle  => CIS_set_inventory_class("$(paragraphs)",
+                                              "$(cis_file_reg[$(paragraphs)][score])",
+                                              "$(cis_file_reg[$(paragraphs)][level])",
+                                              "$(this.bundle)",
+                                              "$(cis_file_reg[$(paragraphs)][comment])"),
+        ifvarclass => or(
+                          # If it matched like it was expected to, and file
+                          # absense is not a failure condition
+                          and(
+                               strcmp( "$(cis_file_reg[$(paragraphs)][match])", "true" ),
+                               canonify("regmatch_$(paragraphs)")),
+
+                          # If the file did not match like it was supposed to
+                          # and the file absense is not a failure condition
+                          and(
+                               strcmp( "$(cis_file_reg[$(paragraphs)][match])","false"),
+                               not( canonify( "failedifnofile_$(paragraphs)")))
+                         );
+
+#   # supposed no match
+#      "$(paragraphs)"
+#        usebundle  => CIS_set_inventory_class("$(paragraphs)",
+#                                              "$(cis_file_reg[$(paragraphs)][score])",
+#                                              "$(cis_file_reg[$(paragraphs)][level])",
+#                                              "$(this.bundle)",
+#                                              "$(cis_file_reg[$(paragraphs)][comment])"),
+#         ifvarclass => and(canonify("regmatch_$(paragraphs)"),
+#                           strcmp("$(cis_file_reg[$(paragraphs)][match])","false"));
+
+  reports:
+    DEBUG_THIS_BUNDLE::
+      "DEBUG $(this.bundle): datafile = '$(infile)'";
+
+      # Report if the file exists
+      "$(this.bundle) '$(paragraphs)' '$(cis_file_reg[$(paragraphs)][filename])' exists"
+        if => canonify("fileexists_$(paragraphs)");
+
+      "$(this.bundle) '$(paragraphs)' found '$(cis_file_reg[$(paragraphs)][regexp])' matched '$(cis_file_reg[$(paragraphs)][match])'"
+        if => canonify( "regmatch_$(paragraphs)" );
+
+      "$(this.bundle) CISFOUND $(CISFOUND)";
+      "$(this.bundle) ifvar $(paragraphs)"
+        ifvarclass => or( fileexists("$(cis_file_reg[$(paragraphs)][filename])"),
+                          not(strcmp("$(cis_file_reg[$(paragraphs)][failedifnofile])","false")));
+
+      "$(this.bundle) ifvar2 $(paragraphs)"
+        ifvarclass => or( "fileexists_$(paragraphs)" , "failedifnofile_$(paragraphs)" );
+
+      "$(this.bundle) $(paragraphs) $(cis_file_reg[$(paragraphs)][match]) $(cis_file_reg[$(paragraphs)][regexp]) $(cis_file_reg[$(paragraphs)][filename])";
+
+      "$(this.bundle) $(paragraphs) $(cis_file_reg[$(paragraphs)][match])"
+        ifvarclass => and(not(regline("$(cis_file_reg[$(paragraphs)][filename])",
+                                      "$(cis_file_reg[$(paragraphs)][regexp])" )),
+                              strcmp("$(cis_file_reg[$(paragraphs)][match])","true"));
+
+}
